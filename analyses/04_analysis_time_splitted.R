@@ -187,13 +187,11 @@ lavTestLRT(fit_splitted_full_v2,
 
 fitmeasures(fit_splitted_full_v2, c('df', 'CFI', 'rmsea')) # no satisfactory fit based on cfi and rmsea
 
-
-
-
 # Testing ----
 mod_modification_partialeffects <-'
-practice_cii_words ~ practice_length + practice_frequency + practice_duration
+# practice_cii_words ~ practice_length + practice_frequency + practice_duration
 wordreading_score_post ~ practice_cii_time + practice_length + practice_frequency + practice_duration
+wordreading_score_pre ~~ practice_length + practice_frequency + practice_duration
 '
 
 
@@ -210,7 +208,6 @@ fit_splitted_partial_v0 <- sem(
   group.label = c('grade_2', 'grade_3', 'grade_4'),
   cluster = "class_ID"
 )
-
 
 plot_lavaan(fit_splitted_partial_v0,
             where = "browser")
