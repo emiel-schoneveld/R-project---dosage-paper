@@ -96,8 +96,8 @@ fit_splitted_full_v1 <- sem(
   group.label = c('grade_2', 'grade_3', 'grade_4'),
   cluster = "class_ID"
 )
-plot_lavaan(fit_splitted_full_v1,
-            where = "browser")
+# plot_lavaan(fit_splitted_full_v1,
+#             where = "browser")
 
 ### Inspect modified model ----
 anova(fit_splitted_full_v0,
@@ -173,8 +173,8 @@ fit_splitted_full_v3 <- sem(
   group.label = c('grade_2', 'grade_3', 'grade_4'),
   cluster = "class_ID"
 )
-plot_lavaan(fit_splitted_full_v3,
-            where = "browser")
+# plot_lavaan(fit_splitted_full_v3,
+#             where = "browser")
 
 ### Inspect modified model ----
 anova(fit_splitted_full_v2,
@@ -182,8 +182,6 @@ anova(fit_splitted_full_v2,
 lavTestLRT(fit_splitted_full_v2, 
            fit_splitted_full_v3, 
            method = "satorra.bentler.2010") # More robust comparison shows no significant improvement of model fit.
-
-
 
 fitmeasures(fit_splitted_full_v2, c('df', 'CFI', 'rmsea')) # no satisfactory fit based on cfi and rmsea
 
@@ -209,8 +207,8 @@ fit_splitted_partial_v0 <- sem(
   cluster = "class_ID"
 )
 
-plot_lavaan(fit_splitted_partial_v0,
-            where = "browser")
+# plot_lavaan(fit_splitted_partial_v0,
+#             where = "browser")
 
 ### Inspect modified model ----
 anova(fit_splitted_full_v2,
@@ -237,3 +235,56 @@ parameterestimates(
     # sig_cor,
     lhs, rhs, group
   )
+
+# Saturated model ----
+mod_splitted_regression_saturated <- '
+# regressions
+wordreading_score_post ~ wordreading_score_pre + practice_cii_words + practice_cii_time + practice_length + practice_frequency + practice_duration
+practice_cii_words ~ wordreading_score_pre + practice_cii_time + practice_length + practice_frequency + practice_duration
+practice_cii_time ~ wordreading_score_pre + practice_length + practice_frequency + practice_duration
+practice_length ~ wordreading_score_pre
+practice_frequency ~ wordreading_score_pre
+practice_duration ~ wordreading_score_pre
+
+# covs
+practice_length ~~ practice_frequency + practice_duration
+practice_frequency ~~ practice_duration
+'
+
+mod_splitted_saturated <- c(
+  mod_splitted_regression_saturated,
+  mod_splitted_covariance_intercept_structure
+)
+
+## Fit saturated path model
+fit_splitted_saturated <- sem(
+  mod_splitted_saturated,
+  data = data, 
+  missing = "FIML",
+  # group = "grade",
+  # group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+)
+parameterTable(fit_splitted_saturated)
+class(fit_splitted_saturated)
+resid(fit_splitted_saturated, type = "cor")
+modificationindices(fit_splitted_saturated, sort = T)
+summary(fit_splitted_saturated)
+
+
+anova(
+  fit_splitted_old,
+  fit_splitted_saturated
+) # significant improvement of model fit
+fit_splitted_old <- fit_splitted_saturated
+fitmeasures(fit_splitted_saturated, c('df', 'chisq', 'pvalue', 'cfi', 'rmsea')) # perfect fit because saturated model
+# resid(fit_splitted_saturated, type = "cor") # no residual correlations because saturated model
+
+parameterestimates(fit_splitted_saturated) |> 
+  filter(
+    op == '~',
+  ) |> 
+  arrange(
+    desc(pvalue)
+  ) |> 
+  slice_head(n = 4)

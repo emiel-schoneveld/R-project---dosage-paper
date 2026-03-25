@@ -3,7 +3,7 @@
     "path": "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - dosage/R project - dosage paper/analyses/03_analyse_data.R",
     "project_path": "analyses/03_analyse_data.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "3896268411",
     "contents": "",
     "dirty": false,
     "created": 1774428324518.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "348,0",
-        "scrollLine": "331"
+        "cursorPosition": "329,0",
+        "scrollLine": "316"
     },
     "folds": "1|17|12|0|\n13|12|17|0|\n18|21|18|25|\n19|41|19|45|\n61|33|63|0|\n64|47|64|51|\n65|33|71|0|\n72|41|83|0|\n84|23|95|0|\n96|27|100|0|\n101|33|108|0|\n109|41|121|0|\n122|23|133|0|\n134|27|138|0|\n161|23|172|0|\n173|27|180|0|\n181|33|189|0|\n190|42|203|0|\n204|23|215|0|\n216|27|221|0|\n256|26|265|0|\n266|24|298|0|\n",
-    "lastKnownWriteTime": 1774430480,
+    "lastKnownWriteTime": 1774432341,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1774430480318,
+    "last_content_update": 1774432341613,
     "read_only": false,
     "read_only_alternatives": []
 }

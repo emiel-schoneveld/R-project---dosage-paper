@@ -328,8 +328,6 @@ fit_saturated <- sem(
 )
 # plot_lavaan(fit_saturated, where = "browser")
 
-
-### Inspect partial model ----
 anova(
   fit_old,
   fit_saturated
