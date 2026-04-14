@@ -265,6 +265,8 @@ fit_splitted_saturated <- sem(
   # group.label = c('grade_2', 'grade_3', 'grade_4'),
   cluster = "class_ID",
 )
+plot_lavaan(fit_splitted_saturated,
+            where = "browser")
 parameterTable(fit_splitted_saturated)
 class(fit_splitted_saturated)
 resid(fit_splitted_saturated, type = "cor")

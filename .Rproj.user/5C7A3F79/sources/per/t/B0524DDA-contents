@@ -22,7 +22,7 @@ data <- readRDS(
 #### specify regression part
 mod_regression_full <- '
 # regressions
-wordreading_score_post ~ c(NA, NA, NA)*wordreading_score_pre + c(post_words_grade2, post_words_grade3, post_words_grade4)*practice_cii_words
+wordreading_score_post ~ c(post_pre_grade2, post_pre_grade3, post_pre_grade4)*wordreading_score_pre + c(post_words_grade2, post_words_grade3, post_words_grade4)*practice_cii_words
 practice_cii_words ~ c(words_time_grade2, words_time_grade3, words_time_grade4)*practice_cii_time
 '
 
@@ -73,7 +73,11 @@ modificationindices(fit_full_v0,
 ### Specify modification 1 (pre on time) ----
 #### Specify modification
 mod_modification_pre_on_time_grade3 <- '
-practice_cii_time ~ c(0, NA, 0)*wordreading_score_pre
+practice_cii_time ~ c(time_pre_grade2, time_pre_grade3, time_pre_grade4)*wordreading_score_pre
+
+time_pre_grade2 == 0
+# time_pre_grade3 == 0
+time_pre_grade4 == 0
 '
 #### Combine into one specification
 mod_full_v1 <- c(
@@ -110,7 +114,11 @@ modificationindices(fit_full_v1,
 ### Specify modification 2 (pre on time) ----
 #### Specify modification
 mod_modification_pre_on_time_grade23 <- '
-practice_cii_time ~ c(NA, NA, 0)*wordreading_score_pre
+practice_cii_time ~ c(time_pre_grade2, time_pre_grade3, time_pre_grade4)*wordreading_score_pre
+
+# time_pre_grade2 == 0
+# time_pre_grade3 == 0
+time_pre_grade4 == 0
 '
 
 #### Combine into one specification
@@ -148,7 +156,11 @@ modificationindices(fit_full_v2,
 ### Specify modification 3 (pre on words) ----
 #### Specify modification
 mod_modification_pre_on_words_grade2 <- '
-practice_cii_words ~ c(NA, 0, 0)*wordreading_score_pre
+practice_cii_words ~ c(words_pre_grade2, words_pre_grade3, words_pre_grade4)*wordreading_score_pre
+
+# words_pre_grade2 == 0
+words_pre_grade3 == 0
+words_pre_grade4 == 0
 '
 
 #### Combine into one specification
