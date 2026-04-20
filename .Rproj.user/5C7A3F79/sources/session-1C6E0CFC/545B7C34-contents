@@ -13,62 +13,87 @@ library(here)
     
 # Load data ----
 ## Student test data
-data_wordreading_all <- read_xlsx(
+data_wordreading_raw <- read_xlsx(
   here('input/data_toetsgegevens.xlsx')
 )
 
 # Transform data_wordreading ----
-## Rename columns and convert to numeric ----
-data_wordreading_all <- data_wordreading_all |> 
+## Rename columns 
+data_wordreading_wide <- data_wordreading_raw |> 
   rename(
     student_ID = Leerlingnummer,
     wordreading_version_pre = Woordleestoets_versie_pre,
+    wordreading_version_mid = Woordleestoets_versie_mid,
     wordreading_version_post = Woordleestoets_versie_post,
     wordreading_score_pre = Woordleestoets_vaardigheidsscore_pre,
+    wordreading_score_mid = Woordleestoets_vaardigheidsscore_mid,
     wordreading_score_post = Woordleestoets_vaardigheidsscore_post
-  ) |> 
+  )
+
+## Convert columns to numeric
+data_wordreading_wide <- data_wordreading_wide |> 
   mutate(
     wordreading_score_pre = wordreading_score_pre |> as.numeric(),
+    wordreading_score_mid = wordreading_score_mid |> as.numeric(),
     wordreading_score_post = wordreading_score_post |> as.numeric()
   )
 
 ## Select columns ----
-data_wordreading_all <- data_wordreading_all |> 
+data_wordreading_wide <- data_wordreading_wide |> 
   dplyr::select(
-    student_ID,
-    contains('wordreading') & (contains('pre') | contains('post'))
+    # select student ID
+    student_ID, 
+    
+    # Select all wordreading variables of pre, mid and post measurement
+    contains('wordreading') & (contains('pre') | contains('mid') | contains('post'))
   )
 
-## Remove all values that are not a DMT and filter outliers ----
-### For premeasurement
-data_wordreading_pre <- data_wordreading_all |> 
-  dplyr::select(
-    student_ID,
-    contains('pre')
-  ) |> 
+## Transform into long format ----
+data_wordreading_long <- data_wordreading_wide |>
+  pivot_longer(
+    contains('score'),
+    names_prefix = "wordreading_score_",
+    names_to = 'measurement_score',
+    values_to = 'score'
+  ) |>
+  pivot_longer(
+    contains('version'),
+    names_prefix = "wordreading_version_",
+    names_to = 'measurement_version',
+    values_to = 'version'
+  ) |>
   filter(
-    wordreading_version_pre == 'DMT',
-    wordreading_score_pre <= 120,
+    measurement_score == measurement_version
+  ) |>
+  rename(
+    'measurement' = measurement_score
+  ) |>
+  dplyr::select(
+    !measurement_version
+  )
+    
+## Filter on test version ----
+data_wordreading_long <- data_wordreading_long |>
+  filter(
+    version == "DMT"
   ) |> 
   dplyr::select(
-    !contains('version')
+    !version
   )
 
-## Join filtered post measurement with pre measurement ----
-data_wordreading <- data_wordreading_all |> 
-  dplyr::select(
-    student_ID,
-    contains('post')
-  ) |> 
+data_wordreading_wide <- data_wordreading_wide |>
   filter(
-    wordreading_version_post == 'DMT',
-    wordreading_score_post <= 120,
-  ) |> 
-  dplyr::select(
-    !contains('version')
-  ) |> 
-  full_join(
-    data_wordreading_pre
+    wordreading_version_pre == "DMT",      
+    wordreading_version_mid == "DMT",
+    wordreading_version_post == "DMT"
+  )
+
+## Pivort wider ----
+data_wordreading <- data_wordreading_long |> 
+  pivot_wider(
+    names_from = measurement,
+    values_from = score,
+    names_prefix = 'wordreading_'
   )
 
 ## Save data ----
