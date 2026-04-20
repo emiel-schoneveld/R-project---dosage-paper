@@ -5,7 +5,6 @@ rm(list = ls())
 
 ## Load packages
 library(tidyverse)
-library(readxl)
 library(lavaan)
 library(here)
 library(lavaangui)

@@ -113,7 +113,10 @@ data_logs_session <- data_logs_lesson |>
     session_dose_total = sum(lesson_dose_total, na.rm = T),
     session_length_readingtime = sum(lesson_length, na.rm = T)
   ) |> 
-  ungroup()
+  ungroup() |> 
+  rename(
+    'session_date' = lesson_date
+  )
 
 ## Compute session length ----
 data_logs_session <- data_logs_session |> 
@@ -126,6 +129,30 @@ data_logs_session <- data_logs_session |>
   filter(
     session_length >= min_session_length,
     session_length <= max_session_length,
+  )
+
+## Split by measurement dates ----
+### Add measurement dates
+data_logs_session <- data_logs_session |> 
+  left_join(
+    data_wordreading
+  )
+
+### Add variable that denotes in which semester the session occured
+data_logs_session <- data_logs_session |> 
+  mutate(
+    session_semester = case_when(
+      # Exclude all sessions on the test dates
+      session_date == wordreading_date_pre ~ NA,
+      session_date == wordreading_date_mid ~ NA,
+      session_date == wordreading_date_post ~ NA,
+      
+      # Add semester
+      session_date < wordreading_date_pre ~ NA,
+      session_date < wordreading_date_mid ~ '1',
+      session_date < wordreading_date_post ~ '2',
+      session_date > wordreading_date_post ~ NA,
+    )
   )
 
 ## Compute student level means ----
@@ -177,4 +204,3 @@ saveRDS(
   data_logs_student,
   here("output/data_logs_student.rds")
 )
-  
