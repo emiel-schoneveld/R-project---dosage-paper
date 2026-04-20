@@ -182,7 +182,7 @@ fit_full_v3 <- sem(
 )
 # plot_lavaan(fit_full_v2,
 #             where = "browser")
-
+  
 ### Inspect modified model ----
 anova(fit_full_v2,
       fit_full_v3) # Satorra-Bentler 2000 correction provides an impossible negative scaling factor.
@@ -305,7 +305,7 @@ parameterestimates(
 # The total effect of time was only significant for Grade 2. It was also robust against multiple testing adjustment. 
 # In this grade, more time practising led to more progress.
 
-plot_lavaan(fit_partial_v0, where = "browser")
+# plot_lavaan(fit_partial_v0, where = "browser")
 
 
 
@@ -366,10 +366,13 @@ parameterestimates(fit_saturated) |>
     lhs, rhs, group,
   ) |> 
   dplyr::select(
-    # lhs, rhs, 
+    lhs, rhs,
     label, est, se, pvalue
   ) |> 
   mutate(
     p_cor = pvalue*3,
     sig_cor = p_cor < .05
+  ) |> 
+  filter(
+    str_detect(lhs, 'post')
   )
