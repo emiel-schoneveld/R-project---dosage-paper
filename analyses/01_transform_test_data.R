@@ -134,7 +134,6 @@ data_wordreading <- data_wordreading_long |>
   pivot_wider(
     names_from = measurement,
     values_from = score:date,
-    # names_prefix = 'wordreading_',
     names_glue = "wordreading_{.value}_{measurement}"
   )
 
@@ -143,4 +142,3 @@ saveRDS(
   data_wordreading,
   here("output/data_wordreading.rds")
 )
-

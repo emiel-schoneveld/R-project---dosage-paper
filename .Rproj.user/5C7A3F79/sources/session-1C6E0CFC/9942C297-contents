@@ -13,8 +13,13 @@ library(here)
 
 # Load data ----
 ## Data from practice logs
-data_logs_old <- read_xlsx(
+data_logs_raw <- read_xlsx(
   here('input/logs_lessons_anonymous.xlsx')
+)
+
+## Wordreading data
+data_wordreading <- readRDS(
+  here('output/data_wordreading.rds')
 )
 
 # Set global variables ----
@@ -28,26 +33,30 @@ max_session_length = 60
 
 # Transform data_logs ----
 ## Rename columns ----
-data_logs_lesson <- data_logs_old |> 
+data_logs_lesson <- data_logs_raw |> 
   rename(
     student_ID = Leerlingnummer,
     lesson_dose = TotalLessonItems,
     lesson_form = LessonType
   )
 
+## Add DMT date info ----
+data_logs_lesson <- data_logs_lesson |> 
+  left_join(
+    data_wordreading
+  )
+
+# Filter all lessons based on practice semester ----
 ## Recode missing values ----
 data_logs_lesson <- data_logs_lesson |> 
   mutate(
     EndDate = na_if(EndDate, "NULL")
   )
 
-## Filter lesson data ----
+## Filter out all nonvalid lesson types ----
 data_logs_lesson <- data_logs_lesson |> 
   filter(
-    lesson_form %in% c("ResearchFlits", "Flits", "ResearchRowRead", "RowRead"),
-    !is.na(EndDate),
-    StartDate >= start_of_semester,
-    EndDate <= end_of_semester
+    lesson_form %in% c("ResearchFlits", "Flits", "ResearchRowRead", "RowRead")
   )
 
 ## Convert strings into date and time class ----
@@ -56,6 +65,21 @@ data_logs_lesson <- data_logs_lesson |>
     lesson_date = as.Date.character(CreationDate),
     lesson_time_start = substring(StartDate, 0, 19) |> as.POSIXlt.character(tz = "CET"),
     lesson_time_end = substring(EndDate, 0, 19) |> as.POSIXlt.character(tz = "CET")
+  )
+
+## Filter out lessons with invalid dates ----
+data_logs_lesson <- data_logs_lesson |> 
+  filter(
+    # Delete all lessons that do not have start or enddate
+    !is.na(EndDate) | !is.na(StartDate),
+    
+    # Delete all lessons outside the semester
+    lesson_date >= start_of_semester,
+    lesson_date <= end_of_semester,
+    
+    # Delete all lessons before the premeasurement or after the postmeasurement
+    lesson_date > wordreading_date_pre,
+    lesson_date < wordreading_date_post
   )
 
 ## Compute lesson duration ----
@@ -78,7 +102,7 @@ data_logs_session <- data_logs_lesson |>
   ) |> 
   ungroup()
 
-## Compute session length
+## Compute session length ----
 data_logs_session <- data_logs_session |> 
   mutate(
     session_length = difftime(session_endtime, session_starttime, units = "mins") |> as.numeric()
@@ -91,7 +115,7 @@ data_logs_session <- data_logs_session |>
     session_length <= max_session_length,
   )
 
-## Compute student level variables ----
+## Compute student level means ----
 data_logs_student <- data_logs_session |> 
   group_by(
     student_ID
@@ -101,11 +125,11 @@ data_logs_student <- data_logs_session |>
     practice_dose = mean(session_dose, na.rm = T),
     practice_cii_time = sum(session_length, na.rm = T)/60,
     practice_cii_readingtime = sum(session_length_readingtime, na.rm = T)/60,
-    practice_cii_words = sum(session_dose, na.rm = T)/1000,
+    practice_cii_words = sum(session_dose, na.rm = T),
   ) |> 
   ungroup()
 
-### Compute and add frequency and number of weeks ----
+### Compute session frequency and number of weeks ----
 #### Add week number
 data_logs_session <- data_logs_session |> 
   mutate(
