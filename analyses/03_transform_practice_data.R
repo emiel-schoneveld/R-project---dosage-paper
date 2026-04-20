@@ -180,6 +180,7 @@ data_logs_student_semester_nofreq_nodur <- data_logs_session |>
     practice_cii_readingtime = sum(session_length_readingtime)/60,
     practice_cii_words_accurate = sum(session_dose_accurate),
     practice_cii_words_total = sum(session_dose_total),
+    practice_accuracy = practice_cii_words_accurate / practice_cii_words_total
   ) |> 
   ungroup()
 
@@ -213,7 +214,7 @@ data_logs_student_semester_wide <- data_logs_student_semester_long |>
   ) |> 
   pivot_wider(
     names_from = session_semester,
-    values_from = practice_frequency:practice_cii_words_total,
+    values_from = contains('practice'),
   )
 
 ### Not splitted per semester ----
@@ -231,6 +232,7 @@ data_logs_student_nofreq_nodur <- data_logs_session |>
     practice_cii_readingtime = sum(session_length_readingtime)/60,
     practice_cii_words_accurate = sum(session_dose_accurate),
     practice_cii_words_total = sum(session_dose_total),
+    practice_accuracy = practice_cii_words_accurate / practice_cii_words_total
   ) |> 
   ungroup()
 

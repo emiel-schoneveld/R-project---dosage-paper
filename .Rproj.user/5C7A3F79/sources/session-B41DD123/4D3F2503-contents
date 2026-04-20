@@ -1,0 +1,6 @@
+cor(data)
+data |> 
+  dplyr::select(
+    contains('cii') & contains('words') & !contains('semester')
+  ) |> 
+  cor()

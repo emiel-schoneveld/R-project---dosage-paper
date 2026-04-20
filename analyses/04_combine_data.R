@@ -47,7 +47,7 @@ data_semester <- data_logs_student_semester |>
 
 ## Columnbind total and semester data into one tibble
 data <- data_yearly |>  
-  bind_cols(
+  full_join(
     data_semester
   )
 
