@@ -17,6 +17,11 @@ data_logs_raw <- read_xlsx(
 )
 
 ## Wordreading data
+data_logs_lesson_dosetotal <- readRDS(
+  here('output/data_logs_lesson_dosetotal.rds')
+)
+
+## Wordreading data
 data_wordreading <- readRDS(
   here('output/data_wordreading.rds')
 )
@@ -35,7 +40,7 @@ max_session_length = 60
 data_logs_lesson <- data_logs_raw |> 
   rename(
     student_ID = Leerlingnummer,
-    lesson_dose = TotalLessonItems,
+    lesson_dose_accurate = TotalLessonItems,
     lesson_form = LessonType
   )
 
@@ -70,7 +75,9 @@ data_logs_lesson <- data_logs_lesson |>
 data_logs_lesson <- data_logs_lesson |> 
   filter(
     # Delete all lessons that do not have start or enddate
-    !is.na(EndDate) | !is.na(StartDate),
+    !is.na(EndDate),
+    !is.na(StartDate),
+    !is.na(lesson_date),
     
     # Delete all lessons outside the semester
     lesson_date >= start_of_semester,
@@ -87,6 +94,25 @@ data_logs_lesson <- data_logs_lesson |>
     lesson_length = difftime(lesson_time_end, lesson_time_start,  units = "mins") |> as.numeric()
   )
 
+## Add total words read and total words presented ----
+### Compute words read per lesson
+data_logs_lesson_dosetotal <- data_logs_words |> 
+  rename(
+    'CourseProgressId' = courseprogessid
+  ) |> 
+  group_by(
+    CourseProgressId
+  ) |> 
+  summarise(
+    lesson_dose_total = sum(tries, na.rm = T)
+  )
+
+### Join total dose to data_logs_lesson
+data_logs_lesson <- data_logs_lesson |> 
+  left_join(
+    data_logs_lesson_dosetotal
+  )
+
 ## Summarise logs per session ----
 data_logs_session <- data_logs_lesson |> 
   group_by(
@@ -96,7 +122,8 @@ data_logs_session <- data_logs_lesson |>
   summarise(
     session_starttime = min(lesson_time_start, na.rm = T),
     session_endtime = max(lesson_time_end, na.rm = T),
-    session_dose = sum(lesson_dose, na.rm = T),
+    session_dose_accurate = sum(lesson_dose_accurate, na.rm = T),
+    session_dose_total = sum(lesson_dose_total, na.rm = T),
     session_length_readingtime = sum(lesson_length, na.rm = T)
   ) |> 
   ungroup()
@@ -120,11 +147,13 @@ data_logs_student <- data_logs_session |>
     student_ID
   ) |> 
   summarise(
-    practice_length = mean(session_length, na.rm = T),
-    practice_dose = mean(session_dose, na.rm = T),
-    practice_cii_time = sum(session_length, na.rm = T)/60,
-    practice_cii_readingtime = sum(session_length_readingtime, na.rm = T)/60,
-    practice_cii_words = sum(session_dose, na.rm = T),
+    practice_length = mean(session_length),
+    practice_dose_accurate = mean(session_dose_accurate),
+    practice_dose_total = mean(session_dose_total),
+    practice_cii_time = sum(session_length)/60,
+    practice_cii_readingtime = sum(session_length_readingtime)/60,
+    practice_cii_words_accurate = sum(session_dose_accurate),
+    practice_cii_words_total = sum(session_dose_total),
   ) |> 
   ungroup()
 
@@ -161,3 +190,4 @@ saveRDS(
   data_logs_student,
   here("output/data_logs_student.rds")
 )
+
