@@ -194,9 +194,9 @@ data_logs_student_semester_nofreq_nodur <- data_logs_session |>
     practice_dose_total = mean(session_dose_total),
     practice_cii_time = sum(session_length)/60,
     practice_cii_readingtime = sum(session_length_readingtime)/60,
-    practice_cii_words_accurate = sum(session_dose_accurate),
-    practice_cii_words_total = sum(session_dose_total),
-    practice_accuracy = practice_cii_words_accurate / practice_cii_words_total
+    practice_cii_words_accurate = sum(session_dose_accurate)/1000,
+    practice_cii_words_total = sum(session_dose_total)/1000,
+    practice_accuracy = (practice_cii_words_accurate / practice_cii_words_total)*100
   ) |> 
   ungroup()
 
@@ -246,9 +246,9 @@ data_logs_student_nofreq_nodur <- data_logs_session |>
     practice_dose_total = mean(session_dose_total),
     practice_cii_time = sum(session_length)/60,
     practice_cii_readingtime = sum(session_length_readingtime)/60,
-    practice_cii_words_accurate = sum(session_dose_accurate),
-    practice_cii_words_total = sum(session_dose_total),
-    practice_accuracy = practice_cii_words_accurate / practice_cii_words_total
+    practice_cii_words_accurate = sum(session_dose_accurate)/1000,
+    practice_cii_words_total = sum(session_dose_total)/1000,
+    practice_accuracy = (practice_cii_words_accurate / practice_cii_words_total)*100
   ) |> 
   ungroup()
 

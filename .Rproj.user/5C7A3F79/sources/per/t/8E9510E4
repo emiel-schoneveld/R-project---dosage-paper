@@ -1,26 +1,26 @@
 {
-    "id": "92D3D44C",
+    "id": "8E9510E4",
     "path": "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - dosage/R project - dosage paper/analyses/06_analyse_data.R",
     "project_path": "analyses/06_analyse_data.R",
     "type": "r_source",
     "hash": "3502134323",
     "contents": "",
     "dirty": false,
-    "created": 1776699472034.0,
+    "created": 1776762234293.0,
     "source_on_save": false,
-    "relative_order": 2,
+    "relative_order": 4,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "16,0",
-        "scrollLine": "9"
+        "cursorPosition": "12,0",
+        "scrollLine": "5"
     },
     "folds": "",
     "lastKnownWriteTime": 1776699780,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1776699780853,
+    "last_content_update": 1776699780,
     "read_only": false,
     "read_only_alternatives": []
 }
