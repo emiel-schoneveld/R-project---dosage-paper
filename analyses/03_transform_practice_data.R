@@ -28,8 +28,8 @@ data_wordreading <- readRDS(
 
 # Set global variables ----
 ## Start and end of year
-start_of_semester = as.Date("2023-08-20")
-end_of_semester = as.Date("2024-07-20")
+start_of_schoolyear = as.Date("2023-08-20")
+end_of_schoolyear = as.Date("2024-07-20")
 
 ## Session length maximum and minimum
 min_session_length = 2
@@ -50,7 +50,6 @@ data_logs_lesson <- data_logs_lesson |>
     data_wordreading
   )
 
-# Filter all lessons based on practice semester ----
 ## Recode missing values ----
 data_logs_lesson <- data_logs_lesson |> 
   mutate(
@@ -80,11 +79,13 @@ data_logs_lesson <- data_logs_lesson |>
     !is.na(lesson_date),
     
     # Delete all lessons outside the semester
-    lesson_date >= start_of_semester,
-    lesson_date <= end_of_semester,
+    lesson_date >= start_of_schoolyear,
+    lesson_date <= end_of_schoolyear,
     
-    # Delete all lessons before the premeasurement or after the postmeasurement
+    # Include all lessons after the premeasurement or before the postmeasurement
+    # Exclude all lesson on the midmeasurement
     lesson_date > wordreading_date_pre,
+    lesson_date != wordreading_date_mid,
     lesson_date < wordreading_date_post
   )
 
@@ -98,6 +99,21 @@ data_logs_lesson <- data_logs_lesson |>
 data_logs_lesson <- data_logs_lesson |> 
   left_join(
     data_logs_lesson_dosetotal
+  ) |> 
+  mutate(
+    # For rowreading set total to total words presented
+    lesson_dose_total = if_else(
+      lesson_form == "ResearchRowRead",
+      lesson_dose_accurate,
+      lesson_dose_total
+    ),
+    
+    # For rowreading set accuracy to words read accurately first time
+    lesson_dose_accurate = if_else(
+      lesson_form == "ResearchRowRead",
+      CorrectWord,
+      lesson_dose_accurate
+    ),
   )
 
 ## Summarise logs per session ----
@@ -258,12 +274,14 @@ data_logs_student <- data_logs_session |>
     y = data_logs_student_nofreq_nodur
   )
 
+## Combine data into one wide dataset ----
+data_practice <- data_logs_student_semester_wide |> 
+  full_join(
+    data_logs_student
+  )
+
 ## Save data ----
 saveRDS(
-  data_logs_student_semester_wide,
-  here("output/data_logs_student_semester.rds")
-)
-saveRDS(
-  data_logs_student,
-  here("output/data_logs_student.rds")
+  data_practice,
+  here("output/data_practice.rds")
 )

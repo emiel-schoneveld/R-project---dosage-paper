@@ -1,0 +1,25 @@
+data_logs_lesson |> 
+  filter(
+    lesson_form == "ResearchRowRead",
+    CourseProgressId == "C6EA3366-D5FD-4201-94CF-B0D1008E8462"
+  ) |> 
+  group_by(
+    CourseProgressId
+  ) |> 
+  dplyr::select(
+    lesson_dose_accurate
+  )
+
+data_logs_words |> 
+  filter(
+    # lesson_form == "ResearchRowRead",
+    courseprogessid == "C6EA3366-D5FD-4201-94CF-B0D1008E8462"
+  ) |> 
+  group_by(
+    courseprogessid
+  ) |> 
+  summarise(
+    try = sum(tries),
+    words = n(),
+    accurate = words - (try - words)
+  )

@@ -28,8 +28,8 @@ data_wordreading <- readRDS(
 
 # Set global variables ----
 ## Start and end of year
-start_of_semester = as.Date("2023-08-20")
-end_of_semester = as.Date("2024-07-20")
+start_of_schoolyear = as.Date("2023-08-20")
+end_of_schoolyear = as.Date("2024-07-20")
 
 ## Session length maximum and minimum
 min_session_length = 2
@@ -50,7 +50,6 @@ data_logs_lesson <- data_logs_lesson |>
     data_wordreading
   )
 
-# Filter all lessons based on practice semester ----
 ## Recode missing values ----
 data_logs_lesson <- data_logs_lesson |> 
   mutate(
@@ -80,11 +79,13 @@ data_logs_lesson <- data_logs_lesson |>
     !is.na(lesson_date),
     
     # Delete all lessons outside the semester
-    lesson_date >= start_of_semester,
-    lesson_date <= end_of_semester,
+    lesson_date >= start_of_schoolyear,
+    lesson_date <= end_of_schoolyear,
     
-    # Delete all lessons before the premeasurement or after the postmeasurement
+    # Include all lessons after the premeasurement or before the postmeasurement
+    # Exclude all lesson on the midmeasurement
     lesson_date > wordreading_date_pre,
+    lesson_date != wordreading_date_mid,
     lesson_date < wordreading_date_post
   )
 
@@ -98,6 +99,21 @@ data_logs_lesson <- data_logs_lesson |>
 data_logs_lesson <- data_logs_lesson |> 
   left_join(
     data_logs_lesson_dosetotal
+  ) |> 
+  mutate(
+    # For rowreading set total to total words presented
+    lesson_dose_total = if_else(
+      lesson_form == "ResearchRowRead",
+      lesson_dose_accurate,
+      lesson_dose_total
+    ),
+    
+    # For rowreading set accuracy to words read accurately first time
+    lesson_dose_accurate = if_else(
+      lesson_form == "ResearchRowRead",
+      CorrectWord,
+      lesson_dose_accurate
+    ),
   )
 
 ## Summarise logs per session ----
@@ -114,6 +130,9 @@ data_logs_session <- data_logs_lesson |>
     session_length_readingtime = sum(lesson_length, na.rm = T)
   ) |> 
   ungroup() |> 
+  mutate( # Add week number
+    session_week = strftime(session_starttime, format = "%V") |> as.character()
+  ) |> 
   rename(
     'session_date' = lesson_date
   )
@@ -131,7 +150,7 @@ data_logs_session <- data_logs_session |>
     session_length <= max_session_length,
   )
 
-## Split by measurement dates ----
+## Add semester variable ----
 ### Add measurement dates
 data_logs_session <- data_logs_session |> 
   left_join(
@@ -149,16 +168,25 @@ data_logs_session <- data_logs_session |>
       
       # Add semester
       session_date < wordreading_date_pre ~ NA,
-      session_date < wordreading_date_mid ~ '1',
-      session_date < wordreading_date_post ~ '2',
+      session_date < wordreading_date_mid ~ 'semester_1',
+      session_date < wordreading_date_post ~ 'semester_2',
       session_date > wordreading_date_post ~ NA,
     )
   )
 
+### Filter out all sessions not in a valid semester ----
+data_logs_session <- data_logs_session |> 
+  filter(
+    !is.na(session_semester)
+  )
+
 ## Compute student level means ----
-data_logs_student <- data_logs_session |> 
+### Splitted per semester ----
+#### Student means ----
+data_logs_student_semester_nofreq_nodur <- data_logs_session |> 
   group_by(
-    student_ID
+    student_ID,
+    session_semester
   ) |> 
   summarise(
     practice_length = mean(session_length),
@@ -168,20 +196,67 @@ data_logs_student <- data_logs_session |>
     practice_cii_readingtime = sum(session_length_readingtime)/60,
     practice_cii_words_accurate = sum(session_dose_accurate),
     practice_cii_words_total = sum(session_dose_total),
+    practice_accuracy = practice_cii_words_accurate / practice_cii_words_total
   ) |> 
   ungroup()
 
-### Compute session frequency and number of weeks ----
-#### Add week number
-data_logs_session <- data_logs_session |> 
-  mutate(
-    session_week = strftime(session_starttime, format = "%V") |> as.character()
+#### Compute and add frequency and number of weeks
+data_logs_student_semester_long <- data_logs_session |> 
+  group_by(
+    student_ID,
+    session_semester,
+    session_week
+  ) |> 
+  summarise(
+    practice_frequency = n()
+  ) |> 
+  ungroup() |> 
+  group_by(
+    student_ID,
+    session_semester
+  ) |> 
+  summarise(
+    practice_frequency = mean(practice_frequency, na.rm = T),
+    practice_duration = n()
+  ) |> 
+  right_join(
+    y = data_logs_student_semester_nofreq_nodur
   )
 
-### Compute and add frequency and number of weeks
+#### Pivot wider
+data_logs_student_semester_wide <- data_logs_student_semester_long |> 
+  relocate(
+    student_ID, session_semester
+  ) |> 
+  pivot_wider(
+    names_from = session_semester,
+    values_from = contains('practice'),
+  )
+
+### Not splitted per semester ----
+#### Student means ----
+data_logs_student_nofreq_nodur <- data_logs_session |> 
+  group_by(
+    student_ID,
+    # session_semester
+  ) |> 
+  summarise(
+    practice_length = mean(session_length),
+    practice_dose_accurate = mean(session_dose_accurate),
+    practice_dose_total = mean(session_dose_total),
+    practice_cii_time = sum(session_length)/60,
+    practice_cii_readingtime = sum(session_length_readingtime)/60,
+    practice_cii_words_accurate = sum(session_dose_accurate),
+    practice_cii_words_total = sum(session_dose_total),
+    practice_accuracy = practice_cii_words_accurate / practice_cii_words_total
+  ) |> 
+  ungroup()
+
+#### Compute and add frequency and number of weeks
 data_logs_student <- data_logs_session |> 
   group_by(
     student_ID,
+    # session_semester,
     session_week
   ) |> 
   summarise(
@@ -196,11 +271,17 @@ data_logs_student <- data_logs_session |>
     practice_duration = n()
   ) |> 
   right_join(
-    y = data_logs_student
+    y = data_logs_student_nofreq_nodur
+  )
+
+## Combine data into one wide dataset ----
+data_practice <- data_logs_student_semester_wide |> 
+  full_join(
+    data_logs_student
   )
 
 ## Save data ----
 saveRDS(
-  data_logs_student,
-  here("output/data_logs_student.rds")
+  data_practice,
+  here("output/data_practice.rds")
 )

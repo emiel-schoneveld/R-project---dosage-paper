@@ -12,7 +12,7 @@ library(shiny)
 
 # Load data ----
 data <- readRDS(
-  here('output/data_transformed.rds')
+  here('output/data.rds')
 )
 
 # Mediation analysis ----
