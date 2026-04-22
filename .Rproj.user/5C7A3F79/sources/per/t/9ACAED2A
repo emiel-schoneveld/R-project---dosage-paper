@@ -1,0 +1,26 @@
+{
+    "id": "9ACAED2A",
+    "path": "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - dosage/R project - dosage paper/analyses/06_analyse_data.R",
+    "project_path": "analyses/06_analyse_data.R",
+    "type": "r_source",
+    "hash": "3502134323",
+    "contents": "",
+    "dirty": false,
+    "created": 1776845097238.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "314,126",
+        "scrollLine": "268"
+    },
+    "folds": "1|17|11|0|\n12|12|16|0|\n17|21|17|25|\n18|41|18|45|\n19|33|47|0|\n48|29|59|0|\n60|33|62|0|\n63|47|63|51|\n64|33|70|0|\n71|41|86|0|\n87|23|98|0|\n99|27|103|0|\n104|33|111|0|\n112|41|128|0|\n129|23|140|0|\n141|27|145|0|\n146|33|153|0|\n154|42|171|0|\n172|23|183|2|\n184|27|191|0|\n192|33|200|0|\n201|42|214|0|\n215|23|226|0|\n227|27|232|0|\n233|21|233|25|\n234|18|255|0|\n256|22|266|0|\n267|26|276|0|\n277|24|309|0|\n",
+    "lastKnownWriteTime": 1776845384,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1776845384868,
+    "read_only": false,
+    "read_only_alternatives": []
+}

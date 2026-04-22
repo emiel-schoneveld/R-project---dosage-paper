@@ -136,8 +136,79 @@ data_wordreading <- data_wordreading_long |>
     names_glue = "wordreading_{.value}_{measurement}"
   )
 
+## Add missing dates ----
+### Check for which respondents a date is missing
+data_wordreading |> 
+  filter(
+    is.na(wordreading_date_pre) |
+      is.na(wordreading_date_mid) |
+      is.na(wordreading_date_post)
+  )
+
+### Add school_ID
+data_wordreading <- data_wordreading |> 
+  mutate(
+    school_ID = str_extract(student_ID, "^[^-]+")
+  )
+
+### Set dates for imputing if no school mean is present
+day_before_start_of_schoolyear = as.Date("2023-08-19")
+day_after_end_of_schoolyear = as.Date("2024-07-21")
+median_date_mid <- median(data_wordreading$wordreading_date_mid, na.rm = T)
+
+### Impute missing dates
+data_wordreading_imputed_dates <- data_wordreading |> 
+  group_by(school_ID) |>
+  mutate(
+    # Set missing dates to school median if missing
+    wordreading_date_pre = if_else(
+      is.na(wordreading_date_pre),
+      median(wordreading_date_pre, na.rm = TRUE),
+      wordreading_date_pre
+    ),
+    wordreading_date_mid = if_else(
+      is.na(wordreading_date_mid),
+      median(wordreading_date_mid, na.rm = TRUE),
+      wordreading_date_mid
+    ),
+    wordreading_date_post = if_else(
+      is.na(wordreading_date_post),
+      median(wordreading_date_post, na.rm = TRUE),
+      wordreading_date_post
+    )
+  )|>
+  ungroup() |>
+  mutate(
+    # Set pre measurement date to day before start of schoolyear if no premeasurement date
+    wordreading_date_pre = if_else(
+      is.na(wordreading_date_pre),
+      day_before_start_of_schoolyear,
+      wordreading_date_pre
+    ),
+    # Set mid measurement date to grand median of sample if no midmeasurement date
+    wordreading_date_mid = if_else(
+      is.na(wordreading_date_mid),
+      median_date_mid,
+      wordreading_date_mid
+    ),
+    # Set post measurement date to day after end of schoolyear if no postmeasurement date
+    wordreading_date_post = if_else(
+      is.na(wordreading_date_post),
+      day_after_end_of_schoolyear,
+      wordreading_date_post
+    )
+  )
+
+### Check for which respondents a date is missing
+data_wordreading_imputed_dates |> 
+  filter(
+    is.na(wordreading_date_pre) |
+      is.na(wordreading_date_mid) |
+      is.na(wordreading_date_post)
+  )
+
 ## Save data ----
 saveRDS(
-  data_wordreading,
+  data_wordreading_imputed_dates,
   here("output/data_wordreading.rds")
 )
