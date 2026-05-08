@@ -306,8 +306,6 @@ parameterestimates(
 
 # plot_lavaan(fit_partial_v0, where = "browser")
 
-
-
 # Saturated model ----
 ## Specify saturated path model
 mod_regression_saturated <- '
