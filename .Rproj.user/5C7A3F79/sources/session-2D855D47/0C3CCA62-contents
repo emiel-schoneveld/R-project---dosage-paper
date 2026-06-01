@@ -1,0 +1,4 @@
+data_logs_lesson |> 
+  filter(
+    lesson_form == "ResearchRowRead"
+  ) |> glimpse()

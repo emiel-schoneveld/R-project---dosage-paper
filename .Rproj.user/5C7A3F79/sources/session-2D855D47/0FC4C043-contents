@@ -17,8 +17,8 @@ data_logs_raw <- read_xlsx(
 )
 
 ## Wordreading data
-data_logs_lesson_dosetotal <- readRDS(
-  here('output/data_logs_lesson_dosetotal.rds')
+data_logs_lesson_dose <- readRDS(
+  here('output/data_logs_lesson_dose.rds')
 )
 
 ## Wordreading data
@@ -40,7 +40,6 @@ max_session_length = 60
 data_logs_lesson <- data_logs_raw |> 
   rename(
     student_ID = Leerlingnummer,
-    lesson_dose_accurate = TotalLessonItems,
     lesson_form = LessonType
   )
 
@@ -93,27 +92,18 @@ data_logs_lesson <- data_logs_lesson |>
     lesson_length = difftime(lesson_time_end, lesson_time_start,  units = "mins") |> as.numeric()
   )
 
-data_logs_lesson
-
 ## Add total words read and total words presented ----
 data_logs_lesson <- data_logs_lesson |> 
   left_join(
-    data_logs_lesson_dosetotal
+    data_logs_lesson_dose
   ) |> 
   mutate(
-    # For rowreading set total to total words presented
-    lesson_dose_total = if_else(
+    # For rowreading set tries to unique
+    lesson_dose_tries = if_else(
       lesson_form == "ResearchRowRead",
-      lesson_dose_accurate,
-      lesson_dose_total
-    ),
-    
-    # For rowreading set accuracy to words read accurately first time
-    lesson_dose_accurate = if_else(
-      lesson_form == "ResearchRowRead",
-      CorrectWord,
-      lesson_dose_accurate
-    ),
+      lesson_dose_unique,
+      lesson_dose_tries
+    )
   )
 
 ## Summarise logs per session ----
@@ -125,9 +115,11 @@ data_logs_session <- data_logs_lesson |>
   summarise(
     session_starttime = min(lesson_time_start, na.rm = T),
     session_endtime = max(lesson_time_end, na.rm = T),
+    session_length_readingtime = sum(lesson_length, na.rm = T),
+    session_dose_tries = sum(lesson_dose_tries, na.rm = T),
+    session_dose_unique = sum(lesson_dose_unique, na.rm = T),
     session_dose_accurate = sum(lesson_dose_accurate, na.rm = T),
-    session_dose_total = sum(lesson_dose_total, na.rm = T),
-    session_length_readingtime = sum(lesson_length, na.rm = T)
+    session_dose_audioplays = sum(lesson_dose_audioplays, na.rm = T),
   ) |> 
   ungroup() |> 
   mutate( # Add week number
@@ -150,33 +142,36 @@ data_logs_session <- data_logs_session |>
     session_length <= max_session_length,
   )
 
-## Add semester variable ----
-### Add measurement dates
-data_logs_session <- data_logs_session |> 
-  left_join(
-    data_wordreading
-  )
-
-## Compute student level means ----
-### Splitted per semester ----
-#### Student means ----
+## Compute student level variables ----
+### Session length, words read, accuracy and total time ----
 data_logs_student_nofreq_nodur <- data_logs_session |> 
   group_by(
     student_ID
   ) |> 
   summarise(
-    practice_length = mean(session_length),
-    practice_dose_accurate = mean(session_dose_accurate),
-    practice_dose_total = mean(session_dose_total),
+    # Time dimensions
+    practice_length = mean(session_length, na.rm = T),
+    
+    # Words read
+    practice_cii_words_tries = sum(session_dose_tries, na.rm = T),
+    practice_cii_words_unique = sum(session_dose_unique, na.rm = T),
+    practice_cii_words_accurate = sum(session_dose_accurate, na.rm = T),
+    practice_cii_words_audioplays = sum(session_dose_audioplays, na.rm = T),
+    
+    # Time total
     practice_cii_time = sum(session_length)/60,
     practice_cii_readingtime = sum(session_length_readingtime)/60,
-    practice_cii_words_accurate = sum(session_dose_accurate)/1000,
-    practice_cii_words_total = sum(session_dose_total)/1000,
-    practice_accuracy = (practice_cii_words_accurate / practice_cii_words_total)*100
+  ) |> 
+  mutate(
+    # Accuracy
+    practice_accuracy = practice_cii_words_accurate / practice_cii_words_unique,
+    
+    # Incorrect attempts
+    practice_cii_words_attempts = practice_cii_words_tries - practice_cii_words_unique
   ) |> 
   ungroup()
 
-#### Compute and add frequency and number of weeks
+### Frequency and duration (number of weeks) ----
 data_logs_student_wide <- data_logs_session |> 
   group_by(
     student_ID,
@@ -197,9 +192,8 @@ data_logs_student_wide <- data_logs_session |>
     y = data_logs_student_nofreq_nodur
   )
 
-
 ## Combine data into one wide dataset ----
-data_practice <- data_logs_student_semester_wide
+data_practice <- data_logs_student_wide
 
 ## Save data ----
 saveRDS(

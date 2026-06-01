@@ -16,19 +16,30 @@ data_logs_words <- read.csv(
 )
 
 # Summarise data ----
-data_logs_lesson_dosetotal <- data_logs_words |> 
+data_logs_lesson_dose <- data_logs_words |> 
   rename(
     'CourseProgressId' = courseprogessid
+  ) |> 
+  mutate(
+    accurate = if_else(
+      tries == 1 & audioplays == 0,
+      1,
+      0
+    )
   ) |> 
   group_by(
     CourseProgressId
   ) |> 
   summarise(
-    lesson_dose_total = sum(tries, na.rm = T)
+    lesson_dose_tries = sum(tries, na.rm = T),
+    lesson_dose_unique = n(),
+    lesson_dose_audioplays = sum(audioplays, na.rm = T),
+    lesson_dose_accurate = sum(accurate, na.rm = T)
   )
 
 # Save data ----
 saveRDS(
-  data_logs_lesson_dosetotal,
-  here("output/data_logs_lesson_dosetotal.rds")
+  data_logs_lesson_dose,
+  here("output/data_logs_lesson_dose.rds")
 )
+

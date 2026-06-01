@@ -1,0 +1,43 @@
+data_logs_lesson |> 
+  group_by(
+    student_ID
+  ) |> 
+  summarise(
+    SUM_unique = sum(lesson_unique, na.rm = T),
+    SUM_audio = sum(lesson_audio_total, na.rm = T),
+    SUM_tries = sum(lesson_dose_total, na.rm = T),
+  ) |> 
+  mutate(
+    RATIO = SUM_audio / SUM_unique,
+    errors = SUM_tries - SUM_unique
+  ) |> 
+  filter(
+    SUM_audio > 200
+  ) |> 
+  glimpse()
+  
+  ggplot(
+    aes(
+      x = SUM_unique,
+      y = SUM_audio,
+      )
+  ) +
+  geom_point()
+  geom_histogram()
+
+
+
+data_logs_words |> as_tibble() |> 
+  ggplot(
+    aes(
+      x = audioplays
+    )
+  ) +
+  geom_histogram(
+    binwidth = 1
+  )
+  
+  filter(
+    audioplays > 0,
+    # tries > 2
+  )
