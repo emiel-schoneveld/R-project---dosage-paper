@@ -12,7 +12,7 @@ library(lavaangui)
 
 # Load data ----
 data <- readRDS(
-  here('output/data_transformed.rds')
+  here::here('output/data.rds')
 )
 
 # Analysis ----
@@ -349,7 +349,121 @@ parameterestimates(fit_splitted_saturated_noccitime) |>
   ) |> 
   slice_head(n = 4)
 
-# Mod with 3 waves ----
+
+
+
+
+
+# Mod with 3 waves - words only ----
+mod_3waves_words <- '
+# regression
+## Predicting reading
+wordreading_score_post ~ c(NA, NA, NA)*wordreading_score_pre + wordreading_score_mid + practice_cii_words_total_semester_2
+wordreading_score_mid ~ wordreading_score_pre + practice_cii_words_total_semester_1
+
+## Predicting total words
+practice_cii_words_total_semester_1 ~ wordreading_score_pre
+practice_cii_words_total_semester_2 ~ wordreading_score_mid
+
+# covariances
+## Words
+practice_cii_words_total_semester_2 ~~ c(NA, NA, NA)*practice_cii_words_total_semester_1
+
+# variances
+wordreading_score_pre ~~ wordreading_score_pre
+wordreading_score_mid ~~ wordreading_score_mid
+wordreading_score_post ~~ wordreading_score_post
+practice_cii_words_total_semester_1 ~~ practice_cii_words_total_semester_1
+practice_cii_words_total_semester_2 ~~ practice_cii_words_total_semester_2
+'
+
+
+
+fit_3waves_words <- sem(
+  mod_3waves_words,
+  data = data |> 
+    mutate(
+      wordreading_score_post = wordreading_score_post / 100,
+      wordreading_score_mid = wordreading_score_mid / 100,
+      wordreading_score_pre = wordreading_score_pre / 100
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+)
+
+
+fitmeasures(fit_3waves_words, 
+            c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper'))
+summary(fit_3waves_words, std = T)
+
+modificationindices(fit_3waves_words, sort = T
+) |> dplyr::select(!contains('sepc')) |> head(5)
+resid(fit_3waves_words, type = "cor")
+
+
+mod_3waves_predictingwords <- '
+## Predicting total words
+practice_cii_words_total_semester_1 ~ practice_length_semester_1 + practice_frequency_semester_1 + practice_duration_semester_1
+practice_cii_words_total_semester_2 ~ practice_length_semester_2 + practice_frequency_semester_2 + practice_duration_semester_2
+
+practice_length_semester_2 ~ practice_length_semester_1
+practice_frequency_semester_2 ~ practice_frequency_semester_1
+practice_duration_semester_2 ~ practice_duration_semester_1
+
+practice_length_semester_1 ~~ practice_frequency_semester_1 + practice_duration_semester_1
+practice_frequency_semester_1 ~~ practice_duration_semester_1
+practice_length_semester_2 ~~ practice_frequency_semester_2 + practice_duration_semester_2
+practice_frequency_semester_2 ~~ practice_duration_semester_2
+
+practice_length_semester_1 ~~ practice_length_semester_1
+practice_frequency_semester_1 ~~ practice_frequency_semester_1
+practice_duration_semester_1 ~~ practice_duration_semester_1
+practice_length_semester_2 ~~ practice_length_semester_2
+practice_frequency_semester_2 ~~ practice_frequency_semester_2
+practice_duration_semester_2 ~~ practice_duration_semester_2
+'
+
+
+fit_3waves_words2 <- sem(
+  c(
+    mod_3waves_words,
+    mod_3waves_predictingwords
+    ),
+  data = data |> 
+    mutate(
+      wordreading_score_post = wordreading_score_post / 100,
+      wordreading_score_mid = wordreading_score_mid / 100,
+      wordreading_score_pre = wordreading_score_pre / 100
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+)
+
+
+fitmeasures(fit_3waves_words2, 
+            c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper'))
+summary(fit_3waves_words2)
+
+modificationindices(fit_3waves_words2, sort = T
+) |> dplyr::select(!contains('sepc')) |> head(10)
+resid(fit_3waves_words, type = "cor")
+
+
+
+
+
+
+
+
+
+
+# Mod with 3 waves - words and time ----
 mod_3waves <- '
 # regression
 ## Predicting reading
@@ -357,50 +471,141 @@ wordreading_score_post ~ wordreading_score_pre + wordreading_score_mid + practic
 wordreading_score_mid ~ wordreading_score_pre + practice_cii_words_total_semester_1
 
 ## Predicting total words
-practice_cii_words_total_semester_1 ~ wordreading_score_pre + practice_length_semester_1 + practice_frequency_semester_1
-practice_cii_words_total_semester_2 ~ wordreading_score_mid + practice_length_semester_2 + practice_frequency_semester_2
-
-## Predicting time variables
-practice_length_semester_2 ~ practice_length_semester_1
-practice_frequency_semester_2 ~ practice_frequency_semester_1
+practice_cii_words_total_semester_1 ~ wordreading_score_pre + practice_length_semester_1 + practice_frequency_semester_1 + practice_duration_semester_1
+practice_cii_words_total_semester_2 ~ wordreading_score_mid + practice_length_semester_2 + practice_frequency_semester_2 + practice_duration_semester_2
 
 # covariances
-## Word
+## Words
 practice_cii_words_total_semester_2 ~~ practice_cii_words_total_semester_1
 
-## Time
-practice_length_semester_1 ~~ practice_frequency_semester_1
-practice_length_semester_2 ~~ practice_frequency_semester_2
+## Across time
+practice_length_semester_2 ~~ practice_length_semester_1
+practice_frequency_semester_2 ~~ practice_frequency_semester_1
+practice_duration_semester_2 ~~ practice_duration_semester_1
+
+## Within time
+practice_length_semester_1 ~~ practice_frequency_semester_1 + practice_duration_semester_1
+practice_frequency_semester_1 ~~ practice_duration_semester_1
+practice_length_semester_2 ~~ practice_frequency_semester_2 + practice_duration_semester_2
+practice_frequency_semester_2 ~~ practice_duration_semester_2
 
 # variances
-wordreading_score_post ~~ wordreading_score_post
-wordreading_score_mid ~~ wordreading_score_mid
 wordreading_score_pre ~~ wordreading_score_pre
+wordreading_score_mid ~~ wordreading_score_mid
+wordreading_score_post ~~ wordreading_score_post
 practice_cii_words_total_semester_1 ~~ practice_cii_words_total_semester_1
 practice_cii_words_total_semester_2 ~~ practice_cii_words_total_semester_2
 practice_length_semester_1 ~~ practice_length_semester_1
 practice_frequency_semester_1 ~~ practice_frequency_semester_1
+practice_duration_semester_1 ~~ practice_duration_semester_1
 practice_length_semester_2 ~~ practice_length_semester_2
 practice_frequency_semester_2 ~~ practice_frequency_semester_2
+practice_duration_semester_2 ~~ practice_duration_semester_2
 '
+
+mod_3waves_directtimeeffects <- '
+wordreading_score_mid ~ practice_length_semester_1 + practice_frequency_semester_1 + practice_duration_semester_1
+wordreading_score_post ~ practice_length_semester_2 + practice_frequency_semester_2 + practice_duration_semester_2
+'
+
+mod_3waves_timepredicted <- '
+practice_length_semester_1 ~ wordreading_score_pre
+practice_frequency_semester_1 ~ wordreading_score_pre
+practice_duration_semester_1 ~ wordreading_score_pre
+practice_length_semester_2 ~ wordreading_score_mid
+practice_frequency_semester_2 ~ wordreading_score_mid
+practice_duration_semester_2 ~ wordreading_score_mid
+'
+
+mod_3waves_additions_timepredicted <- '
+practice_duration_semester_1 ~~ c(0, 0, NA)*practice_frequency_semester_2
+# practice_frequency_semester_1 ~~ c(NA, NA, NA)*practice_frequency_semester_2
+# practice_cii_words_total_semester_2 ~~ c(NA, 0, 0)*practice_duration_semester_2
+# practice_cii_words_total_semester_1 ~~ c(0, NA, 0)*practice_length_semester_2
+# practice_length_semester_1 ~~ c(0, NA, 0)*practice_frequency_semester_2
+# 
+# 
+# practice_length_semester_2 ~ c(NA, NA, NA)*practice_length_semester_1
+# practice_length_semester_2 ~ c(NA, 0, 0)*practice_frequency_semester_1
+# practice_length_semester_2 ~ c(0, 0, NA)*practice_duration_semester_1
+# practice_duration_semester_2 ~ c(NA, 0, 0)*practice_length_semester_1
+# practice_duration_semester_2  ~ c(0, 0, NA)*practice_frequency_semester_1
+# practice_cii_words_total_semester_2  ~ c(NA, 0, 0)*practice_frequency_semester_1
+# practice_cii_words_total_semester_2 ~ c(0, 0, NA)*practice_length_semester_1
+# practice_frequency_semester_2  ~ c(0, 0, NA)*practice_duration_semester_1
+# practice_frequency_semester_2 ~ c(NA, 0, 0)*practice_length_semester_1
+'
+
+fit_3waves <- sem(
+  c(mod_3waves,
+    mod_3waves_directtimeeffects,
+    mod_3waves_timepredicted,
+    mod_3waves_additions_timepredicted
+    ),
+  data = data |> 
+    mutate(
+      wordreading_score_post = wordreading_score_post / 100,
+      wordreading_score_mid = wordreading_score_mid / 100,
+      wordreading_score_pre = wordreading_score_pre / 100
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+)
+
+
+fitmeasures(fit_3waves, 
+            c('df', 'chisq', 'pvalue', 'cfi', 'rmsea'))
+modificationindices(fit_3waves, sort = T
+) |> dplyr::select(!contains('sepc')) |> head(10)
+resid(fit_3waves, type = "cor")
+summary(fit_3waves)
+
+# Mediation analysis
+fit_3waves_fullmediation <- sem(
+  c(mod_3waves,
+    # mod_3waves_directtimeeffects,
+    mod_3waves_timepredicted,
+    mod_3waves_additions_timepredicted
+  ),
+  data = data |> 
+    mutate(
+      wordreading_score_post = wordreading_score_post / 100,
+      wordreading_score_mid = wordreading_score_mid / 100,
+      wordreading_score_pre = wordreading_score_pre / 100
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+)
+fitmeasures(fit_3waves_fullmediation, 
+            c('df', 'chisq', 'pvalue', 'cfi', 'rmsea'))
+anova(
+  fit_3waves_fullmediation,
+  fit_3waves
+)
+
+cor(
+  data |> 
+    dplyr::select(
+      contains('practice') & (contains('freq') | contains('length') | contains('duration')) & contains('semester'),
+      contains('practice_cii_words_total_semester')
+      # contains('wordreading_score')
+    ),
+  use = "pairwise.complete"
+)
+
+var(
+  data |> 
+    dplyr::select(
+      contains('practice') & (contains('freq') | contains('length') | contains('duration')) & contains('semester'),
+      contains('practice_cii_words_total_semester')
+      # contains('wordreading_score')
+    ),
+  use = "pairwise.complete"
   
-  fit_3waves <- sem(
-    mod_3waves,
-    data = data |> 
-      mutate(
-        wordreading_score_post = wordreading_score_post / 100,
-        wordreading_score_mid = wordreading_score_mid / 100,
-        wordreading_score_pre = wordreading_score_pre / 100
-      )
-    , 
-    missing = "FIML",
-    group = "grade",
-    group.label = c('grade_2', 'grade_3', 'grade_4'),
-    cluster = "class_ID",
-  )
-  
-  fitmeasures(fit_3waves, c('df', 'chisq', 'pvalue', 'cfi', 'rmsea'))
-  modificationindices(fit_3waves, sort = T) |> dplyr::select(!contains('sepc')) |> head(15)
-  resid(fit_3waves, type = "cor")
-  summary(fit_3waves)
-  
+)

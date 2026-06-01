@@ -31,6 +31,12 @@ data_characteristics <- data_characteristics_old |>
     school_ID = school
   ) |>
   mutate(
+    age = difftime(
+      as.Date("2023-09-01"),
+      as.Date(as.numeric(dateofbirth), origin = "1899-12-30"),
+      units = 'days'
+    ) |> as.numeric(),
+    age = age / 365.25,
     grade = as.numeric(grade) - 2,
     grade = str_c('grade_', grade),
     condition = recode(
@@ -56,5 +62,3 @@ saveRDS(
   data_characteristics,
   here("output/data_characteristics.rds")
 )
-
-
