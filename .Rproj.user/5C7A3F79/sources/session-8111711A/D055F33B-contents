@@ -77,3 +77,9 @@ data <- data |>
   filter(
     practice_cii_sessions >= 20
   )
+
+# Write cleaned data ----
+saveRDS(
+  data,
+  here("output/data_cleaned.rds")
+)
