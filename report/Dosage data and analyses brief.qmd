@@ -1,0 +1,31 @@
+---
+title: "Dosage data and analyses brief"
+# subtitle: ""
+description: "This document shows the descriptive statistics and potential analyses of the dosage paper."
+
+author: 
+  name: 'Emiel Schoneveld'
+  affiliations:
+    name: 'University of Amsterdam'
+
+keywords: "Dosage, Time, Words, Descriptives, Potential Analyses"
+date: today
+
+editor: source
+number-sections: true
+format:
+  html:
+    # embed-resources: true # used for making a standalone file, slow render but perfect for sharing
+    toc: true
+    code-fold: false
+    # code-summary: "Show the code"
+    
+title-block-banner: "#f0f3f5"
+title-block-banner-color: "black"
+---
+
+```{r}
+# Preperation syntax
+## 
+
+```
