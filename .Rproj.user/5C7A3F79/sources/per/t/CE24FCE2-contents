@@ -73,9 +73,6 @@ data |>
     names_to = "variable",
     values_to = "value"
   ) |> 
-  mutate(
-    variable = str_remove(variable, 'practice_') |> as_factor()
-  ) |> 
   ggplot(
     aes(
       x = value,

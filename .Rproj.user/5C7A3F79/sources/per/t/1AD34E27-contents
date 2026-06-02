@@ -68,6 +68,22 @@ fitmeasures(fit_partialmediation,
             c('df', 'chisq', 'pvalue', 'cfi', 'rmsea'))
 summary(fit_partialmediation, std = T)
 
+# lavaanPlot(
+#   fit_partialmediation,
+#   labels = list(
+#     practice_cii_time = "Time",
+#     practice_cii_words_unique = 'Words unique',
+#     wordreading_score_pre = 'Fluency pre',
+#     wordreading_score_post = 'Fluency post'
+#   ),
+#   coefs = T,
+#   covs = T,
+#   digits = 1,
+#   stars = 'regress',
+#   graph_options = list(
+#     rankdir = "LR"
+#   )
+# )
 parameterEstimates(fit_partialmediation) |> 
   filter(
     # str_detect(lhs, 'words'),
@@ -194,8 +210,6 @@ fit_wordstimeaccuracy_fullmediation <- sem(
 
 anova(fit_wordstimeaccuracy_fullmediation,
        fit_wordstimeaccuracy_partialmediation)
-fitmeasures(fit_wordstimeaccuracy_fullmediation, 
-            c('df', 'chisq', 'pvalue', 'cfi', 'rmsea'))
 
 # Accurate and inaccurate word readings (CII) ----
 mod_accuratewordstime_fullmediation <- '
