@@ -7,6 +7,7 @@ rm(list = ls())
 library(tidyverse)
 library(readxl)
 library(here)
+library(ggplot2)
 
 # Load data ----
 data <- readRDS(
@@ -15,53 +16,41 @@ data <- readRDS(
 
 # Remove outliers ----
 ## Identify outliers and missing data ----
+### DMT ----
 data <- data |> 
   mutate(
     wordreading_missing_pre = is.na(wordreading_score_pre),
-    wordreading_missing_mid = is.na(wordreading_score_mid),
     wordreading_missing_post = is.na(wordreading_score_post),
     wordreading_invalid_pre = wordreading_score_pre > 120,
-    wordreading_invalid_mid = wordreading_score_mid > 120,
     wordreading_invalid_post = wordreading_score_post > 120,
     wordreading_outlier_pre = abs(
       wordreading_score_pre - mean(wordreading_score_pre, na.rm = T)
       ) >= 3.3*sd(wordreading_score_pre, na.rm = T),
-    wordreading_outlier_mid = abs(
-      wordreading_score_mid - mean(wordreading_score_mid, na.rm = T)
-    ) >= 3.3*sd(wordreading_score_mid, na.rm = T),
     wordreading_outlier_post = abs(
       wordreading_score_post - mean(wordreading_score_post, na.rm = T)
     ) >= 3.3*sd(wordreading_score_post, na.rm = T),
   )
 
-## Summarise outliers ----
+#### Summarise outliers
 data |> 
   summarise(
     perc_missing_pre = 100*sum(wordreading_missing_pre, na.rm = T)/n(),
-    perc_missing_mid = 100*sum(wordreading_missing_mid, na.rm = T)/n(),
     perc_missing_post = 100*sum(wordreading_missing_post, na.rm = T)/n(),
       
     perc_invalid_pre = 100*sum(wordreading_invalid_pre, na.rm = T)/n(),
-    perc_invalid_mid = 100*sum(wordreading_invalid_mid, na.rm = T)/n(),
     perc_invalid_post = 100*sum(wordreading_invalid_post, na.rm = T)/n(),
     
     perc_outlier_pre = 100*sum(wordreading_outlier_pre, na.rm = T)/n(),
-    perc_outlier_mid = 100*sum(wordreading_outlier_mid, na.rm = T)/n(),
     perc_outlier_post = 100*sum(wordreading_outlier_post, na.rm = T)/n(),
-  ) |> View()
+  ) #|> View()
 
-## Remove invalid and outliers ----
+#### Remove invalid and outliers
 data <- data |> 
   mutate(
     wordreading_score_pre = if_else(
       wordreading_invalid_pre | wordreading_outlier_pre,
       NA,
       wordreading_score_pre
-    ),
-    wordreading_score_mid = if_else(
-      wordreading_invalid_mid | wordreading_outlier_mid,
-      NA,
-      wordreading_score_mid
     ),
     wordreading_score_post = if_else(
       wordreading_invalid_post | wordreading_outlier_post,
@@ -70,19 +59,30 @@ data <- data |>
     ),
   )
 
-## Inspect valid scores ----
+#### Inspect valid scores
 data |> 
   summarise(
     perc_valid_pre = 100 * sum(!is.na(wordreading_score_pre), na.rm = T) / n(),
-    perc_valid_mid = 100 * sum(!is.na(wordreading_score_mid), na.rm = T) / n(),
     perc_valid_post = 100 * sum(!is.na(wordreading_score_post), na.rm = T) / n(),
+  )
+
+# Filter 2 control participants based on condition ----
+data <- data |> 
+  filter(
+    condition != 'control'
+  )
+
+# filter participants with less than 10 sessions ----
+data <- data |> 
+  filter(
+    practice_cii_sessions >= 20
   )
 
 # Descriptive analysis ----
 ## Summary ----
 summary(data)
 
-## ----
+## participant table ----
 data |> 
   group_by(
     # grade
@@ -101,21 +101,69 @@ data |>
     reading_fluency_max = max(wordreading_score_post, na.rm = T)
   )
 
-## Number of students
+# Write cleaned data ----
+saveRDS(
+  data,
+  here("output/data_cleaned.rds")
+)
 
 
 
-## Correlation table
-data |> 
+
+cors <- data |> 
   dplyr::select(
-    where(is.numeric)
+    contains('cii_'),
+    practice_accuracy,
+    contains('score') & !contains('mid')
   ) |> 
   cor(
-    use = "pairwise.complete.obs"
-  ) #|> View()
+    use = "pairwise.complete"
+  ) |> round(4)
+cors[upper.tri(cors)] <- NA
+cors
 
 data |> 
-  group_by(grade) |> 
-  summarise(
-    mean(wordreading_score_pre, na.rm = T)
+  dplyr::select(
+    grade,
+    contains('cii_'),
+    practice_accuracy,
+    contains('score') & !contains('mid')
+  ) |> 
+  filter(
+    # grade == "grade_2"
+  ) |> 
+  summary()
+
+data |> 
+  dplyr::select(
+    contains('cii_'),
+    practice_accuracy,
+    contains('score') & !contains('mid')
+  ) |> 
+  pivot_longer(
+    contains('e'),
+    names_to = "variable",
+    values_to = "value"
+  ) |> 
+  ggplot(
+    aes(
+      x = value
     )
+  ) +
+  geom_histogram() +
+  facet_wrap(
+    ~variable,
+    scales = 'free'
+    )
+
+data |> 
+  ggplot(
+    aes(
+      x = practice_cii_words_unique,
+      y = practice_accuracy,
+      # color = as_factor(grade)
+    )
+  ) + 
+  # geom_abline(intercept = 0, slope = 1, color = 'grey') +
+  geom_point() +
+  facet_wrap(~grade)

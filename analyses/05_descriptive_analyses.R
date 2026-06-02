@@ -72,6 +72,12 @@ data <- data |>
     condition != 'control'
   )
 
+# filter participants with less than 10 sessions ----
+data <- data |> 
+  filter(
+    practice_cii_sessions >= 20
+  )
+
 # Descriptive analysis ----
 ## Summary ----
 summary(data)
@@ -102,8 +108,7 @@ saveRDS(
 )
 
 
-
-
+# Descriptives for Peter and Madelon ----
 cors <- data |> 
   dplyr::select(
     contains('cii_'),
@@ -141,7 +146,7 @@ data |>
   ) |> 
   ggplot(
     aes(
-      x = value
+      x = value,
     )
   ) +
   geom_histogram() +
@@ -150,34 +155,34 @@ data |>
     scales = 'free'
     )
 
+data |> 
+  ggplot(
+    aes(
+      x = practice_accuracy
+    )
+  ) + geom_histogram() +
+  facet_grid(~grade)
 
 data |> 
   ggplot(
     aes(
       x = practice_cii_words_unique,
       y = practice_accuracy,
-      color = practice_cii_sessions
     )
   ) + 
-  geom_abline(intercept = 0, slope = 1, color = 'grey') +
-  geom_point()
+  geom_point() +
+  facet_wrap(~grade)
 
-lm(
-  wordreading_score_post ~ 
-    wordreading_score_pre 
-  # + practice_cii_words_unique + practice_accuracy
-  + practice_cii_words_tries*practice_accuracy
-  ,
-  data = data |> 
-    filter(
-      # grade == "grade_4"
-    ) |> 
-    mutate(
-      practice_cii_words_tries = practice_cii_words_tries - mean(practice_cii_words_tries, na.rm = T),
-      practice_accuracy = practice_accuracy - mean(practice_accuracy, na.rm = T),
-      
-      # practice_cii_words_unique = practice_cii_words_unique / sd(practice_cii_words_unique, na.rm = T),
-      # practice_accuracy = practice_accuracy / sd(practice_accuracy, na.rm = T)
+data |> 
+  ggplot(
+    aes(
+      x = practice_cii_words_unique,
+      y = practice_cii_words_attempts,
     )
-) |> summary()
+  ) + 
+  geom_abline(intercept = 0, slope = 2, color = 'grey') +
+  geom_point() +
+  facet_wrap(~grade)
+
+
 

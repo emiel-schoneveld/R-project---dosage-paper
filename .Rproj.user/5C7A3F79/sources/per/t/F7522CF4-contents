@@ -74,7 +74,10 @@ anova(
   fit_partialmediation
 )
 
-# Accuracy (continues) ----
+
+
+# two waves words splitted ----
+## Accurate and inaccurate ----
 mod_wordstimeaccuracy_fullmediation <- '
 # regression
 ## Predicting reading
@@ -157,6 +160,5 @@ lm(
       practice_accuracy = practice_accuracy - mean(practice_accuracy, na.rm = T),
     )
 ) |> summary()
-
 
 

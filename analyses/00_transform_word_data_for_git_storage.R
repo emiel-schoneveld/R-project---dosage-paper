@@ -31,7 +31,7 @@ data_logs_lesson_dose <- data_logs_words |>
     CourseProgressId
   ) |> 
   summarise(
-    lesson_dose_tries = sum(tries, na.rm = T),
+    lesson_dose_exposures = sum(tries, na.rm = T),
     lesson_dose_unique = n(),
     lesson_dose_audioplays = sum(audioplays, na.rm = T),
     lesson_dose_accurate = sum(accurate, na.rm = T)
