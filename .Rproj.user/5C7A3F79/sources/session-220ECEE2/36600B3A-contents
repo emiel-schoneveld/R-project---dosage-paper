@@ -43,6 +43,7 @@ library(DT)
 library(reshape2)
 library(plotly)
 library(scatterPlotMatrix)
+library(shiny)
 
 ## source descriptive syntax and analyses draft
 source('07_descriptive_analyses.R')
@@ -241,6 +242,106 @@ scatterPlotMatrix(
 
 # Correlations
 This plot shows the correlations between the practice variables and wordreading scores.
+```{r echo=FALSE, include=TRUE}
+# Precompute correlation matrix for each grade + all
+grades <- c("all", unique(your_data$grade))  # e.g. "all", "grade_2", "grade_3", "grade_4"
+
+# Make function for computing cor matrix
+compute_cor_melt <- function(df) {
+  cors <- df |> 
+    dplyr::select(
+      contains('cii_'),
+      practice_accuracy,
+      contains('score') & !contains('mid')
+    ) |> 
+    cor(
+      use = "pairwise.complete"
+    ) |> round(4)
+  cors[upper.tri(cors)] <- NA
+  return(cors)
+}
+
+# Calculate cor matrix for all grades
+cor_list <- list(
+  all     = compute_cor_melt(data),
+  grade_2 = compute_cor_melt(data |> filter(grade == "grade_2")),
+  grade_3 = compute_cor_melt(data |> filter(grade == "grade_3")),
+  grade_4 = compute_cor_melt(data |> filter(grade == "grade_4"))
+)
+
+# Build a plotly figure with one trace per grade, only first visible
+p_cors <- plot_ly()
+
+for (i in seq_along(cor_list)) {
+  name   <- names(cor_list)[i]
+  df     <- cor_list[[i]]
+  visible <- (i == 1)  # only "all" visible initially
+
+  p_cors <- p_cors |>
+    add_trace(
+      type       = "heatmap",
+      x          = df$Var1,
+      y          = df$Var2,
+      z          = df$value,
+      text       = df$value,
+      texttemplate = "%{text}",
+      colorscale = list(
+        c(0, "red"), c(0.5, "white"), c(1, "darkgreen")
+      ),
+      zmin = -1, zmax = 1,
+      showscale  = (i == 1),
+      visible    = visible,
+      name       = name
+    )
+}
+
+# Build dropdown buttons — each button shows one trace, hides the rest
+n <- length(cor_list)
+buttons <- lapply(seq_along(cor_list), function(i) {
+  vis <- rep(FALSE, n)
+  vis[i] <- TRUE
+  list(
+    method  = "restyle",
+    args    = list(list(visible = vis)),
+    label   = c("All grades", "Grade 2", "Grade 3", "Grade 4")[i]
+  )
+})
+
+p_corsp_corsfig |>
+  layout(
+    updatemenus = list(list(
+      type      = "dropdown",
+      active    = 0,
+      buttons   = buttons,
+      x         = 0,
+      xanchor   = "left",
+      y         = 1.12,
+      yanchor   = "top"
+    )),
+    xaxis = list(tickangle = -30),
+    coloraxis = list(
+      colorscale = "RdYlGn",
+      cmin = -1, cmax = 1
+    )
+  )
+
+p_cors
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r echo=FALSE, include=TRUE}
 # Show correlation

@@ -43,6 +43,7 @@ library(DT)
 library(reshape2)
 library(plotly)
 library(scatterPlotMatrix)
+library(shiny)
 
 ## source descriptive syntax and analyses draft
 source('07_descriptive_analyses.R')
@@ -240,7 +241,102 @@ scatterPlotMatrix(
 ```
 
 # Correlations
-This plot shows the correlations between the practice variables and wordreading scores.
+This plot shows the correlations between the practice variables and wordreading scores for the full sample and per grade.
+```{r echo=FALSE, include=TRUE}
+# Move melting + cleaning inside the function
+compute_cor_melt <- function(df) {
+  cors <- df |> 
+    dplyr::select(
+      contains('cii_'),
+      practice_accuracy,
+      contains('score') & !contains('mid')
+    ) |> 
+    cor(use = "pairwise.complete") |> 
+    round(1)
+  
+  cors[upper.tri(cors)] <- NA   # <-- add this before melting
+  
+  cors |>
+    reshape2::melt() |>
+    mutate(
+      Var1 = str_remove(as.character(Var1), 'practice_'),
+      Var2 = str_remove(as.character(Var2), 'practice_')
+    ) |>
+    mutate(across(c(Var1, Var2), as_factor)) |>
+    drop_na(value)
+}
+
+cor_list <- list(
+  all     = compute_cor_melt(data),
+  grade_2 = compute_cor_melt(data |> filter(grade == "grade_2")),
+  grade_3 = compute_cor_melt(data |> filter(grade == "grade_3")),
+  grade_4 = compute_cor_melt(data |> filter(grade == "grade_4"))
+)
+
+p_cors <- plot_ly()
+
+for (i in seq_along(cor_list)) {
+  df      <- cor_list[[i]]
+  visible <- (i == 1)
+
+  p_cors <- p_cors |>
+    add_trace(
+      type          = "heatmap",
+      x             = df$Var1,          # pass actual vectors, not strings
+      y             = df$Var2,
+      z             = df$value,
+      text          = df$value,
+      texttemplate  = "%{text}",
+      colorscale    = list(             # use list(), not c(), for color stops
+        list(0, "red"),
+        list(0.5, "white"),
+        list(1, "darkgreen")
+      ),
+      zmin      = -1, zmax = 1,
+      showscale = (i == 1),
+      visible   = visible
+    )
+}
+
+n <- length(cor_list)
+buttons <- lapply(seq_along(cor_list), function(i) {
+  vis <- rep(FALSE, n)
+  vis[i] <- TRUE
+  list(
+    method = "restyle",
+    args   = list(list(visible = vis)),
+    label  = c("All grades", "Grade 2", "Grade 3", "Grade 4")[i]
+  )
+})
+
+# Only one final call — no p_cors on its own line after this
+p_cors |>
+  layout(
+    updatemenus = list(list(
+      type    = "dropdown",
+      active  = 0,
+      buttons = buttons,
+      x       = 0, xanchor = "left",
+      y       = 1.12, yanchor = "top"
+    )),
+    xaxis = list(tickangle = -30)
+  )
+```
+
+
+
+
+
+
+
+
+
+
+# number two
+
+
+
+
 
 ```{r echo=FALSE, include=TRUE}
 # Show correlation
