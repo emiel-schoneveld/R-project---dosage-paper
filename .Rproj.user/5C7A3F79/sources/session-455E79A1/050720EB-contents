@@ -186,6 +186,24 @@ estimates_mediation |>
     # str_detect(op, ':=')
   ) |> View()
 
+lavaanPlot(
+  fit_partialmediation_serial,
+  # labels = list(
+  #   practice_cii_time = "Time",
+  #   practice_cii_words_unique = 'Words unique',
+  #   wordreading_score_pre = 'Fluency pre',
+  #   wordreading_score_post = 'Fluency post'
+  # ),
+  coefs = T,
+  stand = T,
+  # covs = T,
+  digits = 1,
+  stars = 'regress',
+  graph_options = list(
+    rankdir = "LR"
+  )
+)
+
 # Accuracy inspection ----
 ## Specify general model ----
 mod_interaction <- 
@@ -271,10 +289,59 @@ estimates_interaction <- bind_rows(
 ) |> 
   dplyr::select(
     !c(data, fit)
+  ) |> 
+  mutate(
+    sig = p.value < .05/9
+  ) |> 
+  arrange(
+    outcome, grade, term
   )
 
 ### View results
 estimates_interaction |> 
+  filter(
+    str_detect(term, ':')
+  ) |> 
   View()
 
+estimates_interaction |> 
+  filter(
+    str_detect(term, ':')
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = as_factor(sig)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  ggtitle('Post ~ accuracy:words')
 
+estimates_interaction |> 
+  filter(
+    term == 'practice_cii_words_exposures'
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = as_factor(sig)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  ggtitle('Post ~ words')
+
+estimates_interaction |> 
+  filter(
+    term == 'practice_accuracy_anytry'
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = as_factor(sig)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  ggtitle('Post ~ accuracy')

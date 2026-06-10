@@ -186,6 +186,24 @@ estimates_mediation |>
     # str_detect(op, ':=')
   ) |> View()
 
+lavaanPlot(
+  fit_partialmediation_serial,
+  # labels = list(
+  #   practice_cii_time = "Time",
+  #   practice_cii_words_unique = 'Words unique',
+  #   wordreading_score_pre = 'Fluency pre',
+  #   wordreading_score_post = 'Fluency post'
+  # ),
+  coefs = T,
+  stand = T,
+  # covs = T,
+  digits = 1,
+  stars = 'regress',
+  graph_options = list(
+    rankdir = "LR"
+  )
+)
+
 # Accuracy inspection ----
 ## Specify general model ----
 mod_interaction <- 
@@ -208,14 +226,15 @@ estimates_interaction_DMT <- data |>
   group_by(grade) |>
   nest() |>
   mutate(
-    fit     = map(data, ~ lm(mod_interaction, data = .x)),
-    results = map(fit, tidy)
+    fit          = map(data, ~ lm(mod_interaction, data = .x)),
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
+                         select(std_estimate = Std_Coefficient,
+                                std_ci_low   = CI_low,
+                                std_ci_high  = CI_high))
   ) |>
-  unnest(results) |> 
-  mutate(
-    outcome = 'DMT',
-    .before = 1
-  )
+  unnest(c(results, standardized)) |>
+  mutate(outcome = 'DMT', .before = 1)
 
 ### discrete ----
 estimates_interaction_discrete <- data |> 
@@ -229,15 +248,15 @@ estimates_interaction_discrete <- data |>
   group_by(grade) |>
   nest() |>
   mutate(
-    fit     = map(data, ~ lm(mod_interaction, data = .x)),
-    results = map(fit, tidy)
+    fit          = map(data, ~ lm(mod_interaction, data = .x)),
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
+                         select(std_estimate = Std_Coefficient,
+                                std_ci_low   = CI_low,
+                                std_ci_high  = CI_high))
   ) |>
-  unnest(results) |> 
-  mutate(
-    outcome = 'discrete',
-    .before = 1
-  )
-
+  unnest(c(results, standardized)) |>
+  mutate(outcome = 'discrete', .before = 1)
 
 ### serial ----
 estimates_interaction_serial <- data |> 
@@ -251,19 +270,15 @@ estimates_interaction_serial <- data |>
   group_by(grade) |>
   nest() |>
   mutate(
-    fit     = map(data, ~ lm(mod_interaction, data = .x)),
-    results = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95, standardised = T)),
+    fit          = map(data, ~ lm(mod_interaction, data = .x)),
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
     standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
-                         select(term = Parameter, 
-                                std_estimate = Std_Coefficient,
+                         select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
   ) |>
-  unnest(results) |> 
-  mutate(
-    outcome = 'serial',
-    .before = 1
-  )
+  unnest(c(results, standardized)) |>
+  mutate(outcome = 'serial', .before = 1)
 
 ## Inspect results ----
 ### Bind results
@@ -274,10 +289,59 @@ estimates_interaction <- bind_rows(
 ) |> 
   dplyr::select(
     !c(data, fit)
+  ) |> 
+  mutate(
+    sig = p.value < .05/9
+  ) |> 
+  arrange(
+    outcome, grade, term
   )
 
 ### View results
 estimates_interaction |> 
+  filter(
+    str_detect(term, ':')
+  ) |> 
   View()
 
+estimates_interaction |> 
+  filter(
+    str_detect(term, ':')
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = as_factor(sig)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  ggtitle('Post ~ accuracy:words')
 
+estimates_interaction |> 
+  filter(
+    term == 'practice_cii_words_exposures'
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = as_factor(sig)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  ggtitle('Post ~ words')
+
+estimates_interaction |> 
+  filter(
+    term == 'practice_accuracy_anytry'
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = as_factor(sig)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  ggtitle('Post ~ accuracy')
