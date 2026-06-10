@@ -5,10 +5,55 @@
 
 ## Load packages
 library(tidyverse)
-library(readxl)
 library(here)
 library(ggplot2)
 library(psych)
+
+# Initialize functions ----
+format_number_for_table <- function(number_input = '', 
+                                    n_decimals = 2,
+                                    prefix = '',
+                                    sufix = ''
+                                    ) {
+  # Convert to character rounded to two decimals
+  string_output <- number_input %>% round(n_decimals) %>% as.character()
+  
+  # Count characters
+  string_length_current <- nchar(string_output)
+  
+  # Find index of .
+  point_index <- str_locate(string_output, '\\.')[,1]
+  
+  # Calculate total string length
+  string_length_final <- ifelse(is.na(point_index),
+                                string_length_current + 1 + n_decimals,
+                                point_index + n_decimals
+  )
+  
+  # Add trailing zeros
+  if (n_decimals > 0) {
+    # Add point if necessary
+    string_output <- ifelse(is.na(point_index),
+                            paste0(string_output, '.'),
+                            string_output
+    )
+    
+    # Add trailing zeros
+    string_output <- str_pad(string_output, width = string_length_final, pad = '0', side = 'right')
+    
+  }
+  
+  # Add prefix and sufix
+  string_output <- 
+    str_c(
+      prefix,
+      string_output,
+      sufix
+    )
+  
+  # Return result
+  return(string_output)
+}
 
 # Load data ----
 data <- readRDS(
@@ -21,9 +66,6 @@ summary(data)
 
 ## participant table ----
 data |> 
-  group_by(
-    # grade
-  ) |> 
   summarise(
     N = n(),
     N_perc = 100 * N / nrow(data),
@@ -32,11 +74,29 @@ data |>
     language_Dutch_perc = 100*sum(str_detect(language_home, 'Nederlands'))/n(),
     percentage_girl = 100*sum(gender == "girl")/n(),
     percentage_X = 100*sum(gender == "X")/n()
+  ) |> 
+  bind_rows(
+    data |>
+      group_by(
+      grade
+    ) |> 
+      summarise(
+        N = n(),
+        N_perc = 100 * N / nrow(data),
+        age_M = mean(age),
+        age_SD = sd(age),
+        language_Dutch_perc = 100*sum(str_detect(language_home, 'Nederlands'))/n(),
+        percentage_girl = 100*sum(gender == "girl")/n(),
+        percentage_X = 100*sum(gender == "X")/n()
+      )
+  ) |> 
+  relocate(
+    grade
   )
 
-## Practice measures descriptives ----
 
-data |>
+## Practice measures descriptives ----
+data_descriptives_fullsample <- data |>
   dplyr::select(
     grade,
     practice_cii_words_exposures,
@@ -53,15 +113,67 @@ data |>
     name
   ) |> 
   summarise(
-    N = n(),
-    perc_missing = (sum(is.na(value)) / n())*100,
-    Mean = mean(value, na.rm = T),
-    SD = sd(value, na.rm = T),
-    Min = min(value, na.rm = T),
-    Max = max(value, na.rm = T),
-    Skewness = skew(value, na.rm = T),
-    Kortosis = kurtosi(value, na.rm = T)
+    perc_missing = ((sum(is.na(value)) / n())*100) |> format_number_for_table(n_decimals = 2, sufix = '%'),
+    Mean = mean(value, na.rm = T)  |> format_number_for_table(n_decimals = 2),
+    SD = sd(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
+    Min = min(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
+    Max = max(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
+    Skewness = skew(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
+    Kortosis = kurtosi(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
   )
+
+data_descriptives_grades <- data |>
+  dplyr::select(
+    grade,
+    practice_cii_words_exposures,
+    practice_cii_words_accurate_anytry,
+    practice_accuracy_anytry,
+    practice_cii_time,
+    contains('fluency'),
+  ) |> 
+  pivot_longer(
+    !grade
+  ) |> 
+  group_by(
+    grade,
+    name
+  ) |> 
+  summarise(
+    perc_missing = ((sum(is.na(value)) / n())*100) |> format_number_for_table(n_decimals = 2, sufix = '%'),
+    Mean = mean(value, na.rm = T)  |> format_number_for_table(n_decimals = 2),
+    SD = sd(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
+    Min = min(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
+    Max = max(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
+    Skewness = skew(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
+    Kortosis = kurtosi(value, na.rm = T) |> format_number_for_table(n_decimals = 2),
+  )
+
+
+data |>
+  dplyr::select(
+    grade,
+    practice_cii_words_exposures,
+    practice_cii_words_accurate_anytry,
+    practice_accuracy_anytry,
+    practice_cii_time,
+    contains('fluency'),
+  ) |> 
+  pivot_longer(
+    !grade
+  ) |> 
+  mutate(
+    name = str_remove(name, 'fluency_'),
+    name = str_remove(name, 'practice_')
+    ) |> 
+  ggplot(
+    aes(
+      x = value
+    )
+  ) +
+  geom_histogram() +
+  facet_grid(
+    grade~name,
+    scales = 'free')
 
 
 # Descriptives for Peter and Madelon ----

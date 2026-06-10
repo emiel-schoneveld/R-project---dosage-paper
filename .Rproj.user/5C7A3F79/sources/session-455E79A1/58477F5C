@@ -3,7 +3,7 @@
     "path": "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - dosage/R project - dosage paper/analyses/07_descriptive_analyses.R",
     "project_path": "analyses/07_descriptive_analyses.R",
     "type": "r_source",
-    "hash": "3328311824",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1780993623353.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "63,3",
-        "scrollLine": "45"
+        "cursorPosition": "150,0",
+        "scrollLine": "143"
     },
-    "folds": "",
-    "lastKnownWriteTime": 1781093018,
+    "folds": "16|39|55|0|\n",
+    "lastKnownWriteTime": 1781094890,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1781093018913,
+    "last_content_update": 1781094890196,
     "read_only": false,
     "read_only_alternatives": []
 }

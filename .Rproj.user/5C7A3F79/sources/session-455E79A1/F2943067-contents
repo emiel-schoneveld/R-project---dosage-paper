@@ -14,6 +14,19 @@ data <- readRDS(
   here::here('output/data.rds')
 )
 
+# Filter data ----
+## Filter out 2 control participants based on condition
+data <- data |> 
+  filter(
+    condition != 'control'
+  )
+
+## filter out 21 participants with less than 10 sessions
+data <- data |> 
+  filter(
+    practice_cii_sessions >= 20
+  )
+
 # Remove outliers ----
 ## Identify outliers and missing data ----
 ### DMT ----
@@ -126,18 +139,6 @@ data |>
     perc_valid_post_discrete = 100 * sum(!is.na(fluency_discrete_post), na.rm = T) / n(),
     perc_valid_pre_serial = 100 * sum(!is.na(fluency_serial_pre), na.rm = T) / n(),
     perc_valid_post_serial = 100 * sum(!is.na(fluency_serial_post), na.rm = T) / n(),
-  )
-
-# Filter out 2 control participants based on condition ----
-data <- data |> 
-  filter(
-    condition != 'control'
-  )
-
-# filter out 21 participants with less than 10 sessions ----
-data <- data |> 
-  filter(
-    practice_cii_sessions >= 20
   )
 
 # Write cleaned data ----
