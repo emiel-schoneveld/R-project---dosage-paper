@@ -21,8 +21,13 @@ data_logs_lesson_dose <- data_logs_words |>
     'CourseProgressId' = courseprogessid
   ) |> 
   mutate(
-    accurate = if_else(
+    accurate_firsttry = if_else(
       tries == 1 & audioplays == 0,
+      1,
+      0
+    ),
+    accurate_anytry = if_else(
+      audioplays == 0,
       1,
       0
     )
@@ -34,7 +39,8 @@ data_logs_lesson_dose <- data_logs_words |>
     lesson_dose_exposures = sum(tries, na.rm = T),
     lesson_dose_unique = n(),
     lesson_dose_audioplays = sum(audioplays, na.rm = T),
-    lesson_dose_accurate = sum(accurate, na.rm = T)
+    lesson_dose_accurate_firsttry = sum(accurate_firsttry, na.rm = T),
+    lesson_dose_accurate_anytry = sum(accurate_anytry, na.rm = T),
   )
 
 # Save data ----

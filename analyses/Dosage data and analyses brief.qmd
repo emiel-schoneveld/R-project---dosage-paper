@@ -69,11 +69,13 @@ var_description <- tribble(
   
   'cii_words_exposures', 'number of times the student was exposed to any word',
   'cii_words_unique', 'number of times the student was exposed to a new word, contain duplicates when word were presented in multiple lessons',
-  'cii_words_accurate', 'number of times the student read a word accurate at their first attempt, if the tutor played the audiorecording of the word the reading was regarded inaccurate',
+  'cii_words_accurate_firsttry', 'number of times the student read a word accurate at their first attempt, if the tutor played the audiorecording of the word the reading was regarded inaccurate',
+    'cii_words_accurate_anytry', 'number of times the student read a word accurate at any attempt, if the tutor played the audiorecording of the word the reading was regarded inaccurate',
   'cii_words_audioplays', 'number of times the audiorecording of words were played',
   'cii_words_attempts', 'number of times the student read words a second or a third time after an incorrect reading',
-  'accuracy', 'percentage of words read accurately at the first attempt, defined as cii_words_accurate/cii_words_unique',
-) 
+  'accuracy_firsttry', 'percentage of words read accurately at the first attempt, defined as cii_words_accurate_firsttry/cii_words_unique',
+    'accuracy_anytry', 'percentage of words read accurately at any attempt, defined as cii_words_accurate_anytry/cii_words_exposures',
+)
 
 # Print variable description
 var_description |> kable()
@@ -180,7 +182,7 @@ These histograms show the distributions of the practice variables.
 p_histos <- data |> 
   dplyr::select(
     contains('cii_'),
-    practice_accuracy,
+    contains('practice_accuracy'),
     contains('score') & !contains('mid')
   ) |> 
   pivot_longer(
@@ -237,6 +239,7 @@ scatterPlotMatrix(
   zAxisDim = "grade",
   categorical = list(grade = unique(data_bivarscat$grade)),
   corrPlotType = "Empty",
+  rotateTitle = TRUE
 )
 ```
 
@@ -248,7 +251,7 @@ compute_cor_melt <- function(df) {
   cors <- df |> 
     dplyr::select(
       contains('cii_'),
-      practice_accuracy,
+      contains('practice_accuracy'),
       contains('score') & !contains('mid')
     ) |> 
     cor(use = "pairwise.complete") |> 
@@ -324,66 +327,6 @@ p_cors |>
 ```
 
 
-
-
-
-
-
-
-
-
-# number two
-
-
-
-
-
-```{r echo=FALSE, include=TRUE}
-# Show correlation
-p_cors <- cors |> 
-  round(1) |> 
-  melt() |> 
-  mutate(
-    Var1 = str_remove(Var1, 'practice_') |> as_factor(),
-    Var2 = str_remove(Var2, 'practice_') |> as_factor(),
-  ) |> 
-  drop_na(
-    value
-  ) |> 
-  ggplot(
-    aes(
-      x = Var1,
-      y = Var2,
-      fill = value
-    )
-  ) +
-  geom_tile(color = "white") +
-  geom_text(
-    aes(label = value),
-    color = "black",
-    size = 4
-  ) +
-  scale_fill_gradient2(
-    low = "red",
-    high = "darkgreen", 
-    mid = "white",
-    midpoint = 0,
-    limit = c(-1,1),
-    space = "Lab",
-    name="Correlation"
-    ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(
-      angle = 30,
-      vjust = 1,
-      hjust = 1
-    )
-  )
-
-ggplotly(p_cors)
-```
-
 # Analyses
 For the analyses we have three possible models.
 
@@ -426,7 +369,7 @@ anova(fit_partialmediation, fit_fullmediation)
 
 ## Model 2: Accuracy 
 ### Model description
-This model is used to investigate how accuracy during training impacts students' improvements after training. Accuracy is defined as the percentage of times a students read a flashed word correctly at their first attempt without the help of an audioplay.
+This model is used to investigate how accuracy during training impacts students' improvements after training. Accuracy_firsttry is defined as the percentage of times a students read a flashed word correctly at their first attempt without the help of an audioplay.
 
 The model displayed below shows that only in Grade 2 accuracy plays a positive role. Students who are more accurate during training improve their word reading fluency more. However, there is no significant interaction effect between words and accuracy. In summary, for an intervention in which students are predominantly very accurate (above 80%), all remaining differences in accuracy seem relatively unimportant.
 
@@ -441,7 +384,7 @@ lavaanPlot(
   labels = list(
     practice_cii_time = "Time",
     practice_cii_words_unique = 'Words unique',
-    practice_accuracy = 'Accuracy',
+    practice_accuracy_firsttry = 'Accuracy_firsttry',
     wordreading_score_pre = 'Fluency pre',
     wordreading_score_post = 'Fluency post'
   ),
@@ -482,7 +425,7 @@ lavaanPlot(
   fit_accuratewordstime_partialmediation,
   labels = list(
     practice_cii_time = "Time",
-    practice_cii_words_accurate  = 'Words accurate',
+    practice_cii_words_accurate_firsttry  = 'Words accurate (first try)',
     practice_cii_words_attempts  = 'Words attempts',
     wordreading_score_pre = 'Fluency pre',
     wordreading_score_post = 'Fluency post'

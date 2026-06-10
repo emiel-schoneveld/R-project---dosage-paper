@@ -41,7 +41,7 @@ data |>
 cors <- data |> 
   dplyr::select(
     contains('cii_'),
-    practice_accuracy,
+    contains('practice_accuracy'),
     contains('score') & !contains('mid')
   ) |> 
   cor(
@@ -54,7 +54,7 @@ data |>
   dplyr::select(
     grade,
     contains('cii_'),
-    practice_accuracy,
+    contains('practice_accuracy'),
     contains('score') & !contains('mid')
   ) |> 
   filter(
@@ -65,7 +65,7 @@ data |>
 data |> 
   dplyr::select(
     contains('cii_'),
-    practice_accuracy,
+    contains('practice_accuracy'),
     contains('score') & !contains('mid')
   ) |> 
   pivot_longer(
@@ -90,7 +90,7 @@ data |>
 data |> 
   ggplot(
     aes(
-      x = practice_accuracy
+      x = practice_accuracy_firsttry
     )
   ) + geom_histogram() +
   facet_grid(~grade)
@@ -99,7 +99,7 @@ data |>
   ggplot(
     aes(
       x = practice_cii_words_unique,
-      y = practice_accuracy,
+      y = practice_accuracy_firsttry,
     )
   ) + 
   geom_point() +
@@ -108,7 +108,7 @@ data |>
 data |> 
   ggplot(
     aes(
-      x = practice_cii_words_accurate,
+      x = practice_cii_words_accurate_firsttry,
       y = practice_cii_words_attempts,
     )
   ) + 
@@ -123,6 +123,6 @@ data |>
     grade == 'grade_4'
   ) |> 
   mutate(
-    threshold = practice_accuracy < .80
+    threshold = practice_accuracy_firsttry < .80
   ) |> pull(threshold)
 

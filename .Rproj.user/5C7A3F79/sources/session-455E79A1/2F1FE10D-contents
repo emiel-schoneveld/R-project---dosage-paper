@@ -1,0 +1,449 @@
+---
+title: "Dosage data and analyses brief"
+# subtitle: ""
+description: "This document shows the descriptive statistics and potential analyses of the dosage paper."
+
+author: 
+  name: 'Emiel Schoneveld'
+  affiliations:
+    name: 'University of Amsterdam'
+
+keywords: "Dosage, Time, Words, Descriptives, Potential Analyses"
+date: today
+
+execute: 
+  warning: false
+  message: false
+  echo: false
+
+project:
+     execute-dir: project
+
+editor: source
+number-sections: true
+format:
+  html:
+    embed-resources: true # used for making a standalone file, slow render but perfect for sharing
+    toc: true
+    code-fold: false
+    # code-summary: "Show the code"
+    title-block-banner: "#bc0031" # title block background color
+    title-block-banner-color: "#fffff" # title block font color
+    backgroundcolor: "#F5F5F3"
+    fontcolor: "#1B1918"
+---
+
+```{r echo=FALSE, include=FALSE}
+# Preperation syntax
+## Load libraries
+library(here)
+library(tidyverse)
+library(vtable)
+library(DT)
+library(reshape2)
+library(plotly)
+library(scatterPlotMatrix)
+library(shiny)
+
+## source descriptive syntax and analyses draft
+source('07_descriptive_analyses.R')
+source('08_analyses_drafts.R')
+
+## Remove mod objects
+rm(list = ls()[str_detect(ls(), 'mod')])
+```
+
+# Summary statistics
+## Table
+This table shows the summary statistics for all practice variables and DMT scores.
+```{r echo=FALSE, include=TRUE}
+# Make variable description
+var_description <- tribble(
+  ~Variable, ~Description,
+  'frequency', 'average sessions per week',
+  'duration', 'number of weeks practiced',
+  'length', 'average session length in minutes, defined as time between start of the first exercise and ending of the last exercise of the day',
+  'cii_sessions', 'number of sessions a student completed',
+  'cii_time', 'total hours of practice defined as the sum of all session length',
+  'cii_readingtime', 'total hours of reading time, defined as the sum of all exercise duration, this excludes breaks inbetween exercises',
+  
+  'cii_words_exposures', 'number of times the student was exposed to any word',
+  'cii_words_unique', 'number of times the student was exposed to a new word, contain duplicates when word were presented in multiple lessons',
+  'cii_words_accurate_firsttry', 'number of times the student read a word accurate at their first attempt, if the tutor played the audiorecording of the word the reading was regarded inaccurate',
+    'cii_words_accurate_anytry', 'number of times the student read a word accurate at any attempt, if the tutor played the audiorecording of the word the reading was regarded inaccurate',
+  'cii_words_audioplays', 'number of times the audiorecording of words were played',
+  'cii_words_attempts', 'number of times the student read words a second or a third time after an incorrect reading',
+  'accuracy_firsttry', 'percentage of words read accurately at the first attempt, defined as cii_words_accurate_firsttry/cii_words_unique',
+    'accuracy_anytry', 'percentage of words read accurately at any attempt, defined as cii_words_accurate_anytry/cii_words_exposures',
+)
+
+# Print variable description
+var_description |> kable()
+```
+
+
+```{r echo=FALSE, include=TRUE}
+# Make summary tables
+table_fullsample <- data |> 
+  dplyr::select(
+    contains('practice'),
+    contains('wordreading')
+  ) |> 
+  dplyr::select(
+    !(contains('missing') | contains('outlier') | contains('invalid'))
+  ) |> 
+  sumtable(
+    out = "return"
+  ) |> as_tibble() |> 
+  mutate(
+    grade = 'all', .before = 1
+  )
+
+table_grade2 <- data |> 
+  filter(
+    grade == "grade_2"
+  ) |> 
+  dplyr::select(
+    contains('practice'),
+    contains('wordreading')
+  ) |> 
+    dplyr::select(
+    !(contains('missing') | contains('outlier') | contains('invalid'))
+  ) |> 
+  sumtable(
+    out = "return",
+  ) |> 
+  as_tibble() |> 
+  mutate(
+    grade = 'grade_2', .before = 1
+  )
+
+table_grade3 <- data |> 
+  filter(
+    grade == "grade_3"
+  ) |> 
+  dplyr::select(
+    contains('practice'),
+    contains('wordreading')
+  ) |> 
+  dplyr::select(
+    !(contains('missing') | contains('outlier') | contains('invalid'))
+  ) |> 
+  sumtable(
+    out = "return",
+  ) |> as_tibble() |> 
+  mutate(
+    grade = 'grade_3', .before = 1
+  )
+
+table_grade4 <- data |> 
+  filter(
+    grade == "grade_4"
+  ) |> 
+  dplyr::select(
+    contains('practice'),
+    contains('wordreading')
+  ) |> 
+  dplyr::select(
+    !(contains('missing') | contains('outlier') | contains('invalid'))
+  ) |> 
+  sumtable(
+    out = "return",
+  ) |> as_tibble() |> 
+  mutate(
+    grade = 'grade_4', .before = 1
+  )
+
+# Combine summary tables
+table_all <- bind_rows(
+  table_fullsample,
+  table_grade2,
+  table_grade3,
+  table_grade4
+) |> 
+  mutate(
+    grade = as_factor(grade),
+    Variable = str_remove(Variable, 'practice_'),
+    Variable = as_factor(Variable)
+  )
+
+# Print table as interactive table
+table_all |> 
+  datatable(
+    filter = "top"
+  )
+```
+
+## Histograms
+These histograms show the distributions of the practice variables.
+
+```{r echo=FALSE, include=TRUE}
+# Plot histograms
+p_histos <- data |> 
+  dplyr::select(
+    contains('cii_'),
+    contains('practice_accuracy'),
+    contains('score') & !contains('mid')
+  ) |> 
+  pivot_longer(
+    contains('e'),
+    names_to = "variable",
+    values_to = "value"
+  ) |> 
+  mutate(
+    variable = str_remove(variable, 'practice_') |> as_factor()
+  ) |> 
+  ggplot(
+    aes(
+      x = value,
+    )
+  ) +
+  geom_histogram() +
+  facet_wrap(
+    ~variable,
+    scales = 'free',
+    ) +
+  theme(
+    panel.spacing.y = unit(0.5,"lines")
+  )
+
+# plot
+p_histos |> print()
+
+```
+
+# Bivariate scatterplots
+These plots show the bivariate distributions of the words read.
+
+::: callout-note
+Click on any variable to color the points. It now shows the points colored per grade.
+:::
+
+``` {r echo=FALSE, include=TRUE}
+# Rename columns data
+data_bivarscat <- data |> 
+    dplyr::select(
+      grade,
+      contains('cii_words')
+    ) |> 
+    rename_with(
+      ~ str_remove(., "practice_cii_words_"), 
+      starts_with("practice_cii_words_")
+      )
+
+# Scatterplot matrix
+scatterPlotMatrix(
+  data_bivarscat,
+  width = 20,
+  height = 20,
+  zAxisDim = "grade",
+  categorical = list(grade = unique(data_bivarscat$grade)),
+  corrPlotType = "Empty",
+  rotateTitle = TRUE
+)
+```
+
+# Correlations
+This plot shows the correlations between the practice variables and wordreading scores for the full sample and per grade.
+```{r echo=FALSE, include=TRUE}
+# Move melting + cleaning inside the function
+compute_cor_melt <- function(df) {
+  cors <- df |> 
+    dplyr::select(
+      contains('cii_'),
+      contains('practice_accuracy'),
+      contains('score') & !contains('mid')
+    ) |> 
+    cor(use = "pairwise.complete") |> 
+    round(1)
+  
+  cors[upper.tri(cors)] <- NA   # <-- add this before melting
+  
+  cors |>
+    reshape2::melt() |>
+    mutate(
+      Var1 = str_remove(as.character(Var1), 'practice_'),
+      Var2 = str_remove(as.character(Var2), 'practice_')
+    ) |>
+    mutate(across(c(Var1, Var2), as_factor)) |>
+    drop_na(value)
+}
+
+cor_list <- list(
+  all     = compute_cor_melt(data),
+  grade_2 = compute_cor_melt(data |> filter(grade == "grade_2")),
+  grade_3 = compute_cor_melt(data |> filter(grade == "grade_3")),
+  grade_4 = compute_cor_melt(data |> filter(grade == "grade_4"))
+)
+
+p_cors <- plot_ly()
+
+for (i in seq_along(cor_list)) {
+  df      <- cor_list[[i]]
+  visible <- (i == 1)
+
+  p_cors <- p_cors |>
+    add_trace(
+      type          = "heatmap",
+      x             = df$Var1,          # pass actual vectors, not strings
+      y             = df$Var2,
+      z             = df$value,
+      text          = df$value,
+      texttemplate  = "%{text}",
+      colorscale    = list(             # use list(), not c(), for color stops
+        list(0, "red"),
+        list(0.5, "white"),
+        list(1, "darkgreen")
+      ),
+      zmin      = -1, zmax = 1,
+      showscale = (i == 1),
+      visible   = visible
+    )
+}
+
+n <- length(cor_list)
+buttons <- lapply(seq_along(cor_list), function(i) {
+  vis <- rep(FALSE, n)
+  vis[i] <- TRUE
+  list(
+    method = "restyle",
+    args   = list(list(visible = vis)),
+    label  = c("All grades", "Grade 2", "Grade 3", "Grade 4")[i]
+  )
+})
+
+# Only one final call — no p_cors on its own line after this
+p_cors |>
+  layout(
+    updatemenus = list(list(
+      type    = "dropdown",
+      active  = 0,
+      buttons = buttons,
+      x       = 0, xanchor = "left",
+      y       = 1.12, yanchor = "top"
+    )),
+    xaxis = list(tickangle = -30)
+  )
+```
+
+
+# Analyses
+For the analyses we have three possible models.
+
+## Model 1: Mediation model
+### Model description
+This model is used to investigate whether the wordreading improvements are caused by the number of words students read and/or the amount of time they have practiced. Words unique is defined ass the number of times a students was presented with a new word.
+The model displayed below shows that time predicts words which in turn predicts post reading score. In Grade 2 and Grade 4, time also has an additional negative effect on post reading score. In Grade 3, time does not have any impact on post reading after controlling for the amount of words students have read.
+When the total effect is calculated for time on post it shows only a significant positive effect for Grade 2.
+
+::: callout-note
+The covariances are omitted in the figure for legibility.
+:::
+
+```{r echo=FALSE, include=TRUE}
+# Plot model
+lavaanPlot(
+  fit_partialmediation,
+  labels = list(
+    practice_cii_time = "Time",
+    practice_cii_words_unique = 'Words unique',
+    wordreading_score_pre = 'Fluency pre',
+    wordreading_score_post = 'Fluency post'
+  ),
+  coefs = T,
+  # covs = T,
+  digits = 1,
+  stars = 'regress',
+  graph_options = list(
+    rankdir = "LR"
+  )
+)
+```
+
+### Mediation analysis
+Omitting the direct effect of time on post reading leads to significant decrease in model fit.
+```{r echo=FALSE, include=TRUE}
+# Print mediation comparison
+anova(fit_partialmediation, fit_fullmediation)
+```
+
+## Model 2: Accuracy 
+### Model description
+This model is used to investigate how accuracy during training impacts students' improvements after training. Accuracy_firsttry is defined as the percentage of times a students read a flashed word correctly at their first attempt without the help of an audioplay.
+
+The model displayed below shows that only in Grade 2 accuracy plays a positive role. Students who are more accurate during training improve their word reading fluency more. However, there is no significant interaction effect between words and accuracy. In summary, for an intervention in which students are predominantly very accurate (above 80%), all remaining differences in accuracy seem relatively unimportant.
+
+::: callout-note
+The productterm is allowed to covary with all variables to fit a saturated model. The covariances are omitted in the figure for legibility.
+:::
+
+```{r echo=FALSE, include=TRUE}
+# Plot model
+lavaanPlot(
+  fit_wordstimeaccuracy_partialmediation,
+  labels = list(
+    practice_cii_time = "Time",
+    practice_cii_words_unique = 'Words unique',
+    practice_accuracy_firsttry = 'Accuracy_firsttry',
+    wordreading_score_pre = 'Fluency pre',
+    wordreading_score_post = 'Fluency post'
+  ),
+  coefs = T,
+  # covs = T,
+  digits = 1,
+  stars = 'regress',
+  graph_options = list(
+    rankdir = "LR"
+  )
+)
+```
+
+### Mediation analysis
+Omitting the direct effect of time on post reading does not lead to significant decrease in model fit. In this model, the effect of time of post reading fluency is completely mediated through words unique and accuracy. However, the resulting model is of inadequate fit.
+
+```{r echo=FALSE, include=TRUE}
+# Print mediation comparison
+anova(fit_wordstimeaccuracy_partialmediation, fit_wordstimeaccuracy_fullmediation)
+print('Fit of full mediation model')
+fitmeasures(fit_wordstimeaccuracy_fullmediation, 
+            c('df', 'chisq', 'pvalue', 'cfi', 'rmsea'))
+```
+
+## Model 3: Attempts model
+### Model description
+This model is used to investigate accurate readings and attempted readings evoke fluency improvements. Words accurate is defined as the number of words that the students has read accurately at their first attempt. Words attempts is defined as the number of attempts a student has performed at reading a word that was not a first and correct reading. These two variables are not defined by each other.
+
+The model displayed below shows that only in Grade 2 the attempts at reading after an inaccurate reading impact fluency improvements. Grade 2 students who have attempted more readings after a first incorrect reading show smaller improvements.
+
+::: callout-note
+The covariances are omitted in the figure for legibility.
+:::
+
+```{r echo=FALSE, include=TRUE}
+# Plot model
+lavaanPlot(
+  fit_accuratewordstime_partialmediation,
+  labels = list(
+    practice_cii_time = "Time",
+    practice_cii_words_accurate_firsttry  = 'Words accurate (first try)',
+    practice_cii_words_attempts  = 'Words attempts',
+    wordreading_score_pre = 'Fluency pre',
+    wordreading_score_post = 'Fluency post'
+  ),
+  coefs = T,
+  # covs = T,
+  digits = 1,
+  stars = 'regress',
+  graph_options = list(
+    rankdir = "LR"
+  )
+)
+```
+
+
+### Mediation analysis
+Omitting the direct effect of time on post reading leads to significant decrease in model fit.
+```{r echo=FALSE, include=TRUE}
+# Print mediation comparison
+anova(fit_accuratewordstime_partialmediation, fit_accuratewordstime_fullmediation)
+```

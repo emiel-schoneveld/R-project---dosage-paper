@@ -118,7 +118,8 @@ data_logs_session <- data_logs_lesson |>
     session_length_readingtime = sum(lesson_length, na.rm = T),
     session_dose_exposures = sum(lesson_dose_exposures, na.rm = T),
     session_dose_unique = sum(lesson_dose_unique, na.rm = T),
-    session_dose_accurate = sum(lesson_dose_accurate, na.rm = T),
+    session_dose_accurate_firsttry = sum(lesson_dose_accurate_firsttry, na.rm = T),
+    session_dose_accurate_anytry = sum(lesson_dose_accurate_anytry, na.rm = T),
     session_dose_audioplays = sum(lesson_dose_audioplays, na.rm = T),
   ) |> 
   ungroup() |> 
@@ -155,7 +156,8 @@ data_logs_student_nofreq_nodur <- data_logs_session |>
     # Words read
     practice_cii_words_exposures = sum(session_dose_exposures, na.rm = T),
     practice_cii_words_unique = sum(session_dose_unique, na.rm = T),
-    practice_cii_words_accurate = sum(session_dose_accurate, na.rm = T),
+    practice_cii_words_accurate_firsttry = sum(session_dose_accurate_firsttry, na.rm = T),
+    practice_cii_words_accurate_anytry = sum(session_dose_accurate_anytry, na.rm = T),
     practice_cii_words_audioplays = sum(session_dose_audioplays, na.rm = T),
     
     # Time total
@@ -165,7 +167,8 @@ data_logs_student_nofreq_nodur <- data_logs_session |>
   ) |> 
   mutate(
     # Accuracy
-    practice_accuracy = practice_cii_words_accurate / practice_cii_words_unique,
+    practice_accuracy_firsttry = practice_cii_words_accurate_firsttry / practice_cii_words_unique,
+    practice_accuracy_anytry = practice_cii_words_accurate_anytry / practice_cii_words_exposures,
     
     # Incorrect attempts
     practice_cii_words_attempts = practice_cii_words_exposures - practice_cii_words_unique

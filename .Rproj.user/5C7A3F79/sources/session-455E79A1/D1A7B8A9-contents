@@ -1,0 +1,43 @@
+### Combine data
+# By Emiel Schoneveld
+
+# General syntax ----
+## Clear environment
+rm(list = ls())
+
+## Load packages
+library(tidyverse)
+library(here)
+
+# Load data ----
+## Test data
+data_wordreading <- readRDS(
+  here('output/data_wordreading.rds')
+)
+
+## Characteristics data
+data_characteristics <- readRDS(
+  here('output/data_characteristics.rds')
+)
+
+## Practice data
+data_practice <- readRDS(
+  here('output/data_practice.rds')
+)
+
+# Combine data_logs_student, data_wordreading and data_characteristics ----
+## Combine
+data <- data_practice |> 
+  left_join(
+    data_characteristics
+  ) |> 
+  left_join(
+    data_wordreading
+  ) |> 
+  ungroup()
+
+# Write ----
+saveRDS(
+  data,
+  here("output/data.rds")
+)

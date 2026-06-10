@@ -102,22 +102,22 @@ anova(
 mod_wordstimeaccuracy_fullmediation <- '
 # regression
 ## Predicting reading
-wordreading_score_post ~ wordreading_score_pre + practice_cii_words_unique + practice_accuracy + wordsXaccuracy
+wordreading_score_post ~ wordreading_score_pre + practice_cii_words_unique + practice_accuracy_firsttry + wordsXaccuracy
 
 ## Predicting words and accuracy
 practice_cii_words_unique ~ practice_cii_time
-practice_accuracy ~ wordreading_score_pre
+practice_accuracy_firsttry ~ wordreading_score_pre
 
 ## covariance
 wordreading_score_pre ~~ practice_cii_words_unique + practice_cii_time
-practice_accuracy ~~ practice_cii_words_unique + practice_cii_time
-wordsXaccuracy ~~ wordreading_score_pre + practice_cii_words_unique + practice_accuracy + practice_cii_time
+practice_accuracy_firsttry ~~ practice_cii_words_unique + practice_cii_time
+wordsXaccuracy ~~ wordreading_score_pre + practice_cii_words_unique + practice_accuracy_firsttry + practice_cii_time
 
 # variances
 wordreading_score_pre ~~ wordreading_score_pre
 wordreading_score_post ~~ wordreading_score_post
 practice_cii_words_unique ~~ practice_cii_words_unique
-practice_accuracy ~~ practice_accuracy
+practice_accuracy_firsttry ~~ practice_accuracy_firsttry
 practice_cii_time ~~ practice_cii_time
 '
 
@@ -135,8 +135,8 @@ fit_wordstimeaccuracy_partialmediation <- sem(
       practice_cii_words_unique = practice_cii_words_unique / 1000,
       
       practice_cii_words_unique = practice_cii_words_unique - mean(practice_cii_words_unique, na.rm = T),
-      practice_accuracy = (practice_accuracy - mean(practice_accuracy, na.rm = T))*100,
-      wordsXaccuracy = practice_cii_words_unique * practice_accuracy
+      practice_accuracy_firsttry = (practice_accuracy_firsttry - mean(practice_accuracy_firsttry, na.rm = T))*100,
+      wordsXaccuracy = practice_cii_words_unique * practice_accuracy_firsttry
     )
   , 
   missing = "FIML",
@@ -161,7 +161,7 @@ parameterEstimates(fit_wordstimeaccuracy_partialmediation) |>
 lm(
   wordreading_score_post ~ 
     wordreading_score_pre + 
-    practice_cii_words_unique*practice_accuracy
+    practice_cii_words_unique*practice_accuracy_firsttry
   ,
   data = data |> 
     filter(
@@ -169,7 +169,7 @@ lm(
     ) |> 
     mutate(
       practice_cii_words_unique = practice_cii_words_unique - mean(practice_cii_words_unique, na.rm = T),
-      practice_accuracy = practice_accuracy - mean(practice_accuracy, na.rm = T),
+      practice_accuracy_firsttry = practice_accuracy_firsttry - mean(practice_accuracy_firsttry, na.rm = T),
     )
 ) |> summary()
 
@@ -182,8 +182,8 @@ fit_wordstimeaccuracy_fullmediation <- sem(
       practice_cii_words_unique = practice_cii_words_unique / 1000,
       
       practice_cii_words_unique = practice_cii_words_unique - mean(practice_cii_words_unique, na.rm = T),
-      practice_accuracy = (practice_accuracy - mean(practice_accuracy, na.rm = T))*100,
-      wordsXaccuracy = practice_cii_words_unique * practice_accuracy
+      practice_accuracy_firsttry = (practice_accuracy_firsttry - mean(practice_accuracy_firsttry, na.rm = T))*100,
+      wordsXaccuracy = practice_cii_words_unique * practice_accuracy_firsttry
     )
   , 
   missing = "FIML",
@@ -201,21 +201,21 @@ fitmeasures(fit_wordstimeaccuracy_fullmediation,
 mod_accuratewordstime_fullmediation <- '
 # regression
 ## Predicting reading
-wordreading_score_post ~ wordreading_score_pre + practice_cii_words_accurate + practice_cii_words_attempts
+wordreading_score_post ~ wordreading_score_pre + practice_cii_words_accurate_firsttry + practice_cii_words_attempts
 
 ## Predicting words
-practice_cii_words_accurate ~ practice_cii_time
+practice_cii_words_accurate_firsttry ~ practice_cii_time
 practice_cii_words_attempts ~ practice_cii_time
 
 ## covariances
-practice_cii_words_accurate + practice_cii_words_attempts ~~ wordreading_score_pre
-practice_cii_words_accurate ~~ practice_cii_words_attempts
+practice_cii_words_accurate_firsttry + practice_cii_words_attempts ~~ wordreading_score_pre
+practice_cii_words_accurate_firsttry ~~ practice_cii_words_attempts
 practice_cii_time ~~ wordreading_score_pre
 
 # variances
 wordreading_score_pre ~~ wordreading_score_pre
 wordreading_score_post ~~ wordreading_score_post
-practice_cii_words_accurate ~~ practice_cii_words_accurate
+practice_cii_words_accurate_firsttry ~~ practice_cii_words_accurate_firsttry
 practice_cii_words_attempts ~~ practice_cii_words_attempts
 '
 
@@ -230,7 +230,7 @@ fit_accuratewordstime_partialmediation <- sem(
   ),
   data = data |> 
     mutate(
-      practice_cii_words_accurate = practice_cii_words_accurate / 1000,
+      practice_cii_words_accurate_firsttry = practice_cii_words_accurate_firsttry / 1000,
       practice_cii_words_attempts = practice_cii_words_attempts / 100,
     )
   , 
@@ -258,7 +258,7 @@ fit_accuratewordstime_fullmediation <- sem(
   ),
   data = data |> 
     mutate(
-      practice_cii_words_accurate = practice_cii_words_accurate / 1000,
+      practice_cii_words_accurate_firsttry = practice_cii_words_accurate_firsttry / 1000,
       practice_cii_words_attempts = practice_cii_words_attempts / 100,
     )
   , 
