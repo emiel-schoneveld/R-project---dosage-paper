@@ -1,17 +1,20 @@
-"0","# Preperation syntax"
-"0","## Load libraries"
-"0","library(here)"
-"0","library(tidyverse)"
-"0","library(vtable)"
-"0","library(DT)"
-"0","library(reshape2)"
-"0","library(plotly)"
-"0","library(scatterPlotMatrix)"
-"0","library(shiny)"
-"0",""
-"0","## source descriptive syntax and analyses draft"
-"0","source('07_descriptive_analyses.R')"
-"0","source('08_analyses_drafts.R')"
-"0",""
-"0","## Remove mod objects"
-"0","rm(list = ls()[str_detect(ls(), 'mod')])"
+"0","library(vtable)
+"
+"2","Loading required package: kableExtra
+"
+"2","Warning: package ‘kableExtra’ was built under R version 4.2.3"
+"2","Registered S3 methods overwritten by 'htmltools':
+  method               from         
+  print.html           tools:rstudio
+  print.shiny.tag      tools:rstudio
+  print.shiny.tag.list tools:rstudio
+"
+"2","
+Attaching package: ‘kableExtra’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    group_rows
+
+"

@@ -8,6 +8,7 @@ library(tidyverse)
 library(readxl)
 library(here)
 library(ggplot2)
+library(psych)
 
 # Load data ----
 data <- readRDS(
@@ -30,12 +31,38 @@ data |>
     age_SD = sd(age),
     language_Dutch_perc = 100*sum(str_detect(language_home, 'Nederlands'))/n(),
     percentage_girl = 100*sum(gender == "girl")/n(),
-    percentage_X = 100*sum(gender == "X")/n(),
-    reading_fluency_M = mean(wordreading_score_pre, na.rm = T),
-    reading_fluency_SD = sd(wordreading_score_pre, na.rm = T),
-    reading_fluency_min = min(wordreading_score_pre, na.rm = T),
-    reading_fluency_max = max(wordreading_score_post, na.rm = T)
+    percentage_X = 100*sum(gender == "X")/n()
   )
+
+## Practice measures descriptives ----
+
+data |>
+  dplyr::select(
+    grade,
+    practice_cii_words_exposures,
+    practice_cii_words_accurate_anytry,
+    practice_accuracy_anytry,
+    practice_cii_time,
+    contains('fluency'),
+  ) |> 
+  pivot_longer(
+    !grade
+  ) |> 
+  group_by(
+    # grade,
+    name
+  ) |> 
+  summarise(
+    N = n(),
+    perc_missing = (sum(is.na(value)) / n())*100,
+    Mean = mean(value, na.rm = T),
+    SD = sd(value, na.rm = T),
+    Min = min(value, na.rm = T),
+    Max = max(value, na.rm = T),
+    Skewness = skew(value, na.rm = T),
+    Kortosis = kurtosi(value, na.rm = T)
+  )
+
 
 # Descriptives for Peter and Madelon ----
 cors <- data |> 

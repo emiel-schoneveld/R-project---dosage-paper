@@ -1,0 +1,1967 @@
+# Fluency discrete ---- 
+## Configural model ----
+### Specify common factor structure of measurement model ----
+mod_DIS_configural_CFA_0 <- '
+group: group_4
+## Premeasurement
+# Common factor factor loadings
+read_factor_pre =~ 
+L1_1_group4*fluency_101_pre +
+L2_1_group4*fluency_102_pre +
+L3_1_group4*fluency_103_pre +
+L4_1_group4*fluency_104_pre +
+L5_1_group4*fluency_105_pre +
+L6_1_group4*fluency_106_pre
+
+# Common factor variances
+read_factor_pre ~~ F1_1_group4*read_factor_pre
+
+# Common factor intercepts
+read_factor_pre ~ A1_group4*1
+
+# Indicator residual variances
+fluency_101_pre ~~ fluency_101_pre
+fluency_102_pre ~~ fluency_102_pre
+fluency_103_pre ~~ fluency_103_pre
+fluency_104_pre ~~ fluency_104_pre
+fluency_105_pre ~~ fluency_105_pre
+fluency_106_pre ~~ fluency_106_pre
+
+# Indicator intercepts
+fluency_101_pre ~ t1_1_group4*1
+fluency_102_pre ~ t2_1_group4*1
+fluency_103_pre ~ t3_1_group4*1
+fluency_104_pre ~ t4_1_group4*1
+fluency_105_pre ~ t5_1_group4*1
+fluency_106_pre ~ t6_1_group4*1
+
+## Postmeasurement
+# Common factor factor loadings
+read_factor_post =~ 
+L1_2_group4*fluency_101_post +
+L2_2_group4*fluency_102_post +
+L3_2_group4*fluency_103_post +
+L4_2_group4*fluency_104_post +
+L5_2_group4*fluency_105_post +
+L6_2_group4*fluency_106_post
+
+# Common factor variances
+read_factor_post ~~ F2_2_group4*read_factor_post
+
+# Common factor intercepts
+read_factor_post ~ A2_group4*1
+
+# Indicator residual variances
+fluency_101_post ~~ fluency_101_post
+fluency_102_post ~~ fluency_102_post
+fluency_103_post ~~ fluency_103_post
+fluency_104_post ~~ fluency_104_post
+fluency_105_post ~~ fluency_105_post
+fluency_106_post ~~ fluency_106_post
+
+# Indicator intercepts
+fluency_101_post ~ t1_2_group4*1
+fluency_102_post ~ t2_2_group4*1
+fluency_103_post ~ t3_2_group4*1
+fluency_104_post ~ t4_2_group4*1
+fluency_105_post ~ t5_2_group4*1
+fluency_106_post ~ t6_2_group4*1
+
+# Indicator covariances
+fluency_101_pre ~~ fluency_101_post
+fluency_102_pre ~~ fluency_102_post
+fluency_103_pre ~~ fluency_103_post
+fluency_104_pre ~~ fluency_104_post
+fluency_105_pre ~~ fluency_105_post
+fluency_106_pre ~~ fluency_106_post
+
+group: group_5
+## Premeasurement
+# Common factors factor loadings
+read_factor_pre =~ 
+L4_1_group5*fluency_104_pre +
+L5_1_group5*fluency_105_pre +
+L6_1_group5*fluency_106_pre +
+L7_1_group5*fluency_107_pre +
+L8_1_group5*fluency_108_pre +
+L9_1_group5*fluency_109_pre
+
+# Common factor variances
+read_factor_pre ~~ F1_1_group5*read_factor_pre
+
+# Common factor intercepts
+read_factor_pre ~ A1_group5*1
+
+# Indicator residual variances
+fluency_104_pre ~~ fluency_104_pre
+fluency_105_pre ~~ fluency_105_pre
+fluency_106_pre ~~ fluency_106_pre
+fluency_107_pre ~~ fluency_107_pre
+fluency_108_pre ~~ fluency_108_pre
+fluency_109_pre ~~ fluency_109_pre
+
+# Indicator intercepts
+fluency_104_pre ~ t4_1_group5*1
+fluency_105_pre ~ t5_1_group5*1
+fluency_106_pre ~ t6_1_group5*1
+fluency_107_pre ~ t7_1_group5*1
+fluency_108_pre ~ t8_1_group5*1
+fluency_109_pre ~ t9_1_group5*1
+
+## Postmeasurement
+# Common factors factor loadings
+read_factor_post =~ 
+L4_2_group5*fluency_104_post +
+L5_2_group5*fluency_105_post +
+L6_2_group5*fluency_106_post +
+L7_2_group5*fluency_107_post +
+L8_2_group5*fluency_108_post +
+L9_2_group5*fluency_109_post
+
+# Common factor variances
+read_factor_post ~~ F2_2_group5*read_factor_post
+
+# Common factor intercepts
+read_factor_post ~ A2_group5*1
+
+# Indicator residual variances
+fluency_104_post ~~ fluency_104_post
+fluency_105_post ~~ fluency_105_post
+fluency_106_post ~~ fluency_106_post
+fluency_107_post ~~ fluency_107_post
+fluency_108_post ~~ fluency_108_post
+fluency_109_post ~~ fluency_109_post
+
+# Indicator intercepts
+fluency_104_post ~ t4_2_group5*1
+fluency_105_post ~ t5_2_group5*1
+fluency_106_post ~ t6_2_group5*1
+fluency_107_post ~ t7_2_group5*1
+fluency_108_post ~ t8_2_group5*1
+fluency_109_post ~ t9_2_group5*1
+
+# Indicator covariances
+fluency_104_pre ~~ fluency_104_post
+fluency_105_pre ~~ fluency_105_post
+fluency_106_pre ~~ fluency_106_post
+fluency_107_pre ~~ fluency_107_post
+fluency_108_pre ~~ fluency_108_post
+fluency_109_pre ~~ fluency_109_post
+
+group: group_6
+## Premeasurement
+# Common factors factor loadings
+read_factor_pre =~ 
+L7_1_group6*fluency_107_pre +
+L8_1_group6*fluency_108_pre +
+L9_1_group6*fluency_109_pre +
+L10_1_group6*fluency_110_pre +
+L11_1_group6*fluency_111_pre +
+L12_1_group6*fluency_112_pre
+
+# Common factor variances
+read_factor_pre ~~ F1_1_group6*read_factor_pre
+
+# Common factor intercepts
+read_factor_pre ~ A1_group6*1
+
+# Indicator residual variances
+fluency_107_pre ~~ fluency_107_pre
+fluency_108_pre ~~ fluency_108_pre
+fluency_109_pre ~~ fluency_109_pre
+fluency_110_pre ~~ fluency_110_pre
+fluency_111_pre ~~ fluency_111_pre
+fluency_112_pre ~~ fluency_112_pre
+
+# Indicator intercepts
+fluency_107_pre ~ t7_1_group6*1
+fluency_108_pre ~ t8_1_group6*1
+fluency_109_pre ~ t9_1_group6*1
+fluency_110_pre ~ t10_1_group6*1
+fluency_111_pre ~ t11_1_group6*1
+fluency_112_pre ~ t12_1_group6*1
+
+## Postmeasurement
+# Common factors factor loadings
+read_factor_post =~ 
+L7_2_group6*fluency_107_post +
+L8_2_group6*fluency_108_post +
+L9_2_group6*fluency_109_post +
+L10_2_group6*fluency_110_post +
+L11_2_group6*fluency_111_post +
+L12_2_group6*fluency_112_post
+
+# Common factor variances
+read_factor_post ~~ F2_2_group6*read_factor_post
+
+# Common factor intercepts
+read_factor_post ~ A2_group6*1
+
+# Indicator residual variances
+fluency_107_post ~~ fluency_107_post
+fluency_108_post ~~ fluency_108_post
+fluency_109_post ~~ fluency_109_post
+fluency_110_post ~~ fluency_110_post
+fluency_111_post ~~ fluency_111_post
+fluency_112_post ~~ fluency_112_post
+
+# Indicator intercepts
+fluency_107_post ~ t7_2_group6*1
+fluency_108_post ~ t8_2_group6*1
+fluency_109_post ~ t9_2_group6*1
+fluency_110_post ~ t10_2_group6*1
+fluency_111_post ~ t11_2_group6*1
+fluency_112_post ~ t12_2_group6*1
+
+# Indicator covariances
+fluency_107_pre ~~ fluency_107_post
+fluency_108_pre ~~ fluency_108_post
+fluency_109_pre ~~ fluency_109_post
+fluency_110_pre ~~ fluency_110_post
+fluency_111_pre ~~ fluency_111_post
+fluency_112_pre ~~ fluency_112_post
+'
+
+### Specify covariance structure of latent factors ----
+mod_DIS_configural_covariancestructure <- '
+group: group_4
+read_factor_pre ~~ read_factor_post
+
+group: group_5
+read_factor_pre ~~ read_factor_post
+
+group: group_6
+read_factor_pre ~~ read_factor_post
+'
+
+### Specify scaling constraints of measurement model ----
+mod_DIS_configural_scalingconstraints <- '
+### Scaling constraints
+## Factor variance
+F1_1_group4 == 1
+F2_2_group4 == 1
+F1_1_group5 == 1
+F2_2_group5 == 1
+F1_1_group6 == 1
+F2_2_group6 == 1
+
+## Factor average
+A1_group4 == 0
+A2_group4 == 0
+A1_group5 == 0
+A2_group5 == 0
+A1_group6 == 0
+A2_group6 == 0
+'
+
+### Specify full configural model ----
+mod_DIS_configural_0 <- c(
+  mod_DIS_configural_CFA_0,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_configural_scalingconstraints
+)
+
+### Fit and inspect model ----
+fit_DIS_configural_0 <- lavaan(mod_DIS_configural_0,
+                               data = data,
+                               cluster = "class_ID",
+                               group = "Leerjaar",
+                               group.label = c('4', '5', '6'),
+                               missing = "FIML"
+)
+fitMeasures(
+  fit_DIS_configural_0,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # No satisfactory fit
+modificationindices(
+  fit_DIS_configural_0,
+  sort. = TRUE
+) %>% head(10) # fluency_107_post ~~ fluency_108_post     3 group_6 
+
+### Specify modification 1: fluency_107_post ~~ fluency_108_post     3 group_6 
+mod_DIS_configural_CFA_1 <- c(
+  mod_DIS_configural_CFA_0,
+  '
+  group: group_6
+  fluency_107_post ~~ fluency_108_post
+  '
+)
+
+### Specify full configural model ----
+mod_DIS_configural_1 <- c(
+  mod_DIS_configural_CFA_1,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_configural_scalingconstraints
+)
+
+### Fit and inspect model ----
+fit_DIS_configural_1 <- lavaan(mod_DIS_configural_1,
+                               data = data,
+                               cluster = "class_ID",
+                               group = "Leerjaar",
+                               group.label = c('4', '5', '6'),
+                               missing = "FIML"
+)
+fitMeasures(
+  fit_DIS_configural_1,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # No satisfactory fit
+modificationindices(
+  fit_DIS_configural_1,
+  sort. = TRUE
+) %>% head(10) # fluency_107_pre ~~  fluency_108_pre     3 group_6
+
+### Specify modification 2: fluency_107_pre ~~  fluency_108_pre     3 group_6
+mod_DIS_configural_CFA_2 <- c(
+  mod_DIS_configural_CFA_1,
+  '
+  group: group_6
+  fluency_107_pre ~~ fluency_108_pre
+  '
+)
+
+### Specify full configural model ----
+mod_DIS_configural_2 <- c(
+  mod_DIS_configural_CFA_2,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_configural_scalingconstraints
+)
+
+### Fit and inspect model ----
+fit_DIS_configural_2 <- lavaan(mod_DIS_configural_2,
+                               data = data,
+                               cluster = "class_ID",
+                               group = "Leerjaar",
+                               group.label = c('4', '5', '6'),
+                               missing = "FIML"
+)
+fitMeasures(
+  fit_DIS_configural_2,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # No satisfactory fit
+modificationindices(
+  fit_DIS_configural_2,
+  sort. = TRUE
+) %>% head(10) # fluency_101_post ~~ fluency_102_post     1 group_4
+
+### Specify modification 3: fluency_101_post ~~ fluency_102_post     1 group_4
+mod_DIS_configural_CFA_3 <- c(
+  mod_DIS_configural_CFA_2,
+  '
+  group: group_4
+  fluency_101_post ~~ fluency_102_post
+  '
+)
+
+### Specify full configural model ----
+mod_DIS_configural_3 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_configural_scalingconstraints
+)
+
+### Fit and inspect model ----
+fit_DIS_configural_3 <- lavaan(mod_DIS_configural_3,
+                               data = data,
+                               cluster = "class_ID",
+                               group = "Leerjaar",
+                               group.label = c('4', '5', '6'),
+                               missing = "FIML"
+)
+fitMeasures(
+  fit_DIS_configural_3,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # Satisfactory fit
+modificationindices(
+  fit_DIS_configural_3,
+  sort. = TRUE
+) %>% head(10)
+
+## weak measurement invariance model ----
+### Specify scaling constraints measurement invariance across measurements ----
+mod_DIS_weakinvariance_time_scalingconstraints <- '
+### Scaling constraints
+## Factor variance
+F1_1_group4 == 1
+F1_1_group5 == 1
+F1_1_group6 == 1
+
+## Factor average
+A1_group4 == 0
+A1_group5 == 0
+A1_group6 == 0
+'
+### Specify weak measurement invariance constraints across measurements ----
+mod_DIS_weakinvariance_time_constraints_0 <- '
+### Measurement invariance constraints
+## Across time & within group
+# Factor loadings
+L1_1_group4 == L1_2_group4
+L2_1_group4 == L2_2_group4
+L3_1_group4 == L3_2_group4
+L4_1_group4 == L4_2_group4
+L5_1_group4 == L5_2_group4
+L6_1_group4 == L6_2_group4
+
+L4_1_group5 == L4_2_group5
+L5_1_group5 == L5_2_group5
+L6_1_group5 == L6_2_group5
+L7_1_group5 == L7_2_group5
+L8_1_group5 == L8_2_group5
+L9_1_group5 == L9_2_group5
+
+L7_1_group6 == L7_2_group6
+L8_1_group6 == L8_2_group6
+L9_1_group6 == L9_2_group6
+L10_1_group6 == L10_2_group6
+L11_1_group6 == L11_2_group6
+L12_1_group6 == L12_2_group6
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_0 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_scalingconstraints,
+  mod_DIS_weakinvariance_time_constraints_0
+)
+
+### Fit and inspect model 0 ----
+fit_DIS_weakinvariance_time_0 <- lavaan(mod_DIS_weakinvariance_time_0,
+                                        data = data,
+                                        cluster = "class_ID",
+                                        group = "Leerjaar",
+                                        group.label = c('4', '5', '6'),
+                                        missing = "FIML"
+)
+fitMeasures(
+  fit_DIS_weakinvariance_time_0,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # no satisfactory fit
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+lavTestScore(fit_DIS_weakinvariance_time_0, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+    uni.p.value < .05
+  ) |>
+  slice_head(n = 10) # L6_1_group5     ==  L6_2_group5
+
+# Modification indices for factor loading across groups
+# lavTestScore(fit_DIS_metricscalar_0, epc = F) |> 
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |> 
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |> 
+#   slice_head(n = 10)
+
+### Specify modification 1: lifting constraint L6_1_group5     ==  L6_2_group5 ----
+mod_DIS_weakinvariance_time_constraints_1 <- '
+### Measurement invariance constraints
+## Across time & within group
+# Factor loadings
+L1_1_group4 == L1_2_group4
+L2_1_group4 == L2_2_group4
+L3_1_group4 == L3_2_group4
+L4_1_group4 == L4_2_group4
+L5_1_group4 == L5_2_group4
+L6_1_group4 == L6_2_group4
+
+L4_1_group5 == L4_2_group5
+L5_1_group5 == L5_2_group5
+# L6_1_group5 == L6_2_group5
+L7_1_group5 == L7_2_group5
+L8_1_group5 == L8_2_group5
+L9_1_group5 == L9_2_group5
+
+L7_1_group6 == L7_2_group6
+L8_1_group6 == L8_2_group6
+L9_1_group6 == L9_2_group6
+L10_1_group6 == L10_2_group6
+L11_1_group6 == L11_2_group6
+L12_1_group6 == L12_2_group6
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_1 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_scalingconstraints,
+  mod_DIS_weakinvariance_time_constraints_1
+)
+
+### Fit and inspect model 1 ----
+fit_DIS_weakinvariance_time_1 <- lavaan(mod_DIS_weakinvariance_time_1,
+                                        data = data,
+                                        cluster = "class_ID",
+                                        group = "Leerjaar",
+                                        group.label = c('4', '5', '6'),
+                                        missing = "FIML"
+)
+anova(
+  fit_DIS_weakinvariance_time_0,
+  fit_DIS_weakinvariance_time_1
+) # Significant improvement of model fit
+# lavTestLRT(
+#    fit_DIS_weakinvariance_time_0,
+# fit_DIS_weakinvariance_time_1
+#   method = "satorra.bentler.2010"
+#   ) # Significant improvement of model fit
+fitMeasures(
+  fit_DIS_weakinvariance_time_1,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # no satisfactory fit
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+lavTestScore(fit_DIS_weakinvariance_time_1, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+    uni.p.value < .05
+  ) |>
+  slice_head(n = 10) # L11_1_group6     == L11_2_group6
+
+# Modification indices for factor loading across groups
+# lavTestScore(fit_DIS_metricscalar_1, epc = F) |> 
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |> 
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |> 
+#   slice_head(n = 10)
+
+### Specify modification 2: lifting constraint L11_1_group6     == L11_2_group6 ----
+mod_DIS_weakinvariance_time_constraints_2 <- '
+### Measurement invariance constraints
+## Across time & within group
+# Factor loadings
+L1_1_group4 == L1_2_group4
+L2_1_group4 == L2_2_group4
+L3_1_group4 == L3_2_group4
+L4_1_group4 == L4_2_group4
+L5_1_group4 == L5_2_group4
+L6_1_group4 == L6_2_group4
+
+L4_1_group5 == L4_2_group5
+L5_1_group5 == L5_2_group5
+# L6_1_group5 == L6_2_group5
+L7_1_group5 == L7_2_group5
+L8_1_group5 == L8_2_group5
+L9_1_group5 == L9_2_group5
+
+L7_1_group6 == L7_2_group6
+L8_1_group6 == L8_2_group6
+L9_1_group6 == L9_2_group6
+L10_1_group6 == L10_2_group6
+# L11_1_group6 == L11_2_group6
+L12_1_group6 == L12_2_group6
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_2 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_scalingconstraints,
+  mod_DIS_weakinvariance_time_constraints_2
+)
+
+### Fit and inspect model 2 ----
+fit_DIS_weakinvariance_time_2 <- lavaan(mod_DIS_weakinvariance_time_2,
+                                        data = data,
+                                        cluster = "class_ID",
+                                        group = "Leerjaar",
+                                        group.label = c('4', '5', '6'),
+                                        missing = "FIML"
+)
+anova(
+  fit_DIS_weakinvariance_time_1,
+  fit_DIS_weakinvariance_time_2
+) # Significant improvement of model fit
+# lavTestLRT(
+#    fit_DIS_weakinvariance_time_0,
+# fit_DIS_weakinvariance_time_1
+#   method = "satorra.bentler.2010"
+#   ) # Significant improvement of model fit
+fitMeasures(
+  fit_DIS_weakinvariance_time_2,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # satisfactory fit
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+lavTestScore(fit_DIS_weakinvariance_time_2, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+    uni.p.value < .05
+  ) |>
+  slice_head(n = 10) # L11_1_group6     == L11_2_group6
+
+# Modification indices for factor loading across groups
+# lavTestScore(fit_DIS_metricscalar_1, epc = F) |> 
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |> 
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |> 
+#   slice_head(n = 10)
+
+### Specify scaling constraints measurement invariance across groups ----
+mod_DIS_weakinvariance_time_group_scalingconstraints <- '
+### Scaling constraints
+## Factor variance
+# F1_1_group4 == 1
+F1_1_group5 == 1
+# F1_1_group6 == 1
+
+## Factor average
+# A1_group4 == 0
+A1_group5 == 0
+# A1_group6 == 0
+'
+
+### Specify weak measurement invariance constraints across groups ----
+mod_DIS_weakinvariance_group_constraints_0 <- '
+### Measurement invariance constraints
+## Within time & across group
+# Factor loadings
+L4_1_group4 == L4_1_group5
+L5_1_group4 == L5_1_group5
+L6_1_group4 == L6_1_group5
+
+L4_2_group4 == L4_2_group5
+L5_2_group4 == L5_2_group5
+L6_2_group4 == L6_2_group5
+
+L7_1_group5 == L7_1_group6
+L8_1_group5 == L8_1_group6
+L9_1_group5 == L9_1_group6
+
+L7_2_group5 == L7_2_group6
+L8_2_group5 == L8_2_group6
+L9_2_group5 == L9_2_group6
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_group_0 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_group_scalingconstraints,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_0
+)
+
+### Fit and inspect model 0 ----
+fit_DIS_weakinvariance_time_group_0 <- lavaan(mod_DIS_weakinvariance_time_group_0,
+                                              data = data,
+                                              cluster = "class_ID",
+                                              group = "Leerjaar",
+                                              group.label = c('4', '5', '6'),
+                                              missing = "FIML"
+)
+fitMeasures(
+  fit_DIS_weakinvariance_time_group_0,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # no satisfactory fit
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+# lavTestScore(fit_DIS_weakinvariance_time_group_0, epc = F) |>
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |>
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |>
+#   slice_head(n = 10)
+
+# Modification indices for factor loading across groups
+lavTestScore(fit_DIS_weakinvariance_time_group_0, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L6_2_group4     == L6_2_group5
+
+### Specify modification 1: lifting constraint   L6_2_group4     == L6_2_group5 ----
+mod_DIS_weakinvariance_group_constraints_1 <- '
+### Measurement invariance constraints
+## Within time & across group
+# Factor loadings
+L4_1_group4 == L4_1_group5
+L5_1_group4 == L5_1_group5
+L6_1_group4 == L6_1_group5
+
+L4_2_group4 == L4_2_group5
+L5_2_group4 == L5_2_group5
+# L6_2_group4 == L6_2_group5
+
+L7_1_group5 == L7_1_group6
+L8_1_group5 == L8_1_group6
+L9_1_group5 == L9_1_group6
+
+L7_2_group5 == L7_2_group6
+L8_2_group5 == L8_2_group6
+L9_2_group5 == L9_2_group6
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_group_1 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_group_scalingconstraints,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_1
+)
+
+### Fit and inspect model 1 ----
+fit_DIS_weakinvariance_time_group_1 <- lavaan(mod_DIS_weakinvariance_time_group_1,
+                                              data = data,
+                                              cluster = "class_ID",
+                                              group = "Leerjaar",
+                                              group.label = c('4', '5', '6'),
+                                              missing = "FIML"
+)
+anova(
+  fit_DIS_weakinvariance_time_group_0,
+  fit_DIS_weakinvariance_time_group_1
+) # Significant improvement of model fit
+# lavTestLRT(
+#    fit_DIS_weakinvariance_time_0,
+# fit_DIS_weakinvariance_time_1
+#   method = "satorra.bentler.2010"
+#   ) # Significant improvement of model fit
+fitMeasures(
+  fit_DIS_weakinvariance_time_group_1,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # no satisfactory fit
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+# lavTestScore(fit_DIS_weakinvariance_time_group_0, epc = F) |>
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |>
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |>
+#   slice_head(n = 10)
+
+# Modification indices for factor loading across groups
+lavTestScore(fit_DIS_weakinvariance_time_group_1, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    # uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L6_1_group4     == L6_1_group5
+
+### Specify modification 2: lifting constraint   L6_1_group4     == L6_1_group5 ----
+mod_DIS_weakinvariance_group_constraints_2 <- '
+### Measurement invariance constraints
+## Within time & across group
+# Factor loadings
+L4_1_group4 == L4_1_group5
+L5_1_group4 == L5_1_group5
+# L6_1_group4 == L6_1_group5
+
+L4_2_group4 == L4_2_group5
+L5_2_group4 == L5_2_group5
+# L6_2_group4 == L6_2_group5
+
+L7_1_group5 == L7_1_group6
+L8_1_group5 == L8_1_group6
+L9_1_group5 == L9_1_group6
+
+L7_2_group5 == L7_2_group6
+L8_2_group5 == L8_2_group6
+L9_2_group5 == L9_2_group6
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_group_2 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_group_scalingconstraints,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_2
+)
+
+### Fit and inspect model 2 ----
+fit_DIS_weakinvariance_time_group_2 <- lavaan(mod_DIS_weakinvariance_time_group_2,
+                                              data = data,
+                                              cluster = "class_ID",
+                                              group = "Leerjaar",
+                                              group.label = c('4', '5', '6'),
+                                              missing = "FIML"
+)
+anova(
+  fit_DIS_weakinvariance_time_group_1,
+  fit_DIS_weakinvariance_time_group_2
+) # No significant improvement of model fit
+# lavTestLRT(
+#    fit_DIS_weakinvariance_time_0,
+# fit_DIS_weakinvariance_time_1
+#   method = "satorra.bentler.2010"
+#   ) # Significant improvement of model fit
+fitMeasures(
+  fit_DIS_weakinvariance_time_group_2,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # no satisfactory fit
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+# lavTestScore(fit_DIS_weakinvariance_time_group_0, epc = F) |>
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |>
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |>
+#   slice_head(n = 10)
+
+# Modification indices for factor loading across groups
+lavTestScore(fit_DIS_weakinvariance_time_group_2, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    # uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L5_2_group4     == L5_2_group5
+
+### Specify modification 3: lifting constraint   L5_2_group4     == L5_2_group5 and L5_1_group4     == L5_1_group5 (otherwise redudancy due to chain)----
+mod_DIS_weakinvariance_group_constraints_3 <- '
+### Measurement invariance constraints
+## Within time & across group
+# Factor loadings
+L4_1_group4 == L4_1_group5
+# L5_1_group4 == L5_1_group5
+# L6_1_group4 == L6_1_group5
+
+L4_2_group4 == L4_2_group5
+# L5_2_group4 == L5_2_group5
+# L6_2_group4 == L6_2_group5
+
+L7_1_group5 == L7_1_group6
+L8_1_group5 == L8_1_group6
+L9_1_group5 == L9_1_group6
+
+L7_2_group5 == L7_2_group6
+L8_2_group5 == L8_2_group6
+L9_2_group5 == L9_2_group6
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_group_3 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_group_scalingconstraints,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_3
+)
+
+### Fit and inspect model 3 ----
+fit_DIS_weakinvariance_time_group_3 <- lavaan(mod_DIS_weakinvariance_time_group_3,
+                                              data = data,
+                                              cluster = "class_ID",
+                                              group = "Leerjaar",
+                                              group.label = c('4', '5', '6'),
+                                              missing = "FIML"
+)
+
+anova(
+  fit_DIS_weakinvariance_time_group_2,
+  fit_DIS_weakinvariance_time_group_3
+) # significant improvement of model fit
+# lavTestLRT(
+#    fit_DIS_weakinvariance_time_0,
+# fit_DIS_weakinvariance_time_1
+#   method = "satorra.bentler.2010"
+#   ) # Significant improvement of model fit
+fitMeasures(
+  fit_DIS_weakinvariance_time_group_3,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # no satisfactory fit
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+# lavTestScore(fit_DIS_weakinvariance_time_group_0, epc = F) |>
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |>
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |>
+#   slice_head(n = 10)
+
+# Modification indices for factor loading across groups
+lavTestScore(fit_DIS_weakinvariance_time_group_3, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    # uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L8_1_group5     == L8_1_group6
+
+### Specify modification 4: lifting constraint   L8_1_group5     == L8_1_group6 and L8_2_group5     == L8_2_group6 (otherwise redudancy due to chain)----
+mod_DIS_weakinvariance_group_constraints_4 <- '
+### Measurement invariance constraints
+## Within time & across group
+# Factor loadings
+L4_1_group4 == L4_1_group5
+# L5_1_group4 == L5_1_group5
+# L6_1_group4 == L6_1_group5
+
+L4_2_group4 == L4_2_group5
+# L5_2_group4 == L5_2_group5
+# L6_2_group4 == L6_2_group5
+
+L7_1_group5 == L7_1_group6
+# L8_1_group5 == L8_1_group6
+L9_1_group5 == L9_1_group6
+
+L7_2_group5 == L7_2_group6
+# L8_2_group5 == L8_2_group6
+L9_2_group5 == L9_2_group6
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_group_4 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_group_scalingconstraints,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_4
+)
+
+### Fit and inspect model 4 ----
+fit_DIS_weakinvariance_time_group_4 <- lavaan(mod_DIS_weakinvariance_time_group_4,
+                                              data = data,
+                                              cluster = "class_ID",
+                                              group = "Leerjaar",
+                                              group.label = c('4', '5', '6'),
+                                              missing = "FIML"
+)
+
+anova(
+  fit_DIS_weakinvariance_time_group_3,
+  fit_DIS_weakinvariance_time_group_4
+) # No significant improvement of model fit
+# lavTestLRT(
+#    fit_DIS_weakinvariance_time_0,
+# fit_DIS_weakinvariance_time_1
+#   method = "satorra.bentler.2010"
+#   ) # Significant improvement of model fit
+fitMeasures(
+  fit_DIS_weakinvariance_time_group_4,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # no satisfactory fit
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+# lavTestScore(fit_DIS_weakinvariance_time_group_0, epc = F) |>
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |>
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |>
+#   slice_head(n = 10)
+
+# Modification indices for factor loading across groups
+lavTestScore(fit_DIS_weakinvariance_time_group_4, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    # uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L7_2_group5     == L7_2_group6
+
+### Specify modification 5: lifting constraint   L7_2_group5     == L7_2_group6 and L7_1_group5     == L7_1_group6 (otherwise redudancy due to chain)----
+mod_DIS_weakinvariance_group_constraints_5 <- '
+### Measurement invariance constraints
+## Within time & across group
+# Factor loadings
+L4_1_group4 == L4_1_group5
+# L5_1_group4 == L5_1_group5
+# L6_1_group4 == L6_1_group5
+
+L4_2_group4 == L4_2_group5
+# L5_2_group4 == L5_2_group5
+# L6_2_group4 == L6_2_group5
+
+# L7_1_group5 == L7_1_group6
+# L8_1_group5 == L8_1_group6
+L9_1_group5 == L9_1_group6
+
+# L7_2_group5 == L7_2_group6
+# L8_2_group5 == L8_2_group6
+L9_2_group5 == L9_2_group6
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_group_5 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_group_scalingconstraints,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_5
+)
+
+### Fit and inspect model 5 ----
+fit_DIS_weakinvariance_time_group_5 <- lavaan(mod_DIS_weakinvariance_time_group_5,
+                                              data = data,
+                                              cluster = "class_ID",
+                                              group = "Leerjaar",
+                                              group.label = c('4', '5', '6'),
+                                              missing = "FIML"
+)
+
+anova(
+  fit_DIS_weakinvariance_time_group_4,
+  fit_DIS_weakinvariance_time_group_5
+) # No significant improvement of model fit
+# lavTestLRT(
+#    fit_DIS_weakinvariance_time_0,
+# fit_DIS_weakinvariance_time_1
+#   method = "satorra.bentler.2010"
+#   ) # Significant improvement of model fit
+fitMeasures(
+  fit_DIS_weakinvariance_time_group_5,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # no satisfactory fit
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+# lavTestScore(fit_DIS_weakinvariance_time_group_0, epc = F) |>
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |>
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |>
+#   slice_head(n = 10)
+
+# Modification indices for factor loading across groups
+lavTestScore(fit_DIS_weakinvariance_time_group_5, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    # uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L4_2_group4     == L4_2_group5
+
+### Specify modification 6: lifting constraint   L4_2_group4     == L4_2_group5 and L4_1_group4     == L4_1_group5 (otherwise redudancy due to chain)----
+mod_DIS_weakinvariance_group_constraints_6 <- '
+### Measurement invariance constraints
+## Within time & across group
+# Factor loadings
+# L4_1_group4 == L4_1_group5
+# L5_1_group4 == L5_1_group5
+# L6_1_group4 == L6_1_group5
+
+# L4_2_group4 == L4_2_group5
+# L5_2_group4 == L5_2_group5
+# L6_2_group4 == L6_2_group5
+
+# L7_1_group5 == L7_1_group6
+# L8_1_group5 == L8_1_group6
+L9_1_group5 == L9_1_group6
+
+# L7_2_group5 == L7_2_group6
+# L8_2_group5 == L8_2_group6
+L9_2_group5 == L9_2_group6
+'
+
+### Specify scaling constraints measurement invariance across groups ----
+mod_DIS_weakinvariance_time_group_scalingconstraints_1 <- '
+### Scaling constraints
+## Factor variance
+F1_1_group4 == 1
+F1_1_group5 == 1
+# F1_1_group6 == 1
+
+## Factor average
+A1_group4 == 0
+A1_group5 == 0
+# A1_group6 == 0
+'
+
+### Specify full weak invariance model -----
+mod_DIS_weakinvariance_time_group_6 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_configural_covariancestructure,
+  mod_DIS_weakinvariance_time_group_scalingconstraints_1,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_6
+)
+
+### Fit and inspect model 6 ----
+fit_DIS_weakinvariance_time_group_6 <- lavaan(mod_DIS_weakinvariance_time_group_6,
+                                              data = data,
+                                              cluster = "class_ID",
+                                              group = "Leerjaar",
+                                              group.label = c('4', '5', '6'),
+                                              missing = "FIML"
+)
+
+anova(
+  fit_DIS_weakinvariance_time_group_5,
+  fit_DIS_weakinvariance_time_group_6
+) # No significant improvement of model fit
+# lavTestLRT(
+#    fit_DIS_weakinvariance_time_0,
+# fit_DIS_weakinvariance_time_1
+#   method = "satorra.bentler.2010"
+#   ) # Significant improvement of model fit
+fitMeasures(
+  fit_DIS_weakinvariance_time_group_6,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) |> print(nd = 8)# satisfactory fit
+
+#### Extract factor scores for dosage paper ----
+##### Factor scores
+# discrete_factor_predicted <- lavPredict(fit_DIS_weakinvariance_time_group_6,
+#            assemble = T
+#            ) |> as_tibble()
+# ##### Original place in data
+# case_idx <- lavInspect(fit_DIS_weakinvariance_time_group_6, "case.idx") |> unlist() |> as_tibble_col(column_name = 'row_number')
+# data_discrete <- discrete_factor_predicted |>
+#   bind_cols(
+#     case_idx
+#   )
+# ##### Add student_ID
+# data_discrete$student_ID <- data$Leerlingnummer[data_discrete$row_number]
+# ##### Rename and select data
+# data_discrete <- data_discrete |>
+#   rename(
+#     fluency_discrete_pre = read_factor_pre,
+#     fluency_discrete_post = read_factor_post,
+#   ) |>
+#   dplyr::select(
+#     !c(Leerjaar, row_number)
+#   )
+# ##### Write data
+# saveRDS(
+#   data_discrete,
+#   paste0(
+#     "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - dosage/R project - dosage paper/input/",
+#     "data_discrete.rds"
+#   )
+# )
+
+### Inspect modification indices ----
+# Modification indices for factor loading across measurements
+# lavTestScore(fit_DIS_weakinvariance_time_group_0, epc = F) |>
+#   as.data.frame() |>
+#   arrange(
+#     desc(uni.X2)
+#   ) |>
+#   filter(
+#     substring(uni.lhs, 1, 1) == 'L',
+#     str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+#     uni.p.value < .05
+#   ) |>
+#   slice_head(n = 10)
+
+# Modification indices for factor loading across groups
+lavTestScore(fit_DIS_weakinvariance_time_group_6, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    # uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L4_2_group4     == L4_2_group5
+
+## Main intervention effect ----
+### Specifying path model ----
+mod_DIS_path_intervention_unconstrained <- '
+group: group_4
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+read_factor_pre ~~ intervention
+
+# path model
+read_factor_post ~ intervention + read_factor_pre
+
+group: group_5
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+read_factor_pre ~~ intervention
+
+# path model
+read_factor_post ~ intervention + read_factor_pre
+
+group: group_6
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+read_factor_pre ~~ intervention
+
+# path model
+read_factor_post ~ intervention + read_factor_pre
+'
+
+### Specify full model ----
+mod_DIS_maineffect_unconstrained <-  c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_weakinvariance_time_group_scalingconstraints_1,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_6,
+  mod_DIS_path_intervention_unconstrained
+)
+
+### Fit and inspect full model ----
+fit_DIS_maineffect_unconstrained <- lavaan(mod_DIS_maineffect_unconstrained,
+                                           data = data,
+                                           cluster = "class_ID",
+                                           group = "Leerjaar",
+                                           group.label = c('4', '5', '6'),
+                                           missing = "FIML"
+)
+# plot_lavaan(fit_DIS_structuralregression_intervention_unconstrained, where = "browser")
+fitMeasures(
+  fit_DIS_maineffect_unconstrained,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) |> print(nd = 5) # no satisfactory fit
+
+### Inspect measurement invariance across conditions ----
+#### Specify model addition ----
+mod_DIS_constraints_pathinvariance_intervention_0 <- '
+group: group_4
+fluency_101_pre ~ 0*intervention
+fluency_102_pre ~ 0*intervention
+fluency_103_pre ~ 0*intervention
+fluency_104_pre ~ 0*intervention
+fluency_105_pre ~ 0*intervention
+fluency_106_pre ~ 0*intervention
+fluency_101_post ~ 0*intervention
+fluency_102_post ~ 0*intervention
+fluency_103_post ~ 0*intervention
+fluency_104_post ~ 0*intervention
+fluency_105_post ~ 0*intervention
+fluency_106_post ~ 0*intervention
+
+group: group_5
+fluency_104_pre ~ 0*intervention
+fluency_105_pre ~ 0*intervention
+fluency_106_pre ~ 0*intervention
+fluency_107_pre ~ 0*intervention
+fluency_108_pre ~ 0*intervention
+fluency_109_pre ~ 0*intervention
+fluency_104_post ~ 0*intervention
+fluency_105_post ~ 0*intervention
+fluency_106_post ~ 0*intervention
+fluency_107_post ~ 0*intervention
+fluency_108_post ~ 0*intervention
+fluency_109_post ~ 0*intervention
+
+group: group_6
+fluency_107_pre ~ 0*intervention
+fluency_108_pre ~ 0*intervention
+fluency_109_pre ~ 0*intervention
+fluency_110_pre ~ 0*intervention
+fluency_111_pre ~ 0*intervention
+fluency_112_pre ~ 0*intervention
+fluency_107_post ~ 0*intervention
+fluency_108_post ~ 0*intervention
+fluency_109_post ~ 0*intervention
+fluency_110_post ~ 0*intervention
+fluency_111_post ~ 0*intervention
+fluency_112_post ~ 0*intervention
+'
+
+#### Add model addition to final model ----
+mod_DIS_maineffect_unconstrained_invariant_0 <- c(
+    mod_DIS_configural_CFA_3,
+    mod_DIS_weakinvariance_time_group_scalingconstraints_1,
+    mod_DIS_weakinvariance_time_constraints_2,
+    mod_DIS_weakinvariance_group_constraints_6,
+    mod_DIS_path_intervention_unconstrained,
+    mod_DIS_constraints_pathinvariance_intervention_0
+    )
+
+#### Fit and inspect model ----
+fit_DIS_maineffect_unconstrained_invariant_0 <- lavaan(mod_DIS_maineffect_unconstrained_invariant_0,
+                                                       data = data,
+                                                       cluster = "class_ID",
+                                                       group = "Leerjaar",
+                                                       group.label = c('4', '5', '6'),
+                                                       missing = "FIML"
+)
+modificationindices(fit_DIS_maineffect_unconstrained_invariant_0,
+                    sort. = TRUE) |> 
+  filter(
+    op == '~',
+    rhs == 'intervention',
+    # mi >= 9.475 # chi square corresponding to alpha = .05/12 indicators
+  ) #  fluency_105_post  ~ intervention     2 group_5 
+
+#### Specify model addition ----
+mod_DIS_constraints_pathinvariance_intervention_1 <- '
+group: group_4
+fluency_101_pre ~ 0*intervention
+fluency_102_pre ~ 0*intervention
+fluency_103_pre ~ 0*intervention
+fluency_104_pre ~ 0*intervention
+fluency_105_pre ~ 0*intervention
+fluency_106_pre ~ 0*intervention
+fluency_101_post ~ 0*intervention
+fluency_102_post ~ 0*intervention
+fluency_103_post ~ 0*intervention
+fluency_104_post ~ 0*intervention
+fluency_105_post ~ 0*intervention
+fluency_106_post ~ 0*intervention
+
+group: group_5
+fluency_104_pre ~ 0*intervention
+fluency_105_pre ~ 0*intervention
+fluency_106_pre ~ 0*intervention
+fluency_107_pre ~ 0*intervention
+fluency_108_pre ~ 0*intervention
+fluency_109_pre ~ 0*intervention
+fluency_104_post ~ 0*intervention
+fluency_105_post ~ intervention
+fluency_106_post ~ 0*intervention
+fluency_107_post ~ 0*intervention
+fluency_108_post ~ 0*intervention
+fluency_109_post ~ 0*intervention
+
+group: group_6
+fluency_107_pre ~ 0*intervention
+fluency_108_pre ~ 0*intervention
+fluency_109_pre ~ 0*intervention
+fluency_110_pre ~ 0*intervention
+fluency_111_pre ~ 0*intervention
+fluency_112_pre ~ 0*intervention
+fluency_107_post ~ 0*intervention
+fluency_108_post ~ 0*intervention
+fluency_109_post ~ 0*intervention
+fluency_110_post ~ 0*intervention
+fluency_111_post ~ 0*intervention
+fluency_112_post ~ 0*intervention
+'
+
+#### Add model addition to final model ----
+mod_DIS_maineffect_unconstrained_invariant_1 <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_weakinvariance_time_group_scalingconstraints_1,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_6,
+  mod_DIS_path_intervention_unconstrained,
+  mod_DIS_constraints_pathinvariance_intervention_1
+)
+
+#### Fit and inspect model ----
+fit_DIS_maineffect_unconstrained_invariant_1 <- lavaan(mod_DIS_maineffect_unconstrained_invariant_1,
+                                                       data = data,
+                                                       cluster = "class_ID",
+                                                       group = "Leerjaar",
+                                                       group.label = c('4', '5', '6'),
+                                                       missing = "FIML"
+)
+fitMeasures(
+  fit_DIS_maineffect_unconstrained_invariant_1,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) |> print(nd = 5) # satisfactory fit
+
+modificationindices(fit_DIS_maineffect_unconstrained_invariant_1,
+                    sort. = TRUE) |> 
+  filter(
+    op == '~',
+    rhs == 'intervention',
+    mi >= 9.475 # chi square corresponding to alpha = .05/12 indicators
+  ) #  No modifications necessary
+
+### Inspecting final unconstrained path model ----
+fitmeasures(fit_DIS_maineffect_unconstrained_invariant_1)[c('cfi', 'df', 'chisq', 'rmsea', 'pvalue')]
+summary(fit_DIS_maineffect_unconstrained_invariant_1, std = T)
+# plot_lavaan(fit_DIS_maineffect_unconstrained_invariant_0, where = "browser")
+
+### Testing equality of main intervention effect ----
+#### Specifying constrained path model ----
+mod_DIS_path_intervention_constrained <- '
+group: group_4
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+read_factor_pre ~~ intervention
+
+# path model
+read_factor_post ~ a*intervention + read_factor_pre
+
+group: group_5
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+read_factor_pre ~~ intervention
+
+# path model
+read_factor_post ~ a*intervention + read_factor_pre
+
+group: group_6
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+read_factor_pre ~~ intervention
+
+# path model
+read_factor_post ~ a*intervention + read_factor_pre
+'
+
+#### Specify full model constrained ----
+mod_DIS_maineffect_constrained <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_weakinvariance_time_group_scalingconstraints_1,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_6,
+  mod_DIS_constraints_pathinvariance_intervention_1,
+  mod_DIS_path_intervention_constrained
+)
+
+#### Fit and inspect model ----
+fit_DIS_maineffect_constrained <- lavaan(mod_DIS_maineffect_constrained,
+                                         data = data,
+                                         cluster = "class_ID",
+                                         group = "Leerjaar",
+                                         group.label = c('4', '5', '6'),
+                                         missing = "FIML"
+)
+anova(
+  fit_DIS_maineffect_constrained,
+  fit_DIS_maineffect_unconstrained_invariant_1
+) # significant decrease in model fit
+
+### Not inspecting final unconstrained path model ----
+# fitmeasures(fit_DIS_maineffect_constrained)[c('cfi', 'df', 'chisq', 'rmsea')]
+# summary(fit_DIS_maineffect_constrained, std = T)
+
+## Condition effects ----
+### Specifying path model ----
+mod_DIS_path_condition_unconstrained <- '
+group: group_4
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+read_factor_pre ~~ condition_led
+read_factor_pre ~~ condition_comb
+
+# path model
+read_factor_post ~ condition_led + condition_comb + read_factor_pre
+
+group: group_5
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+read_factor_pre ~~ condition_led
+read_factor_pre ~~ condition_comb
+
+# path model
+read_factor_post ~ condition_led + condition_comb + read_factor_pre
+
+group: group_6
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+read_factor_pre ~~ condition_led
+read_factor_pre ~~ condition_comb
+
+# path model
+read_factor_post ~ condition_led + condition_comb + read_factor_pre
+'
+
+### Specify full model ----
+mod_DIS_conditioneffect_unconstrained <- c(
+    mod_DIS_configural_CFA_3,
+    mod_DIS_weakinvariance_time_group_scalingconstraints_1,
+    mod_DIS_weakinvariance_time_constraints_2,
+    mod_DIS_weakinvariance_group_constraints_6,
+    mod_DIS_path_condition_unconstrained
+  )
+
+### Fit and inspect full model ----
+fit_DIS_conditioneffect_unconstrained <- lavaan(mod_DIS_conditioneffect_unconstrained,
+                                                data = data,
+                                                cluster = "class_ID",
+                                                group = "Leerjaar",
+                                                group.label = c('4', '5', '6'),
+                                                missing = "FIML"
+)
+# plot_lavaan(fit_DIS_structuralregression_intervention_unconstrained, where = "browser")
+fitMeasures(
+  fit_DIS_conditioneffect_unconstrained,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # satisfactory fit
+
+### Inspect measurement invariance across conditions ----
+#### Specify model addition ----
+mod_DIS_constraints_pathinvariance_condition_0 <- '
+group: group_4
+fluency_101_pre ~ 0*condition_led
+fluency_102_pre ~ 0*condition_led
+fluency_103_pre ~ 0*condition_led
+fluency_104_pre ~ 0*condition_led
+fluency_105_pre ~ 0*condition_led
+fluency_106_pre ~ 0*condition_led
+fluency_101_post ~ 0*condition_led
+fluency_102_post ~ 0*condition_led
+fluency_103_post ~ 0*condition_led
+fluency_104_post ~ 0*condition_led
+fluency_105_post ~ 0*condition_led
+fluency_106_post ~ 0*condition_led
+fluency_101_pre ~ 0*condition_comb
+fluency_102_pre ~ 0*condition_comb
+fluency_103_pre ~ 0*condition_comb
+fluency_104_pre ~ 0*condition_comb
+fluency_105_pre ~ 0*condition_comb
+fluency_106_pre ~ 0*condition_comb
+fluency_101_post ~ 0*condition_comb
+fluency_102_post ~ 0*condition_comb
+fluency_103_post ~ 0*condition_comb
+fluency_104_post ~ 0*condition_comb
+fluency_105_post ~ 0*condition_comb
+fluency_106_post ~ 0*condition_comb
+
+group: group_5
+fluency_104_pre ~ 0*condition_led
+fluency_105_pre ~ 0*condition_led
+fluency_106_pre ~ 0*condition_led
+fluency_107_pre ~ 0*condition_led
+fluency_108_pre ~ 0*condition_led
+fluency_109_pre ~ 0*condition_led
+fluency_104_post ~ 0*condition_led
+fluency_105_post ~ 0*condition_led
+fluency_106_post ~ 0*condition_led
+fluency_107_post ~ 0*condition_led
+fluency_108_post ~ 0*condition_led
+fluency_109_post ~ 0*condition_led
+fluency_104_pre ~ 0*condition_comb
+fluency_105_pre ~ 0*condition_comb
+fluency_106_pre ~ 0*condition_comb
+fluency_107_pre ~ 0*condition_comb
+fluency_108_pre ~ 0*condition_comb
+fluency_109_pre ~ 0*condition_comb
+fluency_104_post ~ 0*condition_comb
+fluency_105_post ~ 0*condition_comb
+fluency_106_post ~ 0*condition_comb
+fluency_107_post ~ 0*condition_comb
+fluency_108_post ~ 0*condition_comb
+fluency_109_post ~ 0*condition_comb
+
+group: group_6
+fluency_107_pre ~ 0*condition_led
+fluency_108_pre ~ 0*condition_led
+fluency_109_pre ~ 0*condition_led
+fluency_110_pre ~ 0*condition_led
+fluency_111_pre ~ 0*condition_led
+fluency_112_pre ~ 0*condition_led
+fluency_107_post ~ 0*condition_led
+fluency_108_post ~ 0*condition_led
+fluency_109_post ~ 0*condition_led
+fluency_110_post ~ 0*condition_led
+fluency_111_post ~ 0*condition_led
+fluency_112_post ~ 0*condition_led
+fluency_107_pre ~ 0*condition_comb
+fluency_108_pre ~ 0*condition_comb
+fluency_109_pre ~ 0*condition_comb
+fluency_110_pre ~ 0*condition_comb
+fluency_111_pre ~ 0*condition_comb
+fluency_112_pre ~ 0*condition_comb
+fluency_107_post ~ 0*condition_comb
+fluency_108_post ~ 0*condition_comb
+fluency_109_post ~ 0*condition_comb
+fluency_110_post ~ 0*condition_comb
+fluency_111_post ~ 0*condition_comb
+fluency_112_post ~ 0*condition_comb
+'
+
+#### Add model addition to final model ----
+mod_DIS_conditioneffect_unconstrained_invariant_0 <- c(
+    mod_DIS_configural_CFA_3,
+    mod_DIS_weakinvariance_time_group_scalingconstraints_1,
+    mod_DIS_weakinvariance_time_constraints_2,
+    mod_DIS_weakinvariance_group_constraints_6,
+    mod_DIS_path_condition_unconstrained,
+    mod_DIS_constraints_pathinvariance_condition_0
+  )
+
+#### Fit and inspect model ----
+fit_DIS_conditioneffect_unconstrained_invariant_0 <- lavaan(mod_DIS_conditioneffect_unconstrained_invariant_0,
+                                                            data = data,
+                                                            cluster = "class_ID",
+                                                            group = "Leerjaar",
+                                                            group.label = c('4', '5', '6'),
+                                                            missing = "FIML"
+)
+modificationindices(fit_DIS_conditioneffect_unconstrained_invariant_0,
+                    sort. = TRUE) |> 
+  filter(
+    op == '~',
+    str_detect(rhs, 'condition'),
+    mi >= 9.475 # chi square corresponding to alpha = .05/12 indicators
+  ) #  no modifications
+
+
+### Inspecting final unconstrained path model ----
+fitmeasures(fit_DIS_conditioneffect_unconstrained)[c('cfi', 'df', 'chisq', 'rmsea', 'pvalue')]
+summary(fit_DIS_conditioneffect_unconstrained, std = T)
+
+### Constraining condition effects ----
+#### Equal condition effects within grades ----
+##### Specify path model ----
+mod_DIS_path_condition_constrainedacrossconditions <- '
+group: group_4
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+read_factor_pre ~~ condition_led
+read_factor_pre ~~ condition_comb
+
+# path model
+read_factor_post ~ a*condition_led + a*condition_comb + read_factor_pre
+
+group: group_5
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+read_factor_pre ~~ condition_led
+read_factor_pre ~~ condition_comb
+
+# path model
+read_factor_post ~ b*condition_led + b*condition_comb + read_factor_pre
+
+group: group_6
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+read_factor_pre ~~ condition_led
+read_factor_pre ~~ condition_comb
+
+# path model
+read_factor_post ~ c*condition_led + c*condition_comb + read_factor_pre
+'
+
+##### Add model addition to final model ----
+mod_DIS_conditioneffect_constrainedacrossconditions <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_weakinvariance_time_group_scalingconstraints_1,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_6,
+  mod_DIS_path_condition_constrainedacrossconditions
+)
+
+##### Fit and inspect model ----
+fit_DIS_conditioneffect_constrainedacrossconditions <- lavaan(mod_DIS_conditioneffect_constrainedacrossconditions,
+                                                              data = data,
+                                                              cluster = "class_ID",
+                                                              group = "Leerjaar",
+                                                              group.label = c('4', '5', '6'),
+                                                              missing = "FIML"
+)
+anova(
+  fit_DIS_conditioneffect_unconstrained,
+  fit_DIS_conditioneffect_constrainedacrossconditions
+) # no significant decrease of model fit
+
+##### Inspecting final constrained path model ----
+fitmeasures(fit_DIS_conditioneffect_constrainedacrossconditions)[c('cfi', 'df', 'chisq', 'rmsea')]
+summary(fit_DIS_conditioneffect_constrainedacrossconditions, std = T)
+
+#### Equal condition effects across grades ----
+##### Specify path model ----
+mod_DIS_path_condition_constrainedacrossgrades <- '
+group: group_4
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+read_factor_pre ~~ condition_led
+read_factor_pre ~~ condition_comb
+
+# path model
+read_factor_post ~ a*condition_led + b*condition_comb + read_factor_pre
+
+group: group_5
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+read_factor_pre ~~ condition_led
+read_factor_pre ~~ condition_comb
+
+# path model
+read_factor_post ~ a*condition_led + b*condition_comb + read_factor_pre
+
+group: group_6
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+read_factor_pre ~~ condition_led
+read_factor_pre ~~ condition_comb
+
+# path model
+read_factor_post ~ a*condition_led + b*condition_comb + read_factor_pre
+'
+
+##### Add model addition to final model ----
+mod_DIS_conditioneffect_constrainedacrossgrades <- c(
+  mod_DIS_configural_CFA_3,
+  mod_DIS_weakinvariance_time_group_scalingconstraints_1,
+  mod_DIS_weakinvariance_time_constraints_2,
+  mod_DIS_weakinvariance_group_constraints_6,
+  mod_DIS_path_condition_constrainedacrossgrades
+)
+
+##### Fit and inspect model ----
+fit_DIS_conditioneffect_constrainedacrossgrades <- lavaan(mod_DIS_conditioneffect_constrainedacrossgrades,
+                                                          data = data,
+                                                          cluster = "class_ID",
+                                                          group = "Leerjaar",
+                                                          group.label = c('4', '5', '6'),
+                                                          missing = "FIML"
+)
+anova(
+  fit_DIS_conditioneffect_unconstrained,
+  fit_DIS_conditioneffect_constrainedacrossgrades
+) # significant decrease of model fit
+
+##### Not inspecting final constrained path model ----
+# fitmeasures(fit_DIS_conditioneffect_constrainedacrossgrades)[c('cfi', 'df', 'chisq', 'rmsea')]
+# summary(fit_DIS_conditioneffect_constrainedacrossgrades, std = T)
+
+## Summary of results ----
+### Main effect ----
+# Unconstrained model: 
+# A positive effect of intervention on DIS fluency at postmeasurement for group 5
+# And an additional positive effect of intervention on word set 5 for group 5
+parameterestimates(
+  fit_DIS_maineffect_unconstrained_invariant_1,
+  standardized = T
+) |> 
+  filter(
+    str_detect(rhs, 'intervention'),
+    op == '~',
+    str_detect(lhs, 'factor') | str_detect(lhs, '5_post') 
+    # pvalue < .05
+  )
+
+# significant difference in intervention effect between grades:
+anova(
+  fit_DIS_maineffect_unconstrained_invariant_1,
+  fit_DIS_maineffect_constrained
+)
+
+### Condition effects ----
+# Unconstrained model: 
+# A positive effect of condition_LED and of condition_comb on DIS fluency at postmeasurement for group 5
+parameterestimates(
+  fit_DIS_conditioneffect_unconstrained_invariant_0,
+  standardized = T
+) |> 
+  filter(
+    str_detect(rhs, 'condition'),
+    op == '~',
+    str_detect(lhs, 'factor')
+    # pvalue < .05
+  )
+
+# No significant differences between condition_LED and condition_comb effects within groups: 
+# significant effect of condition_LED and condition_comb on accuracy at postreading for group 5.
+anova(
+  fit_DIS_conditioneffect_unconstrained_invariant_0,
+  fit_DIS_conditioneffect_constrainedacrossconditions
+)
+
+# Estimates table ----
+estimates_DIS_maineffect_unconstrained <- format_parameter_table(
+  model_fit = fit_DIS_maineffect_unconstrained,
+  rhs_filter = 'intervention',
+  lhs_filter = 'factor'
+)
+
+# estimates_DIS_maineffect_constrainedgrades <- format_parameter_table(
+#   model_fit = fit_DIS_maineffect_constrained,
+#   rhs_filter = 'intervention',
+#   lhs_filter = 'factor'
+# )
+
+estimates_DIS_condeffect_unconstrained <- format_parameter_table(
+  model_fit = fit_DIS_conditioneffect_unconstrained,
+  rhs_filter = 'condition',
+  lhs_filter = 'factor'
+)
+
+# estimates_DIS_condeffect_constrainedconditions <- format_parameter_table(
+#   model_fit = fit_DIS_conditioneffect_constrainedacrossconditions,
+#   rhs_filter = 'condition',
+#   lhs_filter = 'factor'
+# )
+# 
+# estimates_DIS_condeffect_constrainedgrades <- format_parameter_table(
+#   model_fit = fit_DIS_conditioneffect_constrainedacrossgrades,
+#   rhs_filter = 'condition',
+#   lhs_filter = 'factor'
+# )
+
+estimates_DIS_maineffect_models <- bind_rows(
+  estimates_DIS_maineffect_unconstrained,
+  # estimates_DIS_maineffect_constrainedgrades
+) |> add_row(Dummy = 'Main Effects Model', .before = 1)
+
+estimates_DIS_conditioneffect_models <- 
+  bind_rows(
+    estimates_DIS_condeffect_unconstrained,
+    # estimates_DIS_condeffect_constrainedgrades,
+  ) |>
+  arrange(
+    desc(Dummy)
+  ) |> 
+  bind_rows(
+    # estimates_DIS_condeffect_constrainedconditions |> arrange(Grade)
+  ) |> 
+  add_row(Dummy = 'Condition Effects Model', .before = 1)
+
+estimates_DIS_allmodels <- bind_rows(
+  estimates_DIS_maineffect_models,
+  estimates_DIS_conditioneffect_models
+) |> 
+  mutate(
+    Dummy = if_else(
+      (Dummy == lag(Dummy)) & !is.na(lag(Dummy)),
+      NA,
+      Dummy
+    ),
+    Grade = if_else(
+      (Grade == lag(Grade)) & !is.na(lag(Grade)),
+      NA,
+      Grade
+    ),
+  )
+
+estimates_DIS_allmodels |> 
+  write.table(
+    file = "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - RCT effect flits/Manuscript/Tables and Figures/parameter_estimates_DIS_models.csv",
+    sep = ";",
+    row.names = F
+  )
+
+
+
+
