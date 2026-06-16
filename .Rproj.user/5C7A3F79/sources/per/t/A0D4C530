@@ -1,26 +1,26 @@
 {
-    "id": "050720EB",
+    "id": "A0D4C530",
     "path": "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - dosage/R project - dosage paper/analyses/08_analyses_drafts.R",
     "project_path": "analyses/08_analyses_drafts.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "749530816",
     "contents": "",
     "dirty": false,
-    "created": 1781094896933.0,
+    "created": 1781534613663.0,
     "source_on_save": false,
-    "relative_order": 3,
+    "relative_order": 1,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "189,25",
-        "scrollLine": "184"
+        "cursorPosition": "440,16",
+        "scrollLine": "436"
     },
     "folds": "",
-    "lastKnownWriteTime": 1781099412,
+    "lastKnownWriteTime": 1781536794,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1781099412866,
+    "last_content_update": 1781536794765,
     "read_only": false,
     "read_only_alternatives": []
 }

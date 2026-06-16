@@ -99,10 +99,10 @@ data |>
 data_descriptives_fullsample <- data |>
   dplyr::select(
     grade,
-    practice_cii_words_exposures,
-    practice_cii_words_accurate_anytry,
-    practice_accuracy_anytry,
-    practice_cii_time,
+    words_exposures,
+    words_accurate_anytry,
+    accuracy_anytry,
+    time,
     contains('fluency'),
   ) |> 
   pivot_longer(
@@ -125,10 +125,10 @@ data_descriptives_fullsample <- data |>
 data_descriptives_grades <- data |>
   dplyr::select(
     grade,
-    practice_cii_words_exposures,
-    practice_cii_words_accurate_anytry,
-    practice_accuracy_anytry,
-    practice_cii_time,
+    words_exposures,
+    words_accurate_anytry,
+    accuracy_anytry,
+    time,
     contains('fluency'),
   ) |> 
   pivot_longer(
@@ -152,18 +152,17 @@ data_descriptives_grades <- data |>
 data |>
   dplyr::select(
     grade,
-    practice_cii_words_exposures,
-    practice_cii_words_accurate_anytry,
-    practice_accuracy_anytry,
-    practice_cii_time,
+    words_exposures,
+    words_accurate_anytry,
+    accuracy_anytry,
+    time,
     contains('fluency'),
   ) |> 
   pivot_longer(
     !grade
   ) |> 
   mutate(
-    name = str_remove(name, 'fluency_'),
-    name = str_remove(name, 'practice_')
+    name = str_remove(name, 'fluency_')
     ) |> 
   ggplot(
     aes(
@@ -180,7 +179,7 @@ data |>
 cors <- data |> 
   dplyr::select(
     contains('cii_'),
-    contains('practice_accuracy'),
+    contains('accuracy'),
     contains('score') & !contains('mid')
   ) |> 
   cor(
@@ -193,7 +192,7 @@ data |>
   dplyr::select(
     grade,
     contains('cii_'),
-    contains('practice_accuracy'),
+    contains('accuracy'),
     contains('score') & !contains('mid')
   ) |> 
   filter(
@@ -204,7 +203,7 @@ data |>
 data |> 
   dplyr::select(
     contains('cii_'),
-    contains('practice_accuracy'),
+    contains('accuracy'),
     contains('score') & !contains('mid')
   ) |> 
   pivot_longer(
@@ -213,7 +212,7 @@ data |>
     values_to = "value"
   ) |> 
   mutate(
-    variable = str_remove(variable, 'practice_') |> as_factor()
+    variable = str_remove(variable, '') |> as_factor()
   ) |> 
   ggplot(
     aes(
@@ -229,7 +228,7 @@ data |>
 data |> 
   ggplot(
     aes(
-      x = practice_accuracy_firsttry
+      x = accuracy_firsttry
     )
   ) + geom_histogram() +
   facet_grid(~grade)
@@ -237,8 +236,8 @@ data |>
 data |> 
   ggplot(
     aes(
-      x = practice_cii_words_unique,
-      y = practice_accuracy_firsttry,
+      x = words_unique,
+      y = accuracy_firsttry,
     )
   ) + 
   geom_point() +
@@ -247,8 +246,8 @@ data |>
 data |> 
   ggplot(
     aes(
-      x = practice_cii_words_accurate_firsttry,
-      y = practice_cii_words_attempts,
+      x = words_accurate_firsttry,
+      y = words_attempts,
     )
   ) + 
   geom_abline(intercept = 0, slope = 2, color = 'grey') +
@@ -262,6 +261,6 @@ data |>
     grade == 'grade_4'
   ) |> 
   mutate(
-    threshold = practice_accuracy_firsttry < .80
+    threshold = accuracy_firsttry < .80
   ) |> pull(threshold)
 
