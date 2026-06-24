@@ -11,15 +11,37 @@ library(readxl)
 library(here)
 
 # Load data ----
+## Data from words
 data_logs_words <- read.csv(
   "C:/Users/RSCHONE/researchdrive/RICDE-FMG-3578-Flits-Tutorlezen (Projectfolder)/data_analyse/Oefendata logs Flits! Tutorlezen/originals/df_words.csv"
-)
+) |> as_tibble() |> 
+  rename(
+    'CourseProgressId' = courseprogessid
+  ) 
+
+## Data from practice logs
+data_logs_raw <- read_xlsx(
+  here('input/logs_lessons_anonymous.xlsx')
+) |> 
+  dplyr::select(
+    CourseProgressId, Duration
+  )
+
+# Join duration to data_logs_words ----
+data_logs_words <- data_logs_words |> 
+  left_join(
+    data_logs_raw
+  )
+
+# Filter lessons based on duration
+data_logs_words <- data_logs_words |> 
+  filter(
+    Duration > 0,
+    Duration < 15 * 60
+  )
 
 # Summarise data ----
 data_logs_lesson_dose <- data_logs_words |> 
-  rename(
-    'CourseProgressId' = courseprogessid
-  ) |> 
   mutate(
     accurate_firsttry = if_else(
       tries == 1 & audioplays == 0,

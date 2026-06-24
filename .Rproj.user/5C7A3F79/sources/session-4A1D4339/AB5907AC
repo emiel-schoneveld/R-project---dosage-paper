@@ -1,0 +1,26 @@
+{
+    "id": "AB5907AC",
+    "path": "C:/Users/RSCHONE/OneDrive - UvA/Flits!/RCT/analyse/Rscript/paper main analyses/Pseudo models.R",
+    "project_path": null,
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1782311334803.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "191,9",
+        "scrollLine": "187"
+    },
+    "folds": "0|16|0|20|\n1|20|93|0|\n94|23|109|0|\n110|33|130|0|\n221|32|230|0|\n231|47|246|0|\n247|23|255|0|\n256|26|269|0|\n270|33|283|0|\n284|126|299|0|\n300|23|308|0|\n309|26|340|0|\n341|124|356|0|\n357|31|407|0|\n408|123|450|0|\n451|28|451|32|\n452|26|492|0|\n507|53|507|57|\n508|28|528|0|\n529|39|534|0|\n535|27|550|0|\n551|46|555|0|\n556|49|556|53|\n557|39|597|0|\n598|31|616|0|\n617|21|617|25|\n618|26|662|0|\n663|23|670|0|\n671|31|684|0|\n685|53|685|57|\n686|28|718|0|\n719|39|724|0|\n725|27|740|0|\n741|46|745|0|\n746|43|746|47|\n747|25|791|0|\n792|25|799|0|\n800|31|819|0|\n820|22|863|0|\n",
+    "lastKnownWriteTime": 1782311776,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1782311776214,
+    "read_only": false,
+    "read_only_alternatives": []
+}

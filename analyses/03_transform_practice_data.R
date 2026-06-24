@@ -70,6 +70,10 @@ data_logs_lesson <- data_logs_lesson |>
   )
 
 ## Filter out lessons with invalid dates ----
+### Save number of lesson logs before filter
+lesson_logs_before_datefilter <- data_logs_lesson |> nrow()
+
+### Filter based on date
 data_logs_lesson <- data_logs_lesson |> 
   filter(
     # Delete all lessons that do not have start or enddate
@@ -85,6 +89,25 @@ data_logs_lesson <- data_logs_lesson |>
     lesson_date > wordreading_date_pre,
     lesson_date < wordreading_date_post
   )
+
+### calculate filtered out lesson logs
+lesson_logs_after_datefilter <- data_logs_lesson |> nrow()
+lesson_logs_before_datefilter - lesson_logs_after_datefilter
+
+## Filter out lessons based on duration ----
+### Store lessons before filter
+lesson_logs_before_durationfilter <- data_logs_lesson |> nrow()
+
+### filter based on duration (at least one second, and less than 15 minutes)
+data_logs_lesson <- data_logs_lesson |> 
+  filter(
+    Duration > 0,
+    Duration < 15 * 60
+  )
+
+### Calculate lessons filtered by duration
+lesson_logs_after_durationfilter <- data_logs_lesson |> nrow()
+lesson_logs_before_durationfilter - lesson_logs_after_durationfilter
 
 ## Compute lesson duration ----
 data_logs_lesson <- data_logs_lesson |> 
@@ -137,11 +160,19 @@ data_logs_session <- data_logs_session |>
   )
 
 ## Filter by session length ----
+### Store number of logged sessions before filtering on session length
+session_logs_before_lengthfilter <- data_logs_session |> nrow()
+
+### filter on session length
 data_logs_session <- data_logs_session |> 
   filter(
     session_length >= min_session_length,
     session_length <= max_session_length,
   )
+
+### Calculate filtered out sessions based on session length
+session_logs_after_lengthfilter <- data_logs_session |> nrow()
+session_logs_before_lengthfilter - session_logs_after_lengthfilter
 
 ## Compute student level variables ----
 ### Session length, words read, accuracy and total time ----

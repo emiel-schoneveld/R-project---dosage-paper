@@ -1,0 +1,863 @@
+# Pseudo models ----
+## configural_model ----
+mod_PSEUDO_configural_cfa <- '
+group: group_4
+## Common factor structure
+# Common factor factor loadings
+PSEUDO_pre =~ L1_1_group4*pseudo_score_A_pre + L2_1_group4*pseudo_score_B_pre
+PSEUDO_post =~ L1_2_group4*pseudo_score_A_post + L2_2_group4*pseudo_score_B_post
+
+# Common factor variances
+PSEUDO_pre ~~ F1_1_group4*PSEUDO_pre
+PSEUDO_post ~~ F2_2_group4*PSEUDO_post
+
+# Common factor intercepts
+PSEUDO_pre ~ A1_group4*1
+PSEUDO_post ~ A2_group4*1
+
+# Indicator residual variances
+pseudo_score_A_pre ~~ pseudo_score_A_pre
+pseudo_score_B_pre ~~ pseudo_score_B_pre
+pseudo_score_A_post ~~ pseudo_score_A_post
+pseudo_score_B_post ~~ pseudo_score_B_post
+
+# Indicator intercepts
+pseudo_score_A_pre ~ 1
+pseudo_score_B_pre ~ 1
+pseudo_score_A_post ~ 1
+pseudo_score_B_post ~ 1
+
+group: group_5
+## Common factor structure
+# Common factor factor loadings
+PSEUDO_pre =~ L1_1_group5*pseudo_score_A_pre + L2_1_group5*pseudo_score_B_pre
+PSEUDO_post =~ L1_2_group5*pseudo_score_A_post + L2_2_group5*pseudo_score_B_post
+
+# Common factor variances
+PSEUDO_pre ~~ F1_1_group5*PSEUDO_pre
+PSEUDO_post ~~ F2_2_group5*PSEUDO_post
+
+# Common factor intercepts
+PSEUDO_pre ~ A1_group5*1
+PSEUDO_post ~ A2_group5*1
+
+# Indicator residual variances
+pseudo_score_A_pre ~~ pseudo_score_A_pre
+pseudo_score_B_pre ~~ pseudo_score_B_pre
+pseudo_score_A_post ~~ pseudo_score_A_post
+pseudo_score_B_post ~~ pseudo_score_B_post
+
+# Indicator intercepts
+pseudo_score_A_pre ~ 1
+pseudo_score_B_pre ~ 1
+pseudo_score_A_post ~ 1
+pseudo_score_B_post ~ 1
+
+group: group_6
+## Common factor structure
+# Common factor factor loadings
+PSEUDO_pre =~ L1_1_group6*pseudo_score_A_pre + L2_1_group6*pseudo_score_B_pre
+PSEUDO_post =~ L1_2_group6*pseudo_score_A_post + L2_2_group6*pseudo_score_B_post
+
+# Common factor variances
+PSEUDO_pre ~~ F1_1_group6*PSEUDO_pre
+PSEUDO_post ~~ F2_2_group6*PSEUDO_post
+
+# Common factor intercepts
+PSEUDO_pre ~ A1_group6*1
+PSEUDO_post ~ A2_group6*1
+
+# Indicator residual variances
+pseudo_score_A_pre ~~ pseudo_score_A_pre
+pseudo_score_B_pre ~~ pseudo_score_B_pre
+pseudo_score_A_post ~~ pseudo_score_A_post
+pseudo_score_B_post ~~ pseudo_score_B_post
+
+# Indicator intercepts
+pseudo_score_A_pre ~ 1
+pseudo_score_B_pre ~ 1
+pseudo_score_A_post ~ 1
+pseudo_score_B_post ~ 1
+'
+
+## Configural covariance structure
+mod_PSEUDO_configural_covariance <- '
+group: group_4
+PSEUDO_pre ~~ F1_2_group4*PSEUDO_post
+
+group: group_5
+PSEUDO_pre ~~ F1_2_group5*PSEUDO_post
+
+group: group_6
+PSEUDO_pre ~~ F1_2_group6*PSEUDO_post
+'
+
+## Scaling constraints ----
+mod_PSEUDO_configural_scalingconstraints <- '
+F1_1_group4 == 1
+F2_2_group4 == 1
+A1_group4 == 0
+A2_group4 == 0
+F1_1_group5 == 1
+F2_2_group5 == 1
+A1_group5 == 0
+A2_group5 == 0
+F1_1_group6 == 1
+F2_2_group6 == 1
+A1_group6 == 0
+A2_group6 == 0
+'
+
+## Specify full configural model ----
+mod_PSEUDO_configural <- c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_configural_covariance,
+  mod_PSEUDO_configural_scalingconstraints
+)
+
+# Fit and inspect model
+fit_PSEUDO_configural <- lavaan(mod_PSEUDO_configural,
+                                data = data,
+                                cluster = "class_ID",
+                                group = "Leerjaar",
+                                group.label = c('4', '5', '6'),
+                                missing = "FIML"
+)
+
+summary(fit_PSEUDO_configural, std = T)
+fitMeasures(fit_PSEUDO_configural)[c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')]
+modificationindices(fit_PSEUDO_configural,
+                    sort. = TRUE) %>% head(30) #%>% write_xlsx(path = 'C:/Users/RSCHONE/OneDrive - UvA/Flits!/RCT/rapportage/eindrapportage/Beschrijvende statistieken en uitkomsten/MI.xlsx')
+
+## Weak measurement invariance model across measurements ----
+### Specify measurement invariance constraints
+mod_PSEUDO_weakinvariance_time_constraints_0 <- '
+# Measurement invariance constraints
+## Within groups across measurements
+### Indicator loadings
+L1_1_group4 == L1_2_group4
+L2_1_group4 == L2_2_group4
+L1_1_group5 == L1_2_group5
+L2_1_group5 == L2_2_group5
+L1_1_group6 == L1_2_group6
+L2_1_group6 == L2_2_group6
+'
+
+### Specify scaling constraints
+mod_PSEUDO_weakinvariance_time_scalingconstraints <- '
+F1_1_group4 == 1
+A1_group4 == 0
+F1_1_group5 == 1
+A1_group5 == 0
+F1_1_group6 == 1
+A1_group6 == 0
+'
+
+### Specify full model
+mod_PSEUDO_weakinvariance_time_0 <- c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_configural_covariance,
+  mod_PSEUDO_weakinvariance_time_scalingconstraints,
+  mod_PSEUDO_weakinvariance_time_constraints_0
+)
+
+### Fit and inspect model
+fit_PSEUDO_weakinvariance_time_0 <- lavaan(mod_PSEUDO_weakinvariance_time_0,
+                                           data = data,
+                                           cluster = "class_ID",
+                                           group = "Leerjaar",
+                                           group.label = c('4', '5', '6'),
+                                           missing = "FIML"
+)
+
+fitMeasures(
+  fit_PSEUDO_weakinvariance_time_0,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # fit is satisfactory
+
+lavTestScore(fit_PSEUDO_weakinvariance_time_0, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) == str_sub(uni.rhs, -1, -1),
+    uni.p.value < .05
+  ) |>
+  slice_head(n = 10)
+
+#### Extract factor scores for dosage paper ----
+# #### Factor scores
+# pseudo_factor_predicted <- lavPredict(fit_PSEUDO_weakinvariance_time_0,
+#            assemble = T
+#            ) |> as_tibble()
+# ##### Original place in data
+# case_idx <- lavInspect(fit_PSEUDO_weakinvariance_time_0, "case.idx") |> unlist() |> as_tibble_col(column_name = 'row_number')
+# data_pseudo <- pseudo_factor_predicted |>
+#   bind_cols(
+#     case_idx
+#   )
+# ##### Add student_ID
+# data_pseudo$student_ID <- data$Leerlingnummer[data_pseudo$row_number]
+# ##### Rename and select data
+# data_pseudo <- data_pseudo |>
+#   rename(
+#     fluency_pseudo_pre = PSEUDO_pre,
+#     fluency_pseudo_post = PSEUDO_post,
+#   ) |>
+#   dplyr::select(
+#     !c(Leerjaar, row_number)
+#   )
+# ##### Write data
+# saveRDS(
+#   data_pseudo,
+#   paste0(
+#     "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - dosage/R project - dosage paper/input/",
+#     "data_pseudo.rds"
+#   )
+# )
+
+## Weak measurement invariance model across groups ----
+### Specify scaling constraints ----
+mod_PSEUDO_weakinvariance_time_group_scalingconstraints <- '
+F1_1_group4 == 1
+A1_group4 == 0
+# F1_1_group5 == 1
+# A1_group5 == 0
+# F1_1_group6 == 1
+# A1_group6 == 0
+'
+
+### Specify measurement invariance constraints ----
+mod_PSEUDO_weakinvariance_group_constraints_0 <- '
+# Measurement invariance constraints
+## Across groups within measurements
+### Indicator loadings
+L1_1_group4 == L1_1_group5
+L1_1_group5 == L1_1_group6
+L2_1_group4 == L2_1_group5
+L2_1_group5 == L2_1_group6
+
+L1_2_group4 == L1_2_group5
+L1_2_group5 == L1_2_group6
+L2_2_group4 == L2_2_group5
+L2_2_group5 == L2_2_group6
+'
+
+### Specify full model ----
+mod_PSEUDO_weakinvariance_time_group_0 <- c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_configural_covariance,
+  mod_PSEUDO_weakinvariance_time_constraints_0,
+  mod_PSEUDO_weakinvariance_time_group_scalingconstraints,
+  mod_PSEUDO_weakinvariance_group_constraints_0
+)
+
+### Fit and inspect model ----
+fit_PSEUDO_weakinvariance_time_group_0 <- lavaan(mod_PSEUDO_weakinvariance_time_group_0,
+                                                 data = data,
+                                                 cluster = "class_ID",
+                                                 group = "Leerjaar",
+                                                 group.label = c('4', '5', '6'),
+                                                 missing = "FIML"
+)
+
+fitMeasures(
+  fit_PSEUDO_weakinvariance_time_group_0,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # fit is not satisfactory
+
+### Inspect modification indeces ----
+# Modification indices for factor loading across groups
+lavTestScore(fit_PSEUDO_weakinvariance_time_group_0, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    # uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L1_1_group5     == L1_1_group6 and thus also  L1_2_group5     == L1_2_group6
+
+### Specify measurement invariance constraints - L1_1_group5     == L1_1_group6 and thus also  L1_2_group5     == L1_2_group6 ----
+mod_PSEUDO_weakinvariance_group_constraints_1 <- '
+# Measurement invariance constraints
+## Across groups within measurements
+### Indicator loadings
+L1_1_group4 == L1_1_group5
+# L1_1_group5 == L1_1_group6
+L2_1_group4 == L2_1_group5
+L2_1_group5 == L2_1_group6
+
+L1_2_group4 == L1_2_group5
+# L1_2_group5 == L1_2_group6
+L2_2_group4 == L2_2_group5
+L2_2_group5 == L2_2_group6
+'
+
+### Specify full model ----
+mod_PSEUDO_weakinvariance_time_group_1 <- c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_configural_covariance,
+  mod_PSEUDO_weakinvariance_time_constraints_0,
+  mod_PSEUDO_weakinvariance_time_group_scalingconstraints,
+  mod_PSEUDO_weakinvariance_group_constraints_1
+)
+
+### Fit and inspect model ----
+fit_PSEUDO_weakinvariance_time_group_1 <- lavaan(mod_PSEUDO_weakinvariance_time_group_1,
+                                                 data = data,
+                                                 cluster = "class_ID",
+                                                 group = "Leerjaar",
+                                                 group.label = c('4', '5', '6'),
+                                                 missing = "FIML"
+)
+
+anova(
+  fit_PSEUDO_weakinvariance_time_group_0,
+  fit_PSEUDO_weakinvariance_time_group_1
+) # no significant improvement of model fit
+fitMeasures(
+  fit_PSEUDO_weakinvariance_time_group_1,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # fit is not satisfactory
+
+### Inspect modification indeces
+# Modification indices for factor loading across groups
+lavTestScore(fit_PSEUDO_weakinvariance_time_group_1, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    # uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L2_2_group5     == L2_2_group6 and thus also  L2_1_group5     == L2_1_group6
+
+### Specify measurement invariance constraints L2_2_group5     == L2_2_group6 and thus also  L2_1_group5     == L2_1_group6 ----
+mod_PSEUDO_weakinvariance_group_constraints_2 <- '
+# Measurement invariance constraints
+## Across groups within measurements
+### Indicator loadings
+L1_1_group4 == L1_1_group5
+# L1_1_group5 == L1_1_group6
+L2_1_group4 == L2_1_group5
+# L2_1_group5 == L2_1_group6
+
+L1_2_group4 == L1_2_group5
+# L1_2_group5 == L1_2_group6
+L2_2_group4 == L2_2_group5
+# L2_2_group5 == L2_2_group6
+'
+
+### Specify scaling constrains ----
+mod_PSEUDO_weakinvariance_time_group_scalingconstraints_1 <- '
+F1_1_group4 == 1
+A1_group4 == 0
+# F1_1_group5 == 1
+# A1_group5 == 0
+F1_1_group6 == 1
+A1_group6 == 0
+'
+
+### Specify full model
+mod_PSEUDO_weakinvariance_time_group_2 <- c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_configural_covariance,
+  mod_PSEUDO_weakinvariance_time_constraints_0,
+  mod_PSEUDO_weakinvariance_time_group_scalingconstraints_1,
+  mod_PSEUDO_weakinvariance_group_constraints_2
+)
+
+### Fit and inspect model
+fit_PSEUDO_weakinvariance_time_group_2 <- lavaan(mod_PSEUDO_weakinvariance_time_group_2,
+                                                 data = data,
+                                                 cluster = "class_ID",
+                                                 group = "Leerjaar",
+                                                 group.label = c('4', '5', '6'),
+                                                 missing = "FIML"
+)
+
+anova(
+  fit_PSEUDO_weakinvariance_time_group_1,
+  fit_PSEUDO_weakinvariance_time_group_2
+) # significant improvement of model fit
+fitMeasures(
+  fit_PSEUDO_weakinvariance_time_group_2,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # fit is not satisfactory
+
+### Inspect modification indeces
+# Modification indices for factor loading across groups
+lavTestScore(fit_PSEUDO_weakinvariance_time_group_2, epc = F) |>
+  as.data.frame() |>
+  arrange(
+    desc(uni.X2)
+  ) |>
+  filter(
+    substring(uni.lhs, 1, 1) == 'L',
+    str_sub(uni.lhs, -1, -1) != str_sub(uni.rhs, -1, -1),
+    # uni.p.value < .05
+  ) |>
+  slice_head(n = 10) #  L2_2_group4     == L2_2_group5 and thus also  L2_1_group4     == L2_1_group5
+
+### Specify measurement invariance constraintsL2_2_group4     == L2_2_group5 and thus also  L2_1_group4     == L2_1_group5 ----
+mod_PSEUDO_weakinvariance_group_constraints_3 <- '
+# Measurement invariance constraints
+## Across groups within measurements
+### Indicator loadings
+L1_1_group4 == L1_1_group5
+# L1_1_group5 == L1_1_group6
+# L2_1_group4 == L2_1_group5
+# L2_1_group5 == L2_1_group6
+
+L1_2_group4 == L1_2_group5
+# L1_2_group5 == L1_2_group6
+# L2_2_group4 == L2_2_group5
+# L2_2_group5 == L2_2_group6
+'
+
+### Specify full model
+mod_PSEUDO_weakinvariance_time_group_3 <- c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_configural_covariance,
+  mod_PSEUDO_weakinvariance_time_constraints_0,
+  mod_PSEUDO_weakinvariance_time_group_scalingconstraints_1,
+  mod_PSEUDO_weakinvariance_group_constraints_3
+)
+
+### Fit and inspect model
+fit_PSEUDO_weakinvariance_time_group_3 <- lavaan(mod_PSEUDO_weakinvariance_time_group_3,
+                                                 data = data,
+                                                 cluster = "class_ID",
+                                                 group = "Leerjaar",
+                                                 group.label = c('4', '5', '6'),
+                                                 missing = "FIML"
+)
+
+anova(
+  fit_PSEUDO_weakinvariance_time_group_2,
+  fit_PSEUDO_weakinvariance_time_group_3
+) # significant improvement of model fit
+fitMeasures(
+  fit_PSEUDO_weakinvariance_time_group_3,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # fit is not satisfactory, last modification returns model back to measurement invariance across time, therefore no measurement invariance across groups, only across time
+
+## Main intervention effect ----
+### Specifying path model ----
+mod_PSEUDO_path_intervention_unconstrained <- '
+group: group_4
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+PSEUDO_pre ~~ intervention
+
+# path model
+PSEUDO_post ~ intervention + PSEUDO_pre
+
+group: group_5
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+PSEUDO_pre ~~ intervention
+
+# path model
+PSEUDO_post ~ intervention + PSEUDO_pre
+
+group: group_6
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+PSEUDO_pre ~~ intervention
+
+# path model
+PSEUDO_post ~ intervention + PSEUDO_pre
+' 
+
+### Specify full model
+mod_PSEUDO_maineffect_unconstrained <-  c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_weakinvariance_time_scalingconstraints,
+  mod_PSEUDO_weakinvariance_time_constraints_0,
+  mod_PSEUDO_path_intervention_unconstrained
+)
+
+### Fit and inspect full model ----
+fit_PSEUDO_maineffect_unconstrained <- lavaan(mod_PSEUDO_maineffect_unconstrained,
+                                              data = data,
+                                              cluster = "class_ID",
+                                              group = "Leerjaar",
+                                              group.label = c('4', '5', '6'),
+                                              missing = "FIML"
+)
+# plot_lavaan(fit_LED_structuralregression_intervention_unconstrained, where = "browser")
+fitMeasures(
+  fit_PSEUDO_maineffect_unconstrained,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # satisfactory fit
+
+### Inspect measurement invariance across conditions ----
+#### Specify model addition ----
+mod_PSEUDO_constraints_pathinvariance_intervention_0 <- '
+group: group_4
+pseudo_score_A_pre ~ 0*intervention
+pseudo_score_B_pre ~ 0*intervention
+pseudo_score_A_post ~ 0*intervention
+pseudo_score_B_post ~ 0*intervention
+
+group: group_5
+pseudo_score_A_pre ~ 0*intervention
+pseudo_score_B_pre ~ 0*intervention
+pseudo_score_A_post ~ 0*intervention
+pseudo_score_B_post ~ 0*intervention
+
+group: group_6
+pseudo_score_A_pre ~ 0*intervention
+pseudo_score_B_pre ~ 0*intervention
+pseudo_score_A_post ~ 0*intervention
+pseudo_score_B_post ~ 0*intervention
+'
+
+#### Add model addition to final model ----
+mod_PSEUDO_maineffect_unconstrained_invariant_0 <- c(
+  mod_PSEUDO_maineffect_unconstrained,
+  mod_PSEUDO_constraints_pathinvariance_intervention_0
+)
+
+#### Fit and inspect model ----
+fit_PSEUDO_maineffect_unconstrained_invariant_0 <- lavaan(mod_PSEUDO_maineffect_unconstrained_invariant_0,
+                                                          data = data,
+                                                          cluster = "class_ID",
+                                                          group = "Leerjaar",
+                                                          group.label = c('4', '5', '6'),
+                                                          missing = "FIML"
+)
+modificationindices(fit_PSEUDO_maineffect_unconstrained_invariant_0,
+                    sort. = TRUE) |> 
+  filter(
+    op == '~',
+    rhs == 'intervention',
+    mi >= 6.239 # chi square corresponding to alpha = .05/2 indicators
+  ) #  No modifications necessary
+
+### Inspecting final unconstrained path model ----
+fitmeasures(fit_PSEUDO_maineffect_unconstrained_invariant_0)[c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')]
+summary(fit_PSEUDO_maineffect_unconstrained_invariant_0, std = T)
+# plot_lavaan(fit_PSEUDO_maineffect_unconstrained_invariant_0, where = "browser")
+
+### Testing equality of main intervention effect ----
+#### Specifying constrained path model ----
+mod_PSEUDO_path_intervention_constrained <- '
+group: group_4
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+PSEUDO_pre ~~ intervention
+
+# path model
+PSEUDO_post ~ a*intervention + PSEUDO_pre
+
+group: group_5
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+PSEUDO_pre ~~ intervention
+
+# path model
+PSEUDO_post ~ a*intervention + PSEUDO_pre
+
+group: group_6
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+PSEUDO_pre ~~ intervention
+
+# path model
+PSEUDO_post ~ a*intervention + PSEUDO_pre
+'
+
+### Specify full model
+mod_PSEUDO_maineffect_constrained <-  c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_weakinvariance_time_scalingconstraints,
+  mod_PSEUDO_weakinvariance_time_constraints_0,
+  mod_PSEUDO_path_intervention_constrained
+)
+
+### Fit and inspect full model ----
+fit_PSEUDO_maineffect_constrained <- lavaan(mod_PSEUDO_maineffect_constrained,
+                                            data = data,
+                                            cluster = "class_ID",
+                                            group = "Leerjaar",
+                                            group.label = c('4', '5', '6'),
+                                            missing = "FIML"
+)
+anova(
+  fit_PSEUDO_maineffect_unconstrained,
+  fit_PSEUDO_maineffect_constrained
+) # significant decrease in model fit
+
+# summary(fit_PSEUDO_maineffect_constrained)
+fitMeasures(
+  fit_PSEUDO_maineffect_constrained,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # no satisfactory fit
+
+## Condition effects ----
+### Specifying path model ----
+mod_PSEUDO_path_condition_unconstrained <- '
+group: group_4
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+PSEUDO_pre ~~ condition_led
+PSEUDO_pre ~~ condition_comb
+
+# path model
+PSEUDO_post ~ condition_led + condition_comb + PSEUDO_pre
+
+group: group_5
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+PSEUDO_pre ~~ condition_led
+PSEUDO_pre ~~ condition_comb
+
+# path model
+PSEUDO_post ~ condition_led + condition_comb + PSEUDO_pre
+
+group: group_6
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+PSEUDO_pre ~~ condition_led
+PSEUDO_pre ~~ condition_comb
+
+# path model
+PSEUDO_post ~ condition_led + condition_comb + PSEUDO_pre
+'
+
+### Specify full model ----
+mod_PSEUDO_conditioneffect_unconstrained <- c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_weakinvariance_time_constraints_0,
+  mod_PSEUDO_weakinvariance_time_scalingconstraints,
+  mod_PSEUDO_path_condition_unconstrained
+)
+
+### Fit and inspect full model ----
+fit_PSEUDO_conditioneffect_unconstrained <- lavaan(mod_PSEUDO_conditioneffect_unconstrained,
+                                                   data = data,
+                                                   cluster = "class_ID",
+                                                   group = "Leerjaar",
+                                                   group.label = c('4', '5', '6'),
+                                                   missing = "FIML"
+)
+# plot_lavaan(fit_LED_structuralregression_intervention_unconstrained, where = "browser")
+fitMeasures(
+  fit_PSEUDO_conditioneffect_unconstrained,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # satisfactory fit
+
+### Inspect measurement invariance across conditions ----
+#### Specify model addition ----
+mod_PSEUDO_constraints_pathinvariance_condition_0 <- '
+group: group_4
+pseudo_score_A_pre ~ 0*condition_led
+pseudo_score_B_pre ~ 0*condition_led
+pseudo_score_A_post ~ 0*condition_led
+pseudo_score_B_post ~ 0*condition_led
+pseudo_score_A_pre ~ 0*condition_comb
+pseudo_score_B_pre ~ 0*condition_comb
+pseudo_score_A_post ~ 0*condition_comb
+pseudo_score_B_post ~ 0*condition_comb
+
+group: group_5
+pseudo_score_A_pre ~ 0*condition_led
+pseudo_score_B_pre ~ 0*condition_led
+pseudo_score_A_post ~ 0*condition_led
+pseudo_score_B_post ~ 0*condition_led
+pseudo_score_A_pre ~ 0*condition_comb
+pseudo_score_B_pre ~ 0*condition_comb
+pseudo_score_A_post ~ 0*condition_comb
+pseudo_score_B_post ~ 0*condition_comb
+
+group: group_6
+pseudo_score_A_pre ~ 0*condition_led
+pseudo_score_B_pre ~ 0*condition_led
+pseudo_score_A_post ~ 0*condition_led
+pseudo_score_B_post ~ 0*condition_led
+pseudo_score_A_pre ~ 0*condition_comb
+pseudo_score_B_pre ~ 0*condition_comb
+pseudo_score_A_post ~ 0*condition_comb
+pseudo_score_B_post ~ 0*condition_comb
+'
+
+#### Add model addition to final model ----
+mod_PSEUDO_conditioneffect_unconstrained_invariant_0 <- c(
+  mod_PSEUDO_constraints_pathinvariance_condition_0,
+  mod_PSEUDO_conditioneffect_unconstrained
+)
+
+#### Fit and inspect model ----
+fit_PSEUDO_conditioneffect_unconstrained_invariant_0 <- lavaan(mod_PSEUDO_conditioneffect_unconstrained_invariant_0,
+                                                               data = data,
+                                                               cluster = "class_ID",
+                                                               group = "Leerjaar",
+                                                               group.label = c('4', '5', '6'),
+                                                               missing = "FIML"
+)
+modificationindices(fit_PSEUDO_conditioneffect_unconstrained_invariant_0,
+                    sort. = TRUE) |> 
+  filter(
+    op == '~',
+    rhs == 'intervention',
+    mi >= 6.239 # chi square corresponding to alpha = .05/2 indicators
+  ) #  No modifications necessary
+
+### Inspecting final unconstrained path model ----
+fitmeasures(fit_PSEUDO_conditioneffect_unconstrained)[c('df', 'chisq', 'pvalue', 'cfi', 'rmsea')]
+summary(fit_PSEUDO_conditioneffect_unconstrained, std = T)
+# plot_lavaan(fit_PSEUDO_maineffect_unconstrained_invariant_0, where = "browser")
+
+#### Equal condition effects within grades ----
+##### Specify path model ----
+mod_PSEUDO_path_condition_constrainedacrossconditions <- '
+group: group_4
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+PSEUDO_pre ~~ condition_led
+PSEUDO_pre ~~ condition_comb
+
+# path model
+PSEUDO_post ~ a*condition_led + a*condition_comb + PSEUDO_pre
+
+group: group_5
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+PSEUDO_pre ~~ condition_led
+PSEUDO_pre ~~ condition_comb
+
+# path model
+PSEUDO_post ~ b*condition_led + b*condition_comb + PSEUDO_pre
+
+group: group_6
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+PSEUDO_pre ~~ condition_led
+PSEUDO_pre ~~ condition_comb
+
+# path model
+PSEUDO_post ~ d*condition_led + d*condition_comb + PSEUDO_pre
+'
+
+##### Specify full model ----
+mod_PSEUDO_conditioneffect_constrainedacrossconditions <- c(
+  mod_PSEUDO_configural_cfa,
+  mod_PSEUDO_weakinvariance_time_constraints_0,
+  mod_PSEUDO_weakinvariance_time_scalingconstraints,
+  mod_PSEUDO_path_condition_constrainedacrossconditions
+)
+
+### Fit and inspect full model ----
+fit_PSEUDO_conditioneffect_constrainedacrossconditions <- lavaan(mod_PSEUDO_conditioneffect_constrainedacrossconditions,
+                                                                 data = data,
+                                                                 cluster = "class_ID",
+                                                                 group = "Leerjaar",
+                                                                 group.label = c('4', '5', '6'),
+                                                                 missing = "FIML"
+)
+# plot_lavaan(fit_LED_structuralregression_intervention_unconstrained, where = "browser")
+anova(
+  fit_PSEUDO_conditioneffect_unconstrained,
+  fit_PSEUDO_conditioneffect_constrainedacrossconditions
+) # no significant difference in model fit, thus condition effect equal within grades
+summary(fit_PSEUDO_conditioneffect_constrainedacrossconditions)
+
+fitMeasures(
+  fit_PSEUDO_conditioneffect_constrainedacrossconditions,
+  c('df', 'chisq', 'pvalue', 'cfi', 'rmsea', 'rmsea.ci.lower', 'rmsea.ci.upper')
+) # satisfactory fit
+
+## Summary of results ----
+### Main effects per grade
+# Effect of intervention on PSEUDO for grade 2 and 3
+parameterestimates(
+  fit_PSEUDO_maineffect_unconstrained,
+  standardized = T
+) |> 
+  filter(
+    op == '~',
+    rhs == 'intervention',
+    # pvalue < .05
+  ) |> 
+  dplyr::select(
+    rhs, group, est, se, pvalue, std.lv
+  )
+
+### Main effect differs across grades
+anova(
+  fit_PSEUDO_maineffect_unconstrained,
+  fit_PSEUDO_maineffect_constrained
+)
+
+### Condition effects per grade
+parameterestimates(
+  fit_PSEUDO_conditioneffect_unconstrained,
+  standardized = T
+) |> 
+  filter(
+    op == '~',
+    str_detect(rhs, 'condition'),
+    # pvalue < .05
+  ) |> 
+  dplyr::select(rhs, group, est, se, pvalue, std.lv) |> 
+  arrange(
+    rhs, group
+  )
+
+### Condition effects do not differ within grades
+anova(
+  fit_PSEUDO_conditioneffect_unconstrained,
+  fit_PSEUDO_conditioneffect_constrainedacrossconditions
+)
+
