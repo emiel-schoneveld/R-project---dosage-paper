@@ -15,25 +15,10 @@ library(broom)
 library(effectsize)
 library(patchwork)
 
-## Visualizing parameters
-### Define common theme
-common_theme_labs <- theme_minimal() + 
-  theme(
-    panel.grid.major = element_blank(), 
-    panel.grid.minor = element_blank(),
-    # axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()
-  )
-common_theme_nolabs <- theme_minimal() + 
-  theme(
-    panel.grid.major = element_blank(), 
-    panel.grid.minor = element_blank(),
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()
-  )
-
-sig_color = "green"
-insig_color = "red"
+## Load functions and themes
+source(
+  here::here('analyses/00_functions_themes_analysis.R')
+)
 
 # Load data ----
 data <- readRDS(
@@ -67,10 +52,15 @@ fluency_post ~ c(post_time_2, post_time_3, post_time_4)*time
 '
 
 ### Total effects addition
-mod_addition_totaltimeeffect <- '
+mod_addition_totaltimeeffect_partialmediation <- '
 post_time_total_2 := (post_words_2*words_time_2) + post_time_2
 post_time_total_3 := (post_words_3*words_time_3) + post_time_3
 post_time_total_4 := (post_words_4*words_time_4) + post_time_4
+'
+mod_addition_totaltimeeffect_fullmediation <- '
+post_time_total_2 := post_words_2*words_time_2
+post_time_total_3 := post_words_3*words_time_3
+post_time_total_4 := post_words_4*words_time_4
 '
 
 ## Fit models ----
@@ -79,7 +69,7 @@ fit_partialmediation_DMT <- sem(
   c(
     mod_fullmediation,
     mod_addition_partialmediation,
-    mod_addition_totaltimeeffect
+    mod_addition_totaltimeeffect_partialmediation
     ),
   data = data |> 
     mutate(
@@ -96,9 +86,9 @@ fit_partialmediation_DMT <- sem(
 
 fit_fullmediation_DMT <- sem(
   c(
-    mod_fullmediation#,
+    mod_fullmediation,
     # mod_addition_partialmediation,
-    # mod_addition_totaltimeeffect
+    mod_addition_totaltimeeffect_fullmediation
   ),
   data = data |> 
     mutate(
@@ -141,7 +131,7 @@ fit_partialmediation_discrete <- sem(
   c(
     mod_fullmediation,
     mod_addition_partialmediation,
-    mod_addition_totaltimeeffect
+    mod_addition_totaltimeeffect_partialmediation
   ),
   data = data |> 
     mutate(
@@ -158,9 +148,9 @@ fit_partialmediation_discrete <- sem(
 
 fit_fullmediation_discrete <- sem(
   c(
-    mod_fullmediation#,
+    mod_fullmediation,
     # mod_addition_partialmediation,
-    # mod_addition_totaltimeeffect
+    mod_addition_totaltimeeffect_fullmediation
   ),
   data = data |> 
     mutate(
@@ -203,7 +193,7 @@ fit_partialmediation_serial <- sem(
   c(
     mod_fullmediation,
     mod_addition_partialmediation,
-    mod_addition_totaltimeeffect
+    mod_addition_totaltimeeffect_partialmediation
   ),
   data = data |> 
     mutate(
@@ -220,9 +210,9 @@ fit_partialmediation_serial <- sem(
 
 fit_fullmediation_serial <- sem(
   c(
-    mod_fullmediation#,
+    mod_fullmediation,
     # mod_addition_partialmediation,
-    # mod_addition_totaltimeeffect
+    mod_addition_totaltimeeffect_fullmediation
   ),
   data = data |> 
     mutate(
@@ -260,12 +250,138 @@ estimates_mediation_serial <- parameterEstimates(
     .before = 1
   )
 
+### LED ----
+fit_partialmediation_LED <- sem(
+  c(
+    mod_fullmediation,
+    mod_addition_partialmediation,
+    mod_addition_totaltimeeffect_partialmediation
+  ),
+  data = data |> 
+    mutate(
+      words_exposures = words_exposures / 1000,
+      fluency_pre = fluency_LED_pre,
+      fluency_post = fluency_LED_post,
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+)
+
+fit_fullmediation_LED <- sem(
+  c(
+    mod_fullmediation,
+    # mod_addition_partialmediation,
+    mod_addition_totaltimeeffect_fullmediation
+  ),
+  data = data |> 
+    mutate(
+      words_exposures = words_exposures / 1000,
+      fluency_pre = fluency_LED_pre,
+      fluency_post = fluency_LED_post,
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+)
+
+anova_mediation_LED <- anova(
+  fit_partialmediation_LED,
+  fit_fullmediation_LED
+)
+
+estimates_mediation_LED <- parameterEstimates(
+  fit_fullmediation_LED,
+  standardized = T
+) |> 
+  dplyr::select(
+    lhs, op, rhs, group, label, est, se, pvalue, ci.lower, ci.upper, std.all
+  ) |> 
+  filter(
+    op %in% c('~', ':=')
+  ) |> 
+  arrange(
+    lhs, rhs, group
+  ) |> 
+  mutate(
+    outcome = 'LED',
+    .before = 1
+  )
+
+### pseudo ----
+fit_partialmediation_pseudo <- sem(
+  c(
+    mod_fullmediation,
+    mod_addition_partialmediation,
+    mod_addition_totaltimeeffect_partialmediation
+  ),
+  data = data |> 
+    mutate(
+      words_exposures = words_exposures / 1000,
+      fluency_pre = fluency_pseudo_pre,
+      fluency_post = fluency_pseudo_post,
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+)
+
+fit_fullmediation_pseudo <- sem(
+  c(
+    mod_fullmediation,
+    # mod_addition_partialmediation,
+    mod_addition_totaltimeeffect_fullmediation
+  ),
+  data = data |> 
+    mutate(
+      words_exposures = words_exposures / 1000,
+      fluency_pre = fluency_pseudo_pre,
+      fluency_post = fluency_pseudo_post,
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+)
+
+anova_mediation_pseudo <- anova(
+  fit_partialmediation_pseudo,
+  fit_fullmediation_pseudo
+)
+
+estimates_mediation_pseudo <- parameterEstimates(
+  fit_partialmediation_pseudo,
+  standardized = T
+) |> 
+  dplyr::select(
+    lhs, op, rhs, group, label, est, se, pvalue, ci.lower, ci.upper, std.all
+  ) |> 
+  filter(
+    op %in% c('~', ':=')
+  ) |> 
+  arrange(
+    lhs, rhs, group
+  ) |> 
+  mutate(
+    outcome = 'pseudo',
+    .before = 1
+  )
+
 ## Inspect results ----
 ### Bind results of mediation models (and adding missing values explicitely for plotting purposes) ----
 estimates_mediation <- bind_rows(
   estimates_mediation_DMT,
   estimates_mediation_discrete,
-  estimates_mediation_serial
+  estimates_mediation_serial,
+  estimates_mediation_LED,
+  estimates_mediation_pseudo,
 ) |> as_tibble() |> 
   mutate(
     significant = case_when(
@@ -282,49 +398,31 @@ estimates_mediation <- bind_rows(
     grade = group
   )
 
-estimates_mediation_expandedposttime <- estimates_mediation |> 
-  full_join(
-    estimates_mediation |> 
-      filter(
-        str_detect(op, '~'),
-        str_detect(lhs, 'post'),
-        str_detect(rhs, 'time'),
-      ) |> 
-      add_row(
-        outcome = 'discrete',
-      ) |> 
-      add_row(
-        outcome = 'serial'
-      ) |> 
-      expand(
-        outcome, lhs, op, rhs, grade
-      ) |> 
-      drop_na()
+### Extract missing combos
+missing_combos <- estimates_mediation |> 
+  filter(
+    str_detect(op, '~'),
+    str_detect(lhs, 'post'),
+    str_detect(rhs, 'time'),
+  ) |> 
+  add_row(
+    outcome = c('serial', 'LED', 'discrete'),
+    # lhs = c('fluency_post', 'fluency_post', 'fluency_post'),
+    # rhs = c('time', 'time', 'time'),
+    # op = c('~', '~', '~')
+  ) |> 
+  expand(
+    outcome, op, lhs, rhs, grade
+  ) |> 
+  drop_na() |> 
+  filter(
+    !(outcome %in% c('DMT', 'pseudo'))
   )
 
-valid_combos <- estimates_mediation |> 
-  filter(
-    str_detect(op, ':='),
-  ) |> 
-  dplyr::select(lhs, op, rhs, label)
-
-estimates_mediation_expanded <- estimates_mediation_expandedposttime |> 
-  full_join(
-    estimates_mediation |> 
-      filter(
-        str_detect(op, ':='),
-      ) |> 
-      add_row(
-        outcome = 'discrete',
-      ) |> 
-      add_row(
-        outcome = 'serial'
-      ) |> 
-      filter(outcome != 'DMT') |> 
-      dplyr::select(
-        -lhs, -op, -rhs, -label
-      ) |> 
-      cross_join(valid_combos)
+### Add missing combos
+estimates_mediation <- estimates_mediation |> 
+  bind_rows(
+    missing_combos
   )
 
 ### Bind anova comparisons ----
@@ -332,6 +430,8 @@ estimates_mediation_comparison <- bind_rows(
   c('outcome' = 'DMT', unlist(anova_mediation_DMT)),
   c("outcome" = "discrete", unlist(anova_mediation_discrete)),
   c("outcome" = "serial", unlist(anova_mediation_serial)),
+  c("outcome" = "LED", unlist(anova_mediation_LED)),
+  c("outcome" = "pseudo", unlist(anova_mediation_pseudo)),
 ) |> 
   rename(
     'chisq_diff' = `Chisq diff2`,
@@ -361,7 +461,7 @@ estimates_mediation |>
 estimates_mediation_comparison
 
 ### Plot results ----
-p_mediation_postwords <- estimates_mediation_expanded |> 
+p_mediation_postwords <- estimates_mediation |> 
   filter(
     str_detect(op, '~'),
     str_detect(lhs, 'post'),
@@ -382,7 +482,28 @@ p_mediation_postwords <- estimates_mediation_expanded |>
   labs(x = NULL) +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
-p_mediation_posttime <- estimates_mediation_expanded |> 
+p_mediation_wordstime <- estimates_mediation |> 
+  filter(
+    str_detect(op, '~'),
+    str_detect(lhs, 'words'),
+    str_detect(rhs, 'time'),
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = significant,
+      label = std.all |> round(2)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  geom_text() +
+  ggtitle('Words ~ time') +
+  common_theme_labs +
+  labs(x = NULL) +
+  scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
+
+p_mediation_posttime <- estimates_mediation |> 
   filter(
     str_detect(op, '~'),
     str_detect(lhs, 'post'),
@@ -403,7 +524,7 @@ p_mediation_posttime <- estimates_mediation_expanded |>
   labs(x = NULL) +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
-p_mediation_posttimetotal <- estimates_mediation_expanded |> 
+p_mediation_posttimetotal <- estimates_mediation |> 
   filter(
     str_detect(op, ':='),
     str_detect(label, 'post_time_total'),
@@ -429,7 +550,6 @@ p_mediation_posttimetotal <- estimates_mediation_expanded |>
   labs(x = NULL) +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
-
 p_comparison <- estimates_mediation_comparison |> 
   ggplot(
     aes(
@@ -447,7 +567,8 @@ p_comparison <- estimates_mediation_comparison |>
   labs(x = NULL) +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
-p_mediation <- p_mediation_postwords +
+p_mediation <- p_mediation_wordstime +
+  p_mediation_postwords +
   p_mediation_posttime +
   p_mediation_posttimetotal +
   p_comparison +
@@ -456,17 +577,9 @@ p_mediation <- p_mediation_postwords +
     guides = 'collect'
     )
 
-
 # Plot all results ----
 p_mediation_formatted <- p_mediation +
   plot_annotation(
   title = 'Mediation analysis',
   subtitle = 'Using the SEM model'
 )
-
-p_interaction_formatted <- p_interaction +
-  plot_annotation(
-    title = 'Interaction analysis',
-    subtitle = 'Using the OLS model'
-  )
-

@@ -1,9 +1,25 @@
 # Interaction analysis
 # By Emiel Schoneveld
 
+# General syntax ----
+## Clear environment
+# rm(list = ls())
 
+## Load packages
+library(tidyverse)
+library(readxl)
+library(here)
+library(ggplot2)
+library(lavaan)
+library(lavaanPlot)
+library(broom)
+library(effectsize)
+library(patchwork)
 
-
+## Load functions and themes
+source(
+  here::here('analyses/00_functions_themes_analysis.R')
+)
 
 # Accuracy inspection ----
 ## Specify general model ----
@@ -211,6 +227,8 @@ p_interaction_accuracyexposures <- estimates_interaction_expanded |>
   labs(x = NULL) +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
+
+# Plot all results ----
 p_interaction <- p_interaction_exposures +
   p_interaction_time +
   p_interaction_accuracy +
@@ -219,3 +237,5 @@ p_interaction <- p_interaction_exposures +
     axis = "collect",
     guides = "collect"
   )
+
+
