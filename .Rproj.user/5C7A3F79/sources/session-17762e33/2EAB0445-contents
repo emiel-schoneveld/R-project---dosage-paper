@@ -41,22 +41,29 @@ estimates_interaction_DMT <- data |>
   mutate(
     fluency_pre = fluency_DMT_pre,
     fluency_post = fluency_DMT_post,
-    words_exposures = words_exposures / 1000,
-    words_exposures = words_exposures - mean(words_exposures),
-    accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
+    # words_exposures = words_exposures / 1000,
+    # words_exposures = words_exposures - mean(words_exposures),
+    # accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
   ) |>
   group_by(grade) |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
+    # results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
     standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
   ) |>
-  unnest(c(results, standardized)) |>
-  mutate(outcome = 'DMT', .before = 1)
+  unnest(
+    c(#results,
+      standardized
+      )
+    ) |>
+  mutate(
+    outcome = 'DMT', 
+    .before = 1
+    )
 
 ### discrete ----
 estimates_interaction_discrete <- data |> 
