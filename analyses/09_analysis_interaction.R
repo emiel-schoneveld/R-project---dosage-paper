@@ -256,7 +256,6 @@ p_interaction_accuracyexposures <- estimates_interaction |>
   labs(x = NULL) +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
-
 # Plot all results ----
 p_interaction <- p_interaction_exposures +
   p_interaction_accuracy +
@@ -267,3 +266,28 @@ p_interaction <- p_interaction_exposures +
   )
 
 
+ggplot() +
+  geom_abline(
+    intercept = 0,
+    slope = 0.4-0.32,
+    color = 'red'
+  ) +
+  geom_abline(
+    intercept = 0,
+    slope = 0.4+0.32,
+    color = 'green'
+  ) +
+  labs(title = 'DMT')
+
+ggplot() +
+  geom_abline(
+    intercept = 0,
+    slope = 0.14-0.11,
+    color = 'red'
+  ) +
+  geom_abline(
+    intercept = 0,
+    slope = 0.14+0.11,
+    color = 'green'
+  ) +
+  labs(title = 'serial')
