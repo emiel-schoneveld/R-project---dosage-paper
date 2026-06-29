@@ -49,13 +49,18 @@ estimates_interaction_DMT <- data |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    # results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
     standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
   ) |>
-  unnest(c(standardized)) |>
+  unnest(
+    c(
+      results,
+      standardized
+      )
+    ) |>
   mutate(
     outcome = 'DMT', 
     .before = 1
@@ -66,9 +71,9 @@ estimates_interaction_discrete <- data |>
   mutate(
     fluency_pre = fluency_discrete_pre,
     fluency_post = fluency_discrete_post,
-    words_exposures = words_exposures / 1000,
-    words_exposures = words_exposures - mean(words_exposures),
-    accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
+    # words_exposures = words_exposures / 1000,
+    # words_exposures = words_exposures - mean(words_exposures),
+    # accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
   ) |>
   group_by(grade) |>
   nest() |>
@@ -80,7 +85,11 @@ estimates_interaction_discrete <- data |>
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
   ) |>
-  unnest(c(results, standardized)) |>
+  unnest(
+    c(
+      results, 
+      standardized)
+    ) |>
   mutate(outcome = 'discrete', .before = 1)
 
 ### serial ----
@@ -88,9 +97,9 @@ estimates_interaction_serial <- data |>
   mutate(
     fluency_pre = fluency_serial_pre,
     fluency_post = fluency_serial_post,
-    words_exposures = words_exposures / 1000,
-    words_exposures = words_exposures - mean(words_exposures),
-    accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
+    # words_exposures = words_exposures / 1000,
+    # words_exposures = words_exposures - mean(words_exposures),
+    # accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
   ) |>
   group_by(grade) |>
   nest() |>
@@ -102,7 +111,11 @@ estimates_interaction_serial <- data |>
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
   ) |>
-  unnest(c(results, standardized)) |>
+  unnest(
+    c(
+      results, 
+      standardized)
+    ) |>
   mutate(outcome = 'serial', .before = 1)
 
 ### LED ----
@@ -110,9 +123,9 @@ estimates_interaction_LED <- data |>
   mutate(
     fluency_pre = fluency_LED_pre,
     fluency_post = fluency_LED_post,
-    words_exposures = words_exposures / 1000,
-    words_exposures = words_exposures - mean(words_exposures),
-    accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
+    # words_exposures = words_exposures / 1000,
+    # words_exposures = words_exposures - mean(words_exposures),
+    # accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
   ) |>
   group_by(grade) |>
   nest() |>
@@ -124,7 +137,11 @@ estimates_interaction_LED <- data |>
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
   ) |>
-  unnest(c(results, standardized)) |>
+  unnest(
+    c(
+      results,
+      standardized)
+    ) |>
   mutate(outcome = 'LED', .before = 1)
 
 ### pseudo ----
@@ -132,9 +149,9 @@ estimates_interaction_pseudo <- data |>
   mutate(
     fluency_pre = fluency_pseudo_pre,
     fluency_post = fluency_pseudo_post,
-    words_exposures = words_exposures / 1000,
-    words_exposures = words_exposures - mean(words_exposures),
-    accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
+    # words_exposures = words_exposures / 1000,
+    # words_exposures = words_exposures - mean(words_exposures),
+    # accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
   ) |>
   group_by(grade) |>
   nest() |>
@@ -146,7 +163,11 @@ estimates_interaction_pseudo <- data |>
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
   ) |>
-  unnest(c(results, standardized)) |>
+  unnest(
+    c(
+      results,
+      standardized)
+    ) |>
   mutate(outcome = 'pseudo', .before = 1)
 
 ## Inspect results ----
@@ -163,8 +184,8 @@ estimates_interaction <- bind_rows(
   ) |> 
   mutate(
     significant = case_when(
-      p.value < .05 ~ 'Significant',
-      p.value >= .05 ~ 'Not significant'
+      std_ci_low <= 0 ~ 'Not significant',
+      std_ci_low > 0 ~ 'Significant'
     )
   ) |> 
   arrange(
