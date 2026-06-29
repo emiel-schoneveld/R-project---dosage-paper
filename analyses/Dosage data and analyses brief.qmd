@@ -1,14 +1,14 @@
 ---
 title: "Dosage data and analyses brief"
 # subtitle: ""
-description: "This document shows the descriptive statistics and potential analyses of the dosage paper."
+description: "This document shows the analyses of the dosage paper."
 
 author: 
   name: 'Emiel Schoneveld'
   affiliations:
     name: 'University of Amsterdam'
 
-keywords: "Dosage, Time, Words, Descriptives, Potential Analyses"
+keywords: "Dosage, Time, Words, Descriptives, Analyses"
 date: today
 
 execute: 
@@ -46,11 +46,8 @@ library(scatterPlotMatrix)
 library(shiny)
 
 ## source descriptive syntax and analyses draft
-source('07_descriptive_analyses.R')
-source('08_analyses_drafts.R')
-
-## Remove mod objects
-rm(list = ls()[str_detect(ls(), 'mod')])
+source('08_analysis_mediation.R')
+source('09_analysis_interaction.R')
 ```
 
 # Mediation analysis
@@ -65,12 +62,13 @@ The covariances are omitted in the figure for legibility.
 ```{r echo=FALSE, include=TRUE}
 # Plot model
 lavaanPlot(
-  fit_partialmediation_discrete
+  fit_partialmediation_discrete,
+  graph_options = list(rankdir = "TB")
 )
 ```
 
 ## Results
-The models were fitted for three outcome measures. Below the standardized estimates of the regression parameters and the full vs partial mediation anova test.
+The models were fitted for five outcome measures. Below the standardized estimates of the regression parameters and the full vs partial mediation anova test.
 
 ::: {.callout-note}
 Greyed out boxes are omitted regression paths because of full mediation
