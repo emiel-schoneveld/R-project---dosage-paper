@@ -3,26 +3,16 @@
 #   here::here('analyses/09_analysis_interaction.R')
 # )
 
-
-color_data <- tibble(
-  Effect = c('Mean accuracy', '+1 SD accuracy', '-1 SD accuracy') |> as_factor(),
-  Color = c(color_mean, color_plus_1SD, color_min_1SD)
-)
-
-
 # Set colors ----
 color_mean = '#1B1918'
 color_plus_1SD = '#e98300'
 color_min_1SD = '#bc0031'
 color_background = "#D7D6D4"
 
-
-
-
 # Build a small data frame of slopes/intercepts per grade ----
 ## Grade 2 ----
 abline_data_grade2 <- tibble(
-  Effect = c('Mean accuracy', '+1 SD accuracy', '-1 SD accuracy'),
+  Accuracy = c('Mean', '+1 SD', '-1 SD'),
   intercept = rep(
     estimates_interaction |> 
       filter(outcome == 'discrete', grade == 'grade_2', str_detect(term, 'Intercept')) |> 
@@ -38,11 +28,14 @@ abline_data_grade2 <- tibble(
     (estimates_interaction |> filter(outcome == 'discrete', grade == 'grade_2', term == 'words_exposures') |> pull(std_estimate)) -
       (estimates_interaction |> filter(outcome == 'discrete', grade == 'grade_2', str_detect(term, ':')) |> pull(std_estimate))
   )
-)
+) |> 
+  mutate(
+    Accuracy = factor(Accuracy, levels = c('+1 SD', 'Mean', '-1 SD')))
+  )
 
 ## Grade 4 ----
 abline_data_grade4 <- tibble(
-  Effect = c('Mean accuracy', '+1 SD accuracy', '-1 SD accuracy'),
+  Accuracy = c('Mean', '+1 SD', '-1 SD'),
   intercept = rep(
     estimates_interaction |> 
       filter(outcome == 'discrete', grade == 'grade_4', str_detect(term, 'Intercept')) |> 
@@ -58,6 +51,9 @@ abline_data_grade4 <- tibble(
     (estimates_interaction |> filter(outcome == 'discrete', grade == 'grade_4', term == 'words_exposures') |> pull(std_estimate)) -
       (estimates_interaction |> filter(outcome == 'discrete', grade == 'grade_4', str_detect(term, ':')) |> pull(std_estimate))
   )
+) |> 
+  mutate(
+    Accuracy = factor(Accuracy, levels = c('+1 SD', 'Mean', '-1 SD')))
 )
 
 # Plot probed interactions ----
@@ -73,7 +69,7 @@ p_prob_grade2 <- data |>
   geom_point(alpha = 0.0) +
   geom_abline(
     data = abline_data_grade2,
-    aes(intercept = intercept, slope = slope, color = Effect)
+    aes(intercept = intercept, slope = slope, color = Accuracy)
   ) +
   coord_cartesian(xlim = c(-2, 2), ylim = c(-2, 2)) +
   labs(title = 'Grade 2') +
@@ -94,7 +90,7 @@ p_prob_grade4 <- data |>
   geom_point(alpha = 0.0) +
   geom_abline(
     data = abline_data_grade4,
-    aes(intercept = intercept, slope = slope, color = Effect)
+    aes(intercept = intercept, slope = slope, color = Accuracy)
   ) +
   coord_cartesian(xlim = c(-2, 2), ylim = c(-2, 2)) +
   labs(title = 'Grade 4') +
@@ -112,20 +108,32 @@ p_prob <- (p_prob_grade2 +
              )) & 
   theme_bw() & 
   theme(
+    # Titles
     plot.title = element_text(hjust = 0.5, size = 11),
     axis.title = element_text(size = 11),
+    
+    # Axis
     axis.text = element_text(size = 9),
     axis.text.x = element_text(angle = 45, hjust = 1),
+    
+    # Background
     panel.background = element_rect(fill = "white", color = NA),
     plot.background  = element_rect(fill = color_background, color = NA),
+    
+    # Gridlines
     panel.grid.major = element_line(color = color_background),
-    panel.grid.minor = element_blank()
+    panel.grid.minor = element_blank(),
+    
+    # Legend
+    legend.background = element_rect(fill = color_background, color = NA),
+    legend.text = element_text(size = 9),
+    legend.title = element_text(size = 11),
   ) &
   scale_color_manual(
-    name = "Interaction",
-    values = c('Mean accuracy' = color_data$Color[1],
-      '+1 SD accuracy' = color_data$Color[2],
-      '-1 SD accuracy' = color_data$Color[3]
+    name = "Accuracy",
+    values = c('Mean' = color_mean,
+      '+1 SD' = color_plus_1SD,
+      '-1 SD' = color_min_1SD
       )
   )
 
