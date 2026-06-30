@@ -184,8 +184,9 @@ estimates_interaction <- bind_rows(
   ) |> 
   mutate(
     significant = case_when(
-      std_ci_low <= 0 ~ 'Not significant',
-      std_ci_low > 0 ~ 'Significant'
+      (std_ci_low <= 0) & (std_ci_high >= 0) ~ 'Not significant',
+      (std_ci_low > 0) & (std_ci_high > 0) ~ 'Significant',
+      (std_ci_low < 0) & (std_ci_high < 0) ~ 'Significant',
     )
   ) |> 
   arrange(
@@ -291,3 +292,8 @@ ggplot() +
     color = 'green'
   ) +
   labs(title = 'serial')
+
+estimates_interaction |> 
+  filter(
+    str_detect(term, ':')
+  ) |> View()

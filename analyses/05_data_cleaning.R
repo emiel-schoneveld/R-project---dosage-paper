@@ -84,15 +84,16 @@ data_cleaned |>
     perc_valid_post_LED = 100 * sum(!is.na(fluency_LED_post), na.rm = T) / n(),
     perc_valid_pre_pseudo = 100 * sum(!is.na(fluency_pseudo_pre), na.rm = T) / n(),
     perc_valid_post_pseudo = 100 * sum(!is.na(fluency_pseudo_post), na.rm = T) / n(),
-  ) #|> View()
+  )
 
-
-data |> 
+# Filtering data based on accuracy
+data_cleaned |> 
   filter(
-    accuracy_anytry < .80 | accuracy_anytry > 1
-  ) |> 
-  dplyr::select(
-    student_ID, grade, accuracy_anytry, words_exposures, sessions
+    accuracy_anytry < .80
+  ) |> nrow()
+data_cleaned <- data_cleaned |> 
+  filter(
+    accuracy_anytry >= .79
   )
 
 # Write cleaned data ----
