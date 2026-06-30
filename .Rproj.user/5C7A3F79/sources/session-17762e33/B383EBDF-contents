@@ -58,7 +58,7 @@ data_logs_lesson <- data_logs_lesson |>
 ## Filter out all nonvalid lesson types ----
 data_logs_lesson <- data_logs_lesson |> 
   filter(
-    lesson_form %in% c("ResearchFlits", "Flits", "ResearchRowRead", "RowRead", "DMT")
+    lesson_form %in% c("ResearchFlits", "Flits", "ResearchRowRead", "RowRead")
   )
 
 ## Convert strings into date and time class ----

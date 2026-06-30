@@ -49,8 +49,8 @@ estimates_interaction_DMT <- data |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
@@ -79,8 +79,8 @@ estimates_interaction_discrete <- data |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
@@ -105,8 +105,8 @@ estimates_interaction_serial <- data |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
@@ -131,8 +131,8 @@ estimates_interaction_LED <- data |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
@@ -157,8 +157,8 @@ estimates_interaction_pseudo <- data |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.95)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.95) |>
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
@@ -265,35 +265,3 @@ p_interaction <- p_interaction_exposures +
     axis = "collect",
     guides = "collect"
   )
-
-
-ggplot() +
-  geom_abline(
-    intercept = 0,
-    slope = 0.4-0.32,
-    color = 'red'
-  ) +
-  geom_abline(
-    intercept = 0,
-    slope = 0.4+0.32,
-    color = 'green'
-  ) +
-  labs(title = 'DMT')
-
-ggplot() +
-  geom_abline(
-    intercept = 0,
-    slope = 0.14-0.11,
-    color = 'red'
-  ) +
-  geom_abline(
-    intercept = 0,
-    slope = 0.14+0.11,
-    color = 'green'
-  ) +
-  labs(title = 'serial')
-
-estimates_interaction |> 
-  filter(
-    str_detect(term, ':')
-  ) |> View()
