@@ -1,0 +1,26 @@
+{
+    "id": "6DF1FC9E",
+    "path": "C:/Users/RSCHONE/OneDrive - UvA/Flits!/RCT/analyse/Rscript/paper main analyses/DMT models.R",
+    "project_path": null,
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1782801208592.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "56,13",
+        "scrollLine": "51"
+    },
+    "folds": "88|50|149|0|\n150|54|216|0|\n217|48|217|52|\n218|50|284|0|\n285|81|354|0|\n355|81|423|0|\n424|22|424|26|\n425|16|447|0|\n448|22|487|0|\n488|18|574|0|\n",
+    "lastKnownWriteTime": 1782801454,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1782801454467,
+    "read_only": false,
+    "read_only_alternatives": []
+}

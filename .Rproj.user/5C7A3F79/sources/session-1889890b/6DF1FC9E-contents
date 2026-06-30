@@ -1,0 +1,574 @@
+# Standardised serial reading ----
+
+## Specify measurement model ----
+# Specify model
+mod_DMT_configural_0 <- '
+## Common factor structure
+# Common factor factor loadings
+DMT_pre =~ 1*DMT_score_pre
+DMT_mid =~ 1*DMT_score_mid
+DMT_post =~ 1*DMT_score_post
+DMT_followup =~ 1*DMT_score_followup
+
+# Common factor variances
+DMT_pre ~~ DMT_pre
+DMT_mid ~~ DMT_mid
+DMT_post ~~ DMT_post
+DMT_followup ~~ DMT_followup
+
+# Common factor covariances
+DMT_pre ~~ DMT_mid
+DMT_pre ~~ DMT_post
+DMT_pre ~~ DMT_followup
+DMT_mid ~~ DMT_post
+DMT_mid ~~ DMT_followup
+DMT_post ~~ DMT_followup
+
+# Common factor intercepts
+DMT_pre ~ 0*1
+DMT_mid ~ 0*1
+DMT_post ~ 0*1
+DMT_followup ~ 0*1
+
+# Indicator residual variances
+DMT_score_pre ~~ 0*DMT_score_pre
+DMT_score_mid ~~ 0*DMT_score_mid
+DMT_score_post ~~ 0*DMT_score_post
+DMT_score_followup ~~ 0*DMT_score_followup
+
+# Indicator intercepts
+DMT_score_pre ~ 1
+DMT_score_mid ~ 1
+DMT_score_post ~ 1
+DMT_score_followup ~ 1
+'
+
+# Fit and inspect model
+fit_DMT_configural_0 <- lavaan(mod_DMT_configural_0,
+                                   data = data,
+                                   cluster = "class_ID",
+                                   group = "Leerjaar",
+                               group.label = c('4', '5', '6'),
+                                   missing = "FIML"
+)
+fitMeasures(fit_DMT_configural_0)[c('df', 'chisq', 'pvalue', 'cfi', 'rmsea')]
+
+#### Extract factor scores for dosage paper ----
+# #### Factor scores
+# DMT_factor_predicted <- lavPredict(fit_DMT_configural_0,
+#            assemble = T
+#            ) |> as_tibble()
+# ##### Original place in data
+# case_idx <- lavInspect(fit_DMT_configural_0, "case.idx") |> unlist() |> as_tibble_col(column_name = 'row_number')
+# data_DMT <- DMT_factor_predicted |>
+#   bind_cols(
+#     case_idx
+#   )
+# ##### Add student_ID
+# data_DMT$student_ID <- data$Leerlingnummer[data_DMT$row_number]
+# ##### Rename and select data
+# data_DMT <- data_DMT |>
+#   rename(
+#     fluency_DMT_pre = DMT_pre,
+#     fluency_DMT_post = DMT_post,
+#   ) |>
+#   dplyr::select(
+#     !c(Leerjaar, row_number, DMT_mid, DMT_followup)
+#   )
+# 
+# ##### Write data
+# saveRDS(
+#   data_DMT,
+#   paste0(
+#     "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - dosage/R project - dosage paper/input/",
+#     "data_DMT.rds"
+#   )
+# )
+
+## Step 3, 4 and 5 - main intervention effect ----
+### Single dummy unconstrained regression effects ----
+# Specify model
+mod_DMT_maineffect_unconstrained <- '
+## Common factor structure
+# Common factor factor loadings
+DMT_pre =~ 1*DMT_score_pre
+DMT_mid =~ 1*DMT_score_mid
+DMT_post =~ 1*DMT_score_post
+DMT_followup =~ 1*DMT_score_followup
+
+# Common factor variances
+DMT_pre ~~ DMT_pre
+DMT_mid ~~ DMT_mid
+DMT_post ~~ DMT_post
+DMT_followup ~~ DMT_followup
+
+# Common factor covariances
+DMT_mid ~~ DMT_post
+DMT_mid ~~ DMT_followup
+DMT_post ~~ DMT_followup
+
+# Common factor intercepts
+DMT_pre ~ 0*1
+DMT_mid ~ 0*1
+DMT_post ~ 0*1
+DMT_followup ~ 0*1
+
+# Indicator residual variances
+DMT_score_pre ~~ 0*DMT_score_pre
+DMT_score_mid ~~ 0*DMT_score_mid
+DMT_score_post ~~ 0*DMT_score_post
+DMT_score_followup ~~ 0*DMT_score_followup
+
+# Indicator intercepts
+DMT_score_pre ~ 1
+DMT_score_mid ~ 1
+DMT_score_post ~ 1
+DMT_score_followup ~ 1
+
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+DMT_pre ~~ intervention
+
+# path model
+DMT_mid ~ intervention + DMT_pre
+DMT_post ~ intervention + DMT_pre
+DMT_followup ~ intervention + DMT_pre
+'
+
+# Fit and inspect model
+fit_DMT_maineffect_unconstrained <- lavaan(mod_DMT_maineffect_unconstrained,
+                                                  data = data,
+                                                  cluster = "class_ID",
+                                                  group = "Leerjaar",
+                                           group.label = c('4', '5', '6'),
+                                                  missing = "FIML"
+)
+fitMeasures(fit_DMT_maineffect_unconstrained)[c('df', 'chisq', 'pvalue', 'cfi', 'rmsea')]
+summary(fit_DMT_maineffect_unconstrained, std = T)
+
+### Single dummy constrained regression across grades ----
+# Specify model
+mod_DMT_maineffect_constrainedgrades <- '
+## Common factor structure
+# Common factor factor loadings
+DMT_pre =~ 1*DMT_score_pre
+DMT_mid =~ 1*DMT_score_mid
+DMT_post =~ 1*DMT_score_post
+DMT_followup =~ 1*DMT_score_followup
+
+# Common factor variances
+DMT_pre ~~ DMT_pre
+DMT_mid ~~ DMT_mid
+DMT_post ~~ DMT_post
+DMT_followup ~~ DMT_followup
+
+# Common factor covariances
+DMT_mid ~~ DMT_post
+DMT_mid ~~ DMT_followup
+DMT_post ~~ DMT_followup
+
+# Common factor intercepts
+DMT_pre ~ 0*1
+DMT_mid ~ 0*1
+DMT_post ~ 0*1
+DMT_followup ~ 0*1
+
+# Indicator residual variances
+DMT_score_pre ~~ 0*DMT_score_pre
+DMT_score_mid ~~ 0*DMT_score_mid
+DMT_score_post ~~ 0*DMT_score_post
+DMT_score_followup ~~ 0*DMT_score_followup
+
+# Indicator intercepts
+DMT_score_pre ~ 1
+DMT_score_mid ~ 1
+DMT_score_post ~ 1
+DMT_score_followup ~ 1
+
+## Structural regression
+# Observed variables intercept and covariances
+intervention ~ 1
+intervention ~~ intervention
+DMT_pre ~~ intervention
+
+# path model
+DMT_mid ~ a_mid*intervention + DMT_pre
+DMT_post ~ a_post*intervention + DMT_pre
+DMT_followup ~ a_followup*intervention + DMT_pre
+'
+
+# Fit and inspect model
+fit_DMT_maineffect_constrainedgrades <- lavaan(mod_DMT_maineffect_constrainedgrades,
+                            data = data,
+                            cluster = "class_ID",
+                            group = "Leerjaar",
+                            group.label = c('4', '5', '6'),
+                            missing = "FIML"
+)
+
+anova(
+  fit_DMT_maineffect_unconstrained,
+  fit_DMT_maineffect_constrainedgrades
+)
+fitMeasures(fit_DMT_maineffect_constrainedgrades)[c('df', 'chisq', 'pvalue', 'cfi', 'rmsea')]
+# summary(fit_DMT_maineffect_constrainedgrades, std = T)
+
+## Step 6, 7 and 8 - inspect condition equality ----
+### Double dummy unconstrained regression effects ----
+# Specify model
+mod_DMT_conditioneffect_unconstrained <- '
+## Common factor structure
+# Common factor factor loadings
+DMT_pre =~ 1*DMT_score_pre
+DMT_mid =~ 1*DMT_score_mid
+DMT_post =~ 1*DMT_score_post
+DMT_followup =~ 1*DMT_score_followup
+
+# Common factor variances
+DMT_pre ~~ DMT_pre
+DMT_mid ~~ DMT_mid
+DMT_post ~~ DMT_post
+DMT_followup ~~ DMT_followup
+
+# Common factor covariances
+DMT_mid ~~ DMT_post
+DMT_mid ~~ DMT_followup
+DMT_post ~~ DMT_followup
+
+# Common factor intercepts
+DMT_pre ~ 0*1
+DMT_mid ~ 0*1
+DMT_post ~ 0*1
+DMT_followup ~ 0*1
+
+# Indicator residual variances
+DMT_score_pre ~~ 0*DMT_score_pre
+DMT_score_mid ~~ 0*DMT_score_mid
+DMT_score_post ~~ 0*DMT_score_post
+DMT_score_followup ~~ 0*DMT_score_followup
+
+# Indicator intercepts
+DMT_score_pre ~ 1
+DMT_score_mid ~ 1
+DMT_score_post ~ 1
+DMT_score_followup ~ 1
+
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+DMT_pre ~~ condition_led
+DMT_pre ~~ condition_comb
+
+# path model
+DMT_mid ~ condition_led + condition_comb + DMT_pre
+DMT_post ~ condition_led + condition_comb + DMT_pre
+DMT_followup ~ condition_led + condition_comb + DMT_pre
+'
+
+# Fit and inspect model
+fit_DMT_conditioneffect_unconstrained <- lavaan(mod_DMT_conditioneffect_unconstrained,
+                                                  data = data,
+                                                  cluster = "class_ID",
+                                                  group = "Leerjaar",
+                                                group.label = c('4', '5', '6'),
+                                                  missing = "FIML"
+)
+
+fitMeasures(fit_DMT_conditioneffect_unconstrained)[c('df', 'chisq', 'pvalue', 'cfi', 'rmsea')]
+summary(fit_DMT_conditioneffect_unconstrained, std = T)
+
+### Double dummy constrained regression effects across conditions - grades freed ----
+# Specify model
+mod_DMT_conditioneffect_constrainedconditions <- '
+## Common factor structure
+# Common factor factor loadings
+DMT_pre =~ 1*DMT_score_pre
+DMT_mid =~ 1*DMT_score_mid
+DMT_post =~ 1*DMT_score_post
+DMT_followup =~ 1*DMT_score_followup
+
+# Common factor variances
+DMT_pre ~~ DMT_pre
+DMT_mid ~~ DMT_mid
+DMT_post ~~ DMT_post
+DMT_followup ~~ DMT_followup
+
+# Common factor covariances
+DMT_mid ~~ DMT_post
+DMT_mid ~~ DMT_followup
+DMT_post ~~ DMT_followup
+
+# Common factor intercepts
+DMT_pre ~ 0*1
+DMT_mid ~ 0*1
+DMT_post ~ 0*1
+DMT_followup ~ 0*1
+
+# Indicator residual variances
+DMT_score_pre ~~ 0*DMT_score_pre
+DMT_score_mid ~~ 0*DMT_score_mid
+DMT_score_post ~~ 0*DMT_score_post
+DMT_score_followup ~~ 0*DMT_score_followup
+
+# Indicator intercepts
+DMT_score_pre ~ 1
+DMT_score_mid ~ 1
+DMT_score_post ~ 1
+DMT_score_followup ~ 1
+
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+DMT_pre ~~ condition_led
+DMT_pre ~~ condition_comb
+
+# path model
+DMT_mid ~ c(a_mid, b_mid, c_mid)*condition_led + c(a_mid, b_mid, c_mid)*condition_comb + DMT_pre
+DMT_post ~ c(a_post, b_post, c_post)*condition_led + c(a_post, b_post, c_post)*condition_comb + DMT_pre
+DMT_followup ~ c(a_followup, b_followup, c_followup)*condition_led + c(a_followup, b_followup, c_followup)*condition_comb + DMT_pre
+'
+
+# Fit and inspect model
+fit_DMT_conditioneffect_constrainedconditions <- lavaan(mod_DMT_conditioneffect_constrainedconditions,
+                                                          data = data,
+                                                          cluster = "class_ID",
+                                                          group = "Leerjaar",
+                                                        group.label = c('4', '5', '6'),
+                                                          missing = "FIML"
+)
+
+anova(fit_DMT_conditioneffect_unconstrained,
+      fit_DMT_conditioneffect_constrainedconditions)
+
+fitMeasures(fit_DMT_conditioneffect_constrainedconditions)[c('df', 'chisq', 'pvalue', 'cfi', 'rmsea')]
+summary(fit_DMT_conditioneffect_constrainedconditions, std = T)
+
+### Double dummy constrained regression effects across grades - conditions freed ----
+# Specify model
+mod_DMT_conditioneffect_constrainedgrades <- '
+## Common factor structure
+# Common factor factor loadings
+DMT_pre =~ 1*DMT_score_pre
+DMT_mid =~ 1*DMT_score_mid
+DMT_post =~ 1*DMT_score_post
+DMT_followup =~ 1*DMT_score_followup
+
+# Common factor variances
+DMT_pre ~~ DMT_pre
+DMT_mid ~~ DMT_mid
+DMT_post ~~ DMT_post
+DMT_followup ~~ DMT_followup
+
+# Common factor covariances
+DMT_mid ~~ DMT_post
+DMT_mid ~~ DMT_followup
+DMT_post ~~ DMT_followup
+
+# Common factor intercepts
+DMT_pre ~ 0*1
+DMT_mid ~ 0*1
+DMT_post ~ 0*1
+DMT_followup ~ 0*1
+
+# Indicator residual variances
+DMT_score_pre ~~ 0*DMT_score_pre
+DMT_score_mid ~~ 0*DMT_score_mid
+DMT_score_post ~~ 0*DMT_score_post
+DMT_score_followup ~~ 0*DMT_score_followup
+
+# Indicator intercepts
+DMT_score_pre ~ 1
+DMT_score_mid ~ 1
+DMT_score_post ~ 1
+DMT_score_followup ~ 1
+
+## Structural regression
+# Observed variables intercept and covariances
+condition_led ~ 1
+condition_comb ~ 1
+condition_led ~~ condition_led
+condition_comb ~~ condition_comb
+condition_led ~~ condition_comb
+DMT_pre ~~ condition_led
+DMT_pre ~~ condition_comb
+
+# path model
+DMT_mid ~ a_mid*condition_led + b_mid*condition_comb + DMT_pre
+DMT_post ~ a_post*condition_led + b_post*condition_comb + DMT_pre
+DMT_followup ~ a_followup*condition_led + b_followup*condition_comb + DMT_pre
+'
+
+# Fit and inspect model
+fit_DMT_conditioneffect_constrainedgrades <- lavaan(mod_DMT_conditioneffect_constrainedgrades,
+                                                      data = data,
+                                                      cluster = "class_ID",
+                                                      group = "Leerjaar",
+                                                    group.label = c('4', '5', '6'),
+                                                      missing = "FIML"
+)
+
+anova(fit_DMT_conditioneffect_unconstrained,
+      fit_DMT_conditioneffect_constrainedgrades)
+fitMeasures(fit_DMT_conditioneffect_constrainedgrades)[c('df', 'chisq', 'pvalue', 'cfi', 'rmsea')]
+# summary(fit_DMT_conditioneffect_constrainedgrades, std = T)
+
+## Summary of results ----
+### Main effect ----
+# Unconstrained model: 
+# A positive effect of intervention on DMT at mid-, post- and follow-up measurement for group 5
+parameterestimates(
+  fit_DMT_maineffect_unconstrained,
+  standardized = T
+) |> 
+  filter(
+    str_detect(rhs, 'intervention'),
+    op == '~',
+    # pvalue < .05
+  ) |> 
+  arrange(
+    lhs, group
+  ) |> 
+  dplyr::select(lhs, group, est, se, pvalue, std.lv)
+
+# significant difference in intervention effect between grades:
+anova(
+  fit_DMT_maineffect_unconstrained,
+  fit_DMT_maineffect_constrainedgrades
+)
+
+### Condition effects ----
+# Unconstrained model: 
+# A positive effect of condition_LED on DMT at mid-, post- and follow-up and of condition_comb on DMT at follow-up for group 5
+parameterestimates(
+  fit_DMT_conditioneffect_unconstrained,
+  standardized = T
+) |> 
+  filter(
+    str_detect(rhs, 'condition'),
+    op == '~',
+    # pvalue < .001
+  ) |> 
+  arrange(
+    rhs, lhs, group
+  ) |> 
+  dplyr::select(lhs, rhs, group, est, se, pvalue, std.lv)
+
+
+# No significant differences between condition_LED and condition_comb effects within groups: 
+# significant effect of condition_LED and condition_comb on DMT at mid-, post- and follow-up for group 5.
+anova(
+  fit_DMT_conditioneffect_unconstrained,
+  fit_DMT_conditioneffect_constrainedconditions
+)
+parameterestimates(
+  fit_DMT_conditioneffect_constrainedconditions,
+  standardized = T
+) |> 
+  filter(
+    str_detect(rhs, 'condition'),
+    op == '~',
+    pvalue < .05
+  )
+
+# significant differences between condition_LED or condition_comb effects between groups: 
+anova(
+  fit_DMT_conditioneffect_unconstrained,
+  fit_DMT_conditioneffect_constrainedgrades
+)
+
+# Estimates table ----
+estimates_DMT_maineffect_unconstrained <- format_parameter_table(
+  model_fit = fit_DMT_maineffect_unconstrained,
+  rhs_filter = 'intervention',
+  lhs_filter = 'DMT',
+  grade_offset = 1,
+  exclude_outcome = FALSE
+)
+
+estimates_DMT_maineffect_constrainedgrades <- format_parameter_table(
+  model_fit = fit_DMT_maineffect_constrainedgrades,
+  rhs_filter = 'intervention',
+  lhs_filter = 'DMT',
+  grade_offset = 1,
+  exclude_outcome = FALSE
+)
+
+estimates_DMT_conditioneffect_unconstrained <- format_parameter_table(
+  model_fit = fit_DMT_conditioneffect_unconstrained,
+  rhs_filter = 'condition',
+  lhs_filter = 'DMT',
+  grade_offset = 1,
+  exclude_outcome = FALSE
+)
+
+estimates_DMT_conditioneffect_constrainedconditions <- format_parameter_table(
+  model_fit = fit_DMT_conditioneffect_constrainedconditions,
+  rhs_filter = 'condition',
+  lhs_filter = 'DMT',
+  grade_offset = 1,
+  exclude_outcome = FALSE
+)
+
+estimates_DMT_conditioneffect_constrainedgrades <- format_parameter_table(
+  model_fit = fit_DMT_conditioneffect_constrainedgrades,
+  rhs_filter = 'condition',
+  lhs_filter = 'DMT',
+  grade_offset = 1,
+  exclude_outcome = FALSE
+)
+
+estimates_DMT_maineffect_models <- bind_rows(
+  estimates_DMT_maineffect_unconstrained,
+  # estimates_DMT_maineffect_constrainedgrades
+) |> add_row(Dummy = 'Main Effects Model', .before = 1)
+
+estimates_DMT_conditioneffect_models <- 
+  bind_rows(
+    estimates_DMT_conditioneffect_unconstrained,
+    # estimates_DMT_conditioneffect_constrainedgrades,
+  ) |>
+  arrange(
+    desc(Dummy)
+  ) |> 
+  bind_rows(
+    estimates_DMT_conditioneffect_constrainedconditions |> arrange(Grade)
+  ) |> 
+  add_row(Dummy = 'Condition Effects Model', .before = 1)
+
+estimates_DMT_allmodels <- bind_rows(
+  estimates_DMT_maineffect_models,
+  estimates_DMT_conditioneffect_models
+) |> 
+  mutate(
+    Dummy = if_else(
+      (Dummy == lag(Dummy)) & !is.na(lag(Dummy)),
+      NA,
+      Dummy
+    ),
+    Grade = if_else(
+      (Grade == lag(Grade)) & !is.na(lag(Grade)),
+      NA,
+      Grade
+    ),
+  )
+
+estimates_DMT_allmodels |> 
+  write.table(
+    file = "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - RCT effect flits/Manuscript/Tables and Figures/parameter_estimates_DMT_models.csv",
+    sep = ";",
+    row.names = F
+  )
+
+
+
+
