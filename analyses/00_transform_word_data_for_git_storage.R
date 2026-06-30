@@ -40,6 +40,12 @@ data_logs_words <- data_logs_words |>
     Duration < 15 * 60
   )
 
+# Filter words with zero tries
+data_logs_words <- data_logs_words |> 
+  filter(
+    tries > 0
+  )
+
 # Summarise data ----
 data_logs_lesson_dose <- data_logs_words |> 
   mutate(
@@ -70,4 +76,3 @@ saveRDS(
   data_logs_lesson_dose,
   here("output/data_logs_lesson_dose.rds")
 )
-
