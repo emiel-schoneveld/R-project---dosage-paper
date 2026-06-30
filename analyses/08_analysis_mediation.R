@@ -110,8 +110,11 @@ anova_mediation_DMT <- anova(
   fit_fullmediation_DMT
 )
 
+# p value after correction
+(anova_mediation_DMT$`Pr(>Chisq)`[2]*3)
+
 estimates_mediation_DMT <- parameterEstimates(
-  fit_partialmediation_DMT,
+  fit_fullmediation_DMT,
   standardized = T
   ) |> 
   dplyr::select(
@@ -171,6 +174,9 @@ anova_mediation_discrete <- anova(
   fit_partialmediation_discrete,
   fit_fullmediation_discrete
 )
+
+# p value after correction
+(anova_mediation_discrete$`Pr(>Chisq)`[2]*3)
 
 estimates_mediation_discrete <- parameterEstimates(
   fit_fullmediation_discrete,
@@ -234,6 +240,9 @@ anova_mediation_serial <- anova(
   fit_fullmediation_serial
 )
 
+# p value after correction
+(anova_mediation_serial$`Pr(>Chisq)`[2]*3)
+
 estimates_mediation_serial <- parameterEstimates(
   fit_fullmediation_serial,
   standardized = T
@@ -253,128 +262,134 @@ estimates_mediation_serial <- parameterEstimates(
   )
 
 ### LED ----
-fit_partialmediation_LED <- sem(
-  c(
-    mod_fullmediation,
-    mod_addition_partialmediation,
-    mod_addition_totaltimeeffect_partialmediation
-  ),
-  data = data |> 
-    mutate(
-      words_exposures = words_exposures / 1000,
-      fluency_pre = fluency_LED_pre,
-      fluency_post = fluency_LED_post,
-    )
-  , 
-  missing = "FIML",
-  group = "grade",
-  group.label = c('grade_2', 'grade_3', 'grade_4'),
-  cluster = "class_ID",
-)
-
-fit_fullmediation_LED <- sem(
-  c(
-    mod_fullmediation,
-    # mod_addition_partialmediation,
-    mod_addition_totaltimeeffect_fullmediation
-  ),
-  data = data |> 
-    mutate(
-      words_exposures = words_exposures / 1000,
-      fluency_pre = fluency_LED_pre,
-      fluency_post = fluency_LED_post,
-    )
-  , 
-  missing = "FIML",
-  group = "grade",
-  group.label = c('grade_2', 'grade_3', 'grade_4'),
-  cluster = "class_ID",
-)
-
-anova_mediation_LED <- anova(
-  fit_partialmediation_LED,
-  fit_fullmediation_LED
-)
-
-estimates_mediation_LED <- parameterEstimates(
-  fit_fullmediation_LED,
-  standardized = T
-) |> 
-  dplyr::select(
-    lhs, op, rhs, group, label, est, se, pvalue, ci.lower, ci.upper, std.all
-  ) |> 
-  filter(
-    op %in% c('~', ':=')
-  ) |> 
-  arrange(
-    lhs, rhs, group
-  ) |> 
-  mutate(
-    outcome = 'LED',
-    .before = 1
-  )
+# fit_partialmediation_LED <- sem(
+#   c(
+#     mod_fullmediation,
+#     mod_addition_partialmediation,
+#     mod_addition_totaltimeeffect_partialmediation
+#   ),
+#   data = data |> 
+#     mutate(
+#       words_exposures = words_exposures / 1000,
+#       fluency_pre = fluency_LED_pre,
+#       fluency_post = fluency_LED_post,
+#     )
+#   , 
+#   missing = "FIML",
+#   group = "grade",
+#   group.label = c('grade_2', 'grade_3', 'grade_4'),
+#   cluster = "class_ID",
+# )
+# 
+# fit_fullmediation_LED <- sem(
+#   c(
+#     mod_fullmediation,
+#     # mod_addition_partialmediation,
+#     mod_addition_totaltimeeffect_fullmediation
+#   ),
+#   data = data |> 
+#     mutate(
+#       words_exposures = words_exposures / 1000,
+#       fluency_pre = fluency_LED_pre,
+#       fluency_post = fluency_LED_post,
+#     )
+#   , 
+#   missing = "FIML",
+#   group = "grade",
+#   group.label = c('grade_2', 'grade_3', 'grade_4'),
+#   cluster = "class_ID",
+# )
+# 
+# anova_mediation_LED <- anova(
+#   fit_partialmediation_LED,
+#   fit_fullmediation_LED
+# )
+# 
+# # p value after correction
+# (anova_mediation_LED$`Pr(>Chisq)`[2]*3)
+# 
+# estimates_mediation_LED <- parameterEstimates(
+#   fit_fullmediation_LED,
+#   standardized = T
+# ) |> 
+#   dplyr::select(
+#     lhs, op, rhs, group, label, est, se, pvalue, ci.lower, ci.upper, std.all
+#   ) |> 
+#   filter(
+#     op %in% c('~', ':=')
+#   ) |> 
+#   arrange(
+#     lhs, rhs, group
+#   ) |> 
+#   mutate(
+#     outcome = 'LED',
+#     .before = 1
+#   )
 
 ### pseudo ----
-fit_partialmediation_pseudo <- sem(
-  c(
-    mod_fullmediation,
-    mod_addition_partialmediation,
-    mod_addition_totaltimeeffect_partialmediation
-  ),
-  data = data |> 
-    mutate(
-      words_exposures = words_exposures / 1000,
-      fluency_pre = fluency_pseudo_pre,
-      fluency_post = fluency_pseudo_post,
-    )
-  , 
-  missing = "FIML",
-  group = "grade",
-  group.label = c('grade_2', 'grade_3', 'grade_4'),
-  cluster = "class_ID",
-)
-
-fit_fullmediation_pseudo <- sem(
-  c(
-    mod_fullmediation,
-    # mod_addition_partialmediation,
-    mod_addition_totaltimeeffect_fullmediation
-  ),
-  data = data |> 
-    mutate(
-      words_exposures = words_exposures / 1000,
-      fluency_pre = fluency_pseudo_pre,
-      fluency_post = fluency_pseudo_post,
-    )
-  , 
-  missing = "FIML",
-  group = "grade",
-  group.label = c('grade_2', 'grade_3', 'grade_4'),
-  cluster = "class_ID",
-)
-
-anova_mediation_pseudo <- anova(
-  fit_partialmediation_pseudo,
-  fit_fullmediation_pseudo
-)
-
-estimates_mediation_pseudo <- parameterEstimates(
-  fit_partialmediation_pseudo,
-  standardized = T
-) |> 
-  dplyr::select(
-    lhs, op, rhs, group, label, est, se, pvalue, ci.lower, ci.upper, std.all
-  ) |> 
-  filter(
-    op %in% c('~', ':=')
-  ) |> 
-  arrange(
-    lhs, rhs, group
-  ) |> 
-  mutate(
-    outcome = 'pseudo',
-    .before = 1
-  )
+# fit_partialmediation_pseudo <- sem(
+#   c(
+#     mod_fullmediation,
+#     mod_addition_partialmediation,
+#     mod_addition_totaltimeeffect_partialmediation
+#   ),
+#   data = data |> 
+#     mutate(
+#       words_exposures = words_exposures / 1000,
+#       fluency_pre = fluency_pseudo_pre,
+#       fluency_post = fluency_pseudo_post,
+#     )
+#   , 
+#   missing = "FIML",
+#   group = "grade",
+#   group.label = c('grade_2', 'grade_3', 'grade_4'),
+#   cluster = "class_ID",
+# )
+# 
+# fit_fullmediation_pseudo <- sem(
+#   c(
+#     mod_fullmediation,
+#     # mod_addition_partialmediation,
+#     mod_addition_totaltimeeffect_fullmediation
+#   ),
+#   data = data |> 
+#     mutate(
+#       words_exposures = words_exposures / 1000,
+#       fluency_pre = fluency_pseudo_pre,
+#       fluency_post = fluency_pseudo_post,
+#     )
+#   , 
+#   missing = "FIML",
+#   group = "grade",
+#   group.label = c('grade_2', 'grade_3', 'grade_4'),
+#   cluster = "class_ID",
+# )
+# 
+# anova_mediation_pseudo <- anova(
+#   fit_partialmediation_pseudo,
+#   fit_fullmediation_pseudo
+# )
+# 
+# # p value after correction
+# (anova_mediation_pseudo$`Pr(>Chisq)`[2]*3)
+# 
+# estimates_mediation_pseudo <- parameterEstimates(
+#   fit_partialmediation_pseudo,
+#   standardized = T
+# ) |> 
+#   dplyr::select(
+#     lhs, op, rhs, group, label, est, se, pvalue, ci.lower, ci.upper, std.all
+#   ) |> 
+#   filter(
+#     op %in% c('~', ':=')
+#   ) |> 
+#   arrange(
+#     lhs, rhs, group
+#   ) |> 
+#   mutate(
+#     outcome = 'pseudo',
+#     .before = 1
+#   )
 
 ## Inspect results ----
 ### Bind results of mediation models (and adding missing values explicitely for plotting purposes) ----
@@ -382,13 +397,13 @@ estimates_mediation <- bind_rows(
   estimates_mediation_DMT,
   estimates_mediation_discrete,
   estimates_mediation_serial,
-  estimates_mediation_LED,
-  estimates_mediation_pseudo,
+  # estimates_mediation_LED,
+  # estimates_mediation_pseudo,
 ) |> as_tibble() |> 
   mutate(
     significant = case_when(
-    pvalue < .05 ~ 'Significant',
-    pvalue >= .05 ~ 'Not significant'
+    pvalue < .05/9 ~ 'Significant',
+    pvalue >= .05/9 ~ 'Not significant'
   ),
     group = case_when(
       group == 1 ~ 'grade_2',
@@ -408,7 +423,7 @@ missing_combos <- estimates_mediation |>
     str_detect(rhs, 'time'),
   ) |> 
   add_row(
-    outcome = c('serial', 'LED', 'discrete'),
+    outcome = c('serial', 'LED', 'discrete', 'DMT'),
     # lhs = c('fluency_post', 'fluency_post', 'fluency_post'),
     # rhs = c('time', 'time', 'time'),
     # op = c('~', '~', '~')
@@ -418,7 +433,7 @@ missing_combos <- estimates_mediation |>
   ) |> 
   drop_na() |> 
   filter(
-    !(outcome %in% c('DMT', 'pseudo'))
+    !(outcome %in% c('pseudo'))
   )
 
 ### Add missing combos
@@ -432,8 +447,8 @@ estimates_mediation_comparison <- bind_rows(
   c('outcome' = 'DMT', unlist(anova_mediation_DMT)),
   c("outcome" = "discrete", unlist(anova_mediation_discrete)),
   c("outcome" = "serial", unlist(anova_mediation_serial)),
-  c("outcome" = "LED", unlist(anova_mediation_LED)),
-  c("outcome" = "pseudo", unlist(anova_mediation_pseudo)),
+  # c("outcome" = "LED", unlist(anova_mediation_LED)),
+  # c("outcome" = "pseudo", unlist(anova_mediation_pseudo)),
 ) |> 
   rename(
     'chisq_diff' = `Chisq diff2`,
@@ -443,10 +458,10 @@ estimates_mediation_comparison <- bind_rows(
   dplyr::select(
     outcome, df_diff, chisq_diff, pvalue
   ) |> 
-  mutate(    
+  mutate(
     significant = case_when(
-    pvalue < .05 ~ 'Significant',
-    pvalue >= .05 ~ 'Not significant'
+    pvalue < .05/3 ~ 'Significant',
+    pvalue >= .05/3 ~ 'Not significant'
   ),
     grade = ''
     )
@@ -463,6 +478,27 @@ estimates_mediation |>
 estimates_mediation_comparison
 
 ### Plot results ----
+p_mediation_postpre <- estimates_mediation |> 
+  filter(
+    str_detect(op, '~'),
+    str_detect(lhs, 'post'),
+    str_detect(rhs, 'pre'),
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = significant,
+      label = std.all |> round(2)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  geom_text() +
+  ggtitle('Post ~ pre') +
+  common_theme_labs +
+  labs(x = NULL) +
+  scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
+
 p_mediation_postwords <- estimates_mediation |> 
   filter(
     str_detect(op, '~'),
@@ -569,7 +605,8 @@ p_comparison <- estimates_mediation_comparison |>
   labs(x = NULL) +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
-p_mediation <- p_mediation_wordstime +
+p_mediation <- p_mediation_postpre +
+  p_mediation_wordstime +
   p_mediation_postwords +
   p_mediation_posttime +
   p_mediation_posttimetotal +
@@ -583,5 +620,5 @@ p_mediation <- p_mediation_wordstime +
 p_mediation_formatted <- p_mediation +
   plot_annotation(
   title = 'Mediation analysis',
-  subtitle = 'Using the SEM model'
 )
+

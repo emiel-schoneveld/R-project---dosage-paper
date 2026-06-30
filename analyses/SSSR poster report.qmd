@@ -1,0 +1,108 @@
+---
+title: "Make time count! Exposure to words, not hours spent practicing, drives reading progress"
+subtitle: "A data report"
+description: "This report provides a detailed overview of the data used for the SSSR poster. In addition it provides the estimates derived from both analyses."
+
+author: 
+  name: 'Emiel Schoneveld'
+  affiliations:
+    name: 'University of Amsterdam'
+
+keywords: "Intervention, Dosage, Time, Words, Accuracy"
+date: today
+
+execute: 
+  warning: false
+  message: false
+  echo: false
+
+project:
+     execute-dir: project
+
+editor: source
+number-sections: true
+format:
+  html:
+    embed-resources: true # used for making a standalone file, slow render but perfect for sharing
+    toc: true
+    code-fold: false
+    # code-summary: "Show the code"
+    title-block-banner: "#bc0031" # title block background color
+    title-block-banner-color: "#fffff" # title block font color
+    backgroundcolor: "#F5F5F3"
+    fontcolor: "#1B1918"
+---
+
+```{r echo=FALSE, include=FALSE}
+# Preperation syntax
+## Load libraries
+library(here)
+library(tidyverse)
+library(vtable)
+library(DT)
+library(reshape2)
+library(plotly)
+library(scatterPlotMatrix)
+library(shiny)
+
+## source descriptive syntax and analyses draft
+source('07_descriptive_analyses.R')
+source('08_analysis_mediation.R')
+source('09_analysis_interaction.R')
+
+## Select variables and rename
+data_wide <- data |> 
+  dplyr::select(
+    grade, time, words_exposures, accuracy_anytry, contains('fluency') & !(contains('LED') | contains('pseudo'))
+  ) |> 
+  rename(
+    'words' = words_exposures,
+    'accuracy' = accuracy_anytry
+  ) |> 
+  mutate(
+    grade = case_when(
+      grade == 'grade_2' ~ 'Grade 2',
+      grade == 'grade_3' ~ 'Grade 3',
+      grade == 'grade_4' ~ 'Grade 4',
+    )
+  ) |> 
+  rename_with(~ str_remove(.x, 'fluency_')) |> 
+  rename_with(~ str_replace(.x, '_', '-')) |> 
+  rename_with(~ str_replace(.x, 'serial', 'serial_exp')) |> 
+  rename_with(~ str_replace(.x, 'discrete', 'discrete_exp')) |> 
+  rename_with(~ str_replace(.x, 'DMT', 'serial_normed'))
+
+## Pivot data
+data_long <- data_wide |> 
+  pivot_longer(
+    contains('-'),
+    names_to = c('task', 'measurement'),
+    names_sep = '-',
+    values_to = 'fluency'
+  )
+
+## Make factors
+data_long <- data_long |> 
+  mutate(
+    task = factor(task, levels = c('serial_normed', 'serial_exp', 'discrete_exp')),
+    measurement = factor(measurement, levels = c('pre', 'post')),
+  )
+```
+
+# Descriptive statistics ----
+## Histograms
+```{r}
+# data_long |> 
+# scatterPlotMatrix(data_long)
+data_wide |> 
+  dplyr::select(
+    time, words, accuracy, grade, contains('_')
+  ) |> 
+  scatterPlotMatrix(
+    categorical = list(grade = sort(unique(data_wide$grade))),
+    zAxisDim = 'grade',
+    rotateTitle = T
+  )
+
+```
+
