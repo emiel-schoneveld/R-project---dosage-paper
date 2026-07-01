@@ -31,7 +31,6 @@ format:
     title-block-banner-color: "#fffff" # title block font color
     backgroundcolor: "#F5F5F3"
     fontcolor: "#1B1918"
-    fig-format: svg
 ---
 
 ```{r echo=FALSE, include=FALSE}
@@ -40,7 +39,6 @@ format:
 library(here)
 library(tidyverse)
 library(scatterPlotMatrix)
-library(ggiraph)
 
 ## source descriptive syntax and analyses draft
 # source('07_descriptive_analyses.R')
@@ -132,13 +130,8 @@ Time -> post is empty because the effect of time on post was fully mediated by w
 #| fig-width: 14
 #| fig-height: 6
 
-# p_mediation_formatted
-girafe(
-  p_mediation_formatted,
-  options = list(
-    opts_zoom(max = 5)
-  )
-)
+p_mediation_formatted
+
 ```
 
 # Interaction analysis
@@ -173,11 +166,6 @@ The models were fitted for three outcome measures. Below the standardized regres
 #| fig-width: 14
 #| fig-height: 6
 
-# p_interaction_formatted
-girafe(
-  p_interaction_formatted,
-  options = list(
-    opts_zoom(max = 5)
-  )
-)
+p_interaction_formatted
+
 ```
