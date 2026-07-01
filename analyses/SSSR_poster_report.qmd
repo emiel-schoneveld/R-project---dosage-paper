@@ -97,8 +97,8 @@ data_wide |>
     categorical = list(grade = sort(unique(data_wide$grade))),
     zAxisDim = 'grade',
     rotateTitle = T,
-    width = 1000,
-    height = 1000
+    width = 1400,
+    height = 1400
   )
 
 ```
