@@ -495,7 +495,7 @@ p_mediation_postpre <- estimates_mediation |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text(color = 'white') +
+  geom_text(color = 'white', size = 8) +
   ggtitle('Pre -> post') +
   common_theme_labs +
   labs(x = NULL) +
@@ -517,7 +517,7 @@ p_mediation_postwords <- estimates_mediation |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text(color = 'white') +
+  geom_text(color = 'white', size = 8) +
   ggtitle('Words -> post') +
   common_theme_labs +
   labs(x = NULL) +
@@ -538,7 +538,7 @@ p_mediation_wordstime <- estimates_mediation |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text(color = 'white') +
+  geom_text(color = 'white', size = 8) +
   ggtitle('Time -> words') +
   common_theme_labs +
   labs(x = NULL) +
@@ -560,7 +560,7 @@ p_mediation_posttime <- estimates_mediation |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text(color = 'white') +
+  geom_text(color = 'white', size = 8) +
   ggtitle('Time -> post') +
   common_theme_labs +
   labs(x = NULL) +
@@ -587,7 +587,7 @@ p_mediation_posttimetotal <- estimates_mediation |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text(color = 'white') +
+  geom_text(color = 'white', size = 8) +
   ggtitle('Time -> post (total effect)') +
   common_theme_labs +
   labs(x = NULL) +

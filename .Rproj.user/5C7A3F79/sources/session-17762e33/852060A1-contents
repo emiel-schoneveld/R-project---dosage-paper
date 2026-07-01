@@ -219,7 +219,7 @@ p_interaction_exposures <- estimates_interaction |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text(color = 'white') +
+  geom_text(color = 'white', size = 8) +
   ggtitle('Post ~ words') +
   common_theme_labs +
   labs(x = NULL) +
@@ -240,7 +240,7 @@ p_interaction_accuracy <- estimates_interaction |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text(color = 'white') +
+  geom_text(color = 'white', size = 8) +
   ggtitle('Post ~ accuracy') +
   common_theme_labs +
   labs(x = NULL) +
@@ -260,7 +260,7 @@ p_interaction_accuracyexposures <- estimates_interaction |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text(color = 'white') +
+  geom_text(color = 'white', size = 8) +
   ggtitle('Post ~ accuracy:words') +
   common_theme_labs +
   labs(x = NULL) +
