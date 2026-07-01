@@ -24,7 +24,10 @@ data_logs_raw <- read_xlsx(
   here('input/logs_lessons_anonymous.xlsx')
 ) |> 
   dplyr::select(
-    CourseProgressId, Duration, LessonType
+    CourseProgressId, Duration, LessonType, Leerlingnummer
+  ) |> 
+  rename(
+    student_ID = Leerlingnummer
   )
 
 # Join duration to data_logs_words ----

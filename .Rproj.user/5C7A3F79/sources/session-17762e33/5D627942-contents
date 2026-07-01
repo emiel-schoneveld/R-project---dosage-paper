@@ -31,6 +31,7 @@ format:
     title-block-banner-color: "#fffff" # title block font color
     backgroundcolor: "#F5F5F3"
     fontcolor: "#1B1918"
+    fig-format: svg
 ---
 
 ```{r echo=FALSE, include=FALSE}
@@ -38,15 +39,11 @@ format:
 ## Load libraries
 library(here)
 library(tidyverse)
-library(vtable)
-library(DT)
-library(reshape2)
-library(plotly)
 library(scatterPlotMatrix)
-library(shiny)
+library(ggiraph)
 
 ## source descriptive syntax and analyses draft
-source('07_descriptive_analyses.R')
+# source('07_descriptive_analyses.R')
 source('08_analysis_mediation.R')
 source('09_analysis_interaction.R')
 
@@ -90,19 +87,97 @@ data_long <- data_long |>
 ```
 
 # Descriptive statistics ----
-## Histograms
+## Histograms and scatterplots
 ```{r}
-# data_long |> 
-# scatterPlotMatrix(data_long)
 data_wide |> 
   dplyr::select(
-    time, words, accuracy, grade, contains('_')
+    time, words, accuracy, grade, contains('post')
   ) |> 
   scatterPlotMatrix(
     categorical = list(grade = sort(unique(data_wide$grade))),
     zAxisDim = 'grade',
-    rotateTitle = T
+    rotateTitle = T,
+    width = 1000,
+    height = 1000
   )
 
 ```
 
+# Mediation analysis
+## Model description
+This model is used to investigate whether the reading fluency improvements are caused by the number of words students read and/or the amount of time they have practiced.
+The model displayed below was fitted with and without the direct effect of time on post to test for full or partial mediation of the time effect on post fluency via words.
+
+::: callout-note
+The covariances are omitted in the figure for legibility.
+:::
+
+```{r echo=FALSE, include=TRUE}
+# Plot model
+lavaanPlot(
+  fit_partialmediation_discrete,
+  graph_options = list(rankdir = "TB")
+)
+```
+
+## Results
+The models were fitted for three outcome measures. Below the standardized estimates of the regression parameters and the full vs partial mediation anova test.
+
+::: {.callout-note}
+Time -> post is empty because the effect of time on post was fully mediated by words in all three models.
+:::
+
+
+```{r echo=FALSE, include=TRUE}
+#| fig-width: 14
+#| fig-height: 6
+
+# p_mediation_formatted
+girafe(
+  p_mediation_formatted,
+  options = list(
+    opts_zoom(max = 5)
+  )
+)
+```
+
+# Interaction analysis
+## Model description
+Using an OLM linear model the following model was fitted to check the influence of accuracy. The effect of time on post was omitted because it was fully mediated by words.
+
+```{r echo=FALSE, include=TRUE}
+# specify model
+mod_lm_visualisation <- 'fluency_post ~ fluency_pre + time + words_exposures + accuracy_anytry + exposuresXaccuracy'
+
+# fit dummy model
+fit_lm_visualisation <- sem(
+  mod_lm_visualisation,
+  data |> 
+    mutate(
+      fluency_post = fluency_DMT_post,
+      fluency_pre = fluency_DMT_pre,
+      exposuresXaccuracy = accuracy_anytry*words_exposures,
+    )
+)
+
+# Plot
+lavaanPlot(
+  fit_lm_visualisation
+)
+```
+
+## The results
+The models were fitted for three outcome measures. Below the standardized regression estimates.
+
+```{r echo=FALSE, include=TRUE}
+#| fig-width: 14
+#| fig-height: 6
+
+# p_interaction_formatted
+girafe(
+  p_interaction_formatted,
+  options = list(
+    opts_zoom(max = 5)
+  )
+)
+```

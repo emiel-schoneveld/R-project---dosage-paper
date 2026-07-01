@@ -1,0 +1,224 @@
+---
+title: "Make time count! Exposure to words, not hours spent practicing, drives reading progress"
+subtitle: "A data report"
+description: "This report provides a detailed overview of the data used for the SSSR poster. In addition it provides the estimates derived from both analyses."
+
+author: 
+  name: 'Emiel Schoneveld'
+  affiliations:
+    name: 'University of Amsterdam'
+
+keywords: "Intervention, Dosage, Time, Words, Accuracy"
+date: today
+
+execute: 
+  warning: false
+  message: false
+  echo: false
+
+project:
+     execute-dir: project
+
+editor: source
+number-sections: true
+format:
+  html:
+    embed-resources: true # used for making a standalone file, slow render but perfect for sharing
+    toc: true
+    code-fold: false
+    # code-summary: "Show the code"
+    title-block-banner: "#bc0031" # title block background color
+    title-block-banner-color: "#fffff" # title block font color
+    backgroundcolor: "#F5F5F3"
+    fontcolor: "#1B1918"
+---
+
+```{r echo=FALSE, include=FALSE}
+# Preperation syntax
+## Load libraries
+library(here)
+library(tidyverse)
+library(vtable)
+library(DT)
+library(reshape2)
+library(plotly)
+library(scatterPlotMatrix)
+library(shiny)
+
+## source descriptive syntax and analyses draft
+# source('07_descriptive_analyses.R')
+source('08_analysis_mediation.R')
+source('09_analysis_interaction.R')
+
+## Select variables and rename
+data_wide <- data |> 
+  dplyr::select(
+    grade, time, words_exposures, accuracy_anytry, contains('fluency') & !(contains('LED') | contains('pseudo'))
+  ) |> 
+  rename(
+    'words' = words_exposures,
+    'accuracy' = accuracy_anytry
+  ) |> 
+  mutate(
+    grade = case_when(
+      grade == 'grade_2' ~ 'Grade 2',
+      grade == 'grade_3' ~ 'Grade 3',
+      grade == 'grade_4' ~ 'Grade 4',
+    )
+  ) |> 
+  rename_with(~ str_remove(.x, 'fluency_')) |> 
+  rename_with(~ str_replace(.x, '_', '-')) |> 
+  rename_with(~ str_replace(.x, 'serial', 'serial_exp')) |> 
+  rename_with(~ str_replace(.x, 'discrete', 'discrete_exp')) |> 
+  rename_with(~ str_replace(.x, 'DMT', 'serial_normed'))
+
+## Pivot data
+data_long <- data_wide |> 
+  pivot_longer(
+    contains('-'),
+    names_to = c('task', 'measurement'),
+    names_sep = '-',
+    values_to = 'fluency'
+  )
+
+## Make factors
+data_long <- data_long |> 
+  mutate(
+    task = factor(task, levels = c('serial_normed', 'serial_exp', 'discrete_exp')),
+    measurement = factor(measurement, levels = c('pre', 'post')),
+  )
+```
+
+# Descriptive statistics ----
+## Histograms and scatterplots
+```{r}
+data_wide |> 
+  dplyr::select(
+    time, words, accuracy, grade, contains('post')
+  ) |> 
+  scatterPlotMatrix(
+    categorical = list(grade = sort(unique(data_wide$grade))),
+    zAxisDim = 'grade',
+    rotateTitle = T,
+    width = 1000,
+    height = 1000
+  )
+
+```
+
+# Mediation analysis
+## Model description
+This model is used to investigate whether the reading fluency improvements are caused by the number of words students read and/or the amount of time they have practiced.
+The model displayed below was fitted with and without the direct effect of time on post to test for full or partial mediation of the time effect on post fluency via words.
+
+::: callout-note
+The covariances are omitted in the figure for legibility.
+:::
+
+```{r echo=FALSE, include=TRUE}
+# Plot model
+lavaanPlot(
+  fit_partialmediation_discrete,
+  graph_options = list(rankdir = "TB")
+)
+```
+
+## Results
+The models were fitted for three outcome measures. Below the standardized estimates of the regression parameters and the full vs partial mediation anova test.
+
+::: {.callout-note}
+`Time -> post` is empty because the effect of time on post was fully mediated by words in all three models.
+:::
+
+
+```{r echo=FALSE, include=TRUE}
+#| fig-width: 12
+#| fig-height: 6
+
+p1_med <- ggplotly(p_mediation_postpre)
+p2_med <- ggplotly(p_mediation_wordstime) |> style(showlegend = FALSE)
+p3_med <- ggplotly(p_mediation_postwords) |> style(showlegend = FALSE)
+p4_med <- ggplotly(p_mediation_posttime) |> style(showlegend = FALSE)
+p5_med <- ggplotly(p_mediation_posttimetotal) |> style(showlegend = FALSE)
+p6_med <- ggplotly(p_comparison ) |> style(showlegend = FALSE)
+
+p_med <- subplot(
+  p1_med,
+  p2_med,
+  p3_med,
+  p4_med,
+  p5_med,
+  p6_med,
+  nrows = 2, shareY = T, shareX = FALSE, titleX = T, titleY = T)
+
+p_med |> layout(
+  title = "Mediation analysis",
+  annotations = list(
+      list(x = 0.08,  y = 1.05, text = "Pre -> post", showarrow = FALSE,
+           xref = "paper", yref = "paper", font = list(size = 14)),
+      list(x = 0.5,  y = 1.05, text = "Time -> words", showarrow = FALSE,
+           xref = "paper", yref = "paper", font = list(size = 14)),
+      list(x = 1.2,  y = 1.05, text = "Words -> post", showarrow = FALSE,
+           xref = "paper", yref = "paper", font = list(size = 14)),
+      list(x = 0.08,  y = 0.45, text = "Time -> post", showarrow = FALSE,
+           xref = "paper", yref = "paper", font = list(size = 14)),
+      list(x = 0.5,  y = 0.45, text = "Time -> post (total effect)", showarrow = FALSE,
+           xref = "paper", yref = "paper", font = list(size = 14)),
+      list(x = 1.2,  y = 0.45, text = "Full vs partial mediation", showarrow = FALSE,
+           xref = "paper", yref = "paper", font = list(size = 14))
+    )
+  )
+
+```
+
+# Interaction analysis
+## Model description
+Using an OLM linear model the following model was fitted to check the influence of accuracy. The effect of time on post was omitted because it was fully mediated by words.
+
+```{r echo=FALSE, include=TRUE}
+
+# specify model
+mod_lm_visualisation <- 'fluency_post ~ fluency_pre + time + words_exposures + accuracy_anytry + exposuresXaccuracy'
+
+# fit dummy model
+fit_lm_visualisation <- sem(
+  mod_lm_visualisation,
+  data |> 
+    mutate(
+      fluency_post = fluency_DMT_post,
+      fluency_pre = fluency_DMT_pre,
+      exposuresXaccuracy = accuracy_anytry*words_exposures,
+    )
+)
+
+# Plot
+lavaanPlot(
+  fit_lm_visualisation
+)
+```
+
+## The results
+The models were fitted for three outcome measures. Below the standardized regression estimates.
+
+```{r echo=FALSE, include=TRUE}
+#| fig-width: 12
+#| fig-height: 6
+p1_int <- ggplotly(p_interaction_exposures)
+p2_int <- ggplotly(p_interaction_accuracy) |> style(showlegend = FALSE)
+p3_int <- ggplotly(p_interaction_accuracyexposures) |> style(showlegend = FALSE)
+
+p_int <- subplot(p1_int, p2_int, p3_int, nrows = 1, shareY = T, shareX = FALSE, titleX = T, titleY = T)
+
+p_int |> layout(
+  title = "Interaction analysis",
+  annotations = list(
+      list(x = 0.08,  y = 1.05, text = "Words -> post", showarrow = FALSE,
+           xref = "paper", yref = "paper", font = list(size = 14)),
+      list(x = 0.5,  y = 1.05, text = "Accuracy -> post", showarrow = FALSE,
+           xref = "paper", yref = "paper", font = list(size = 14)),
+      list(x = 1.2,  y = 1.05, text = "Words X accuracy -> post", showarrow = FALSE,
+           xref = "paper", yref = "paper", font = list(size = 14))
+    )
+  )
+```
+

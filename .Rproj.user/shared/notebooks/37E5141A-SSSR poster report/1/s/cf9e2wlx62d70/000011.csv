@@ -1,0 +1,5 @@
+"0","# Plot model"
+"0","lavaanPlot("
+"0","  fit_partialmediation_discrete,"
+"0","  graph_options = list(rankdir = ""TB"")"
+"0",")"
