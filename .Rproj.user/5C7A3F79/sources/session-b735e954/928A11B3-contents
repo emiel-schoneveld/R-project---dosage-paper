@@ -60,7 +60,8 @@ data_wide <- data |>
       grade == 'grade_2' ~ 'Grade 2',
       grade == 'grade_3' ~ 'Grade 3',
       grade == 'grade_4' ~ 'Grade 4',
-    )
+    ),
+    accuracy = accuracy*100 |> round(2)
   ) |> 
   rename_with(~ str_remove(.x, 'fluency_')) |> 
   rename_with(~ str_replace(.x, '_', '-')) |> 
@@ -145,13 +146,15 @@ summary_table <- bind_rows(
   ) |> 
   relocate(
     outcome, grade, measurement, N, N_missing, Min, Max, Mean, SD
+  ) |> 
+  arrange(
+    outcome,
+    grade
   )
 
 # Render summary table interactively
 datatable(
-  summary_table,
-  extensions = 'Buttons',
-  options = list(dom = 'Bfrtip')
+  summary_table
 )
 ```
 
