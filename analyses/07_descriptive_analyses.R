@@ -303,4 +303,3 @@ data |>
     name,
     # grade
   )
-  

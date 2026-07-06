@@ -73,7 +73,7 @@ p_prob_grade2 <- data |>
   labs(title = 'Grade 2') +
   scale_x_continuous(name = 'Words read', breaks = -2:2,
                      labels = c('-2 SD', '-1 SD', 'Mean', '+1 SD', '+2 SD')) +
-  scale_y_continuous(name = 'Discrete fluency post', breaks = -2:2,
+  scale_y_continuous(name = 'Discrete post', breaks = -2:2,
                      labels = c('-2 SD', '-1 SD', 'Mean', '+1 SD', '+2 SD'))
 
 ## Grade 4 ----
@@ -94,14 +94,14 @@ p_prob_grade4 <- data |>
   labs(title = 'Grade 4') +
   scale_x_continuous(name = 'Words read', breaks = -2:2,
                      labels = c('-2 SD', '-1 SD', 'Mean', '+1 SD', '+2 SD')) +
-  scale_y_continuous(name = 'Discrete fluency post', breaks = -2:2,
+  scale_y_continuous(name = 'Discrete post', breaks = -2:2,
                      labels = c('-2 SD', '-1 SD', 'Mean', '+1 SD', '+2 SD'))
 
 # p_prob_grade4
 p_prob <- (p_prob_grade2 + 
              p_prob_grade4 + 
              plot_layout(
-               axis = 'collect',
+               axes = 'collect',
                guides = 'collect'
              )) & 
   theme_bw() & 
@@ -140,7 +140,7 @@ ggsave(
   here::here('output/interaction_plot_SSSR.png'),
   dpi = 600,
   width = 11.2,
-  height = 6.6,
+  height = 5.02,
   units = 'cm'
 )
 

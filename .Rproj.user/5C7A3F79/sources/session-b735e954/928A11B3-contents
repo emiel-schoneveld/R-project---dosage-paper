@@ -39,6 +39,7 @@ format:
 library(here)
 library(tidyverse)
 library(scatterPlotMatrix)
+library(DT)
 
 ## source descriptive syntax and analyses draft
 # source('07_descriptive_analyses.R')
@@ -84,14 +85,155 @@ data_long <- data_long |>
   )
 ```
 
-# Descriptive statistics ----
+# Descriptive statistics
+## Descriptive table
+```{r}
+# Make summary table per grade
+summary_table_grouped <- data_wide |> 
+  pivot_longer(
+    -grade,
+    names_to = 'outcome',
+    values_to = 'value'
+  ) |> 
+  group_by(
+    grade, outcome
+  ) |> 
+  summarise(
+    N = n(),
+    N_missing = sum(is.na(value)),
+    Min = min(value, na.rm = T) |> round(2),
+    Max = max(value, na.rm = T) |> round(2),
+    Mean = mean(value, na.rm = T) |> round(2),
+    SD = sd(value, na.rm = T) |> round(2),
+  )
+
+# Make summary table for full sample
+summary_table_fullsample <- data_wide |> 
+  pivot_longer(
+    -grade,
+    names_to = 'outcome',
+    values_to = 'value'
+  ) |> 
+  group_by(
+    outcome
+  ) |> 
+  summarise(
+    N = n(),
+    N_missing = sum(is.na(value)),
+    Min = min(value, na.rm = T) |> round(2),
+    Max = max(value, na.rm = T) |> round(2),
+    Mean = mean(value, na.rm = T) |> round(2),
+    SD = sd(value, na.rm = T) |> round(2),
+  ) |> 
+  mutate(
+    grade = 'All grades'
+  )
+
+# Bind summary tables
+summary_table <- bind_rows(
+  summary_table_fullsample,
+  summary_table_grouped
+) |> 
+  mutate(
+    grade = factor(grade, levels = c('All grades', 'Grade 2', 'Grade 3', 'Grade 4')),
+    measurement = str_extract(outcome, "(?<=-).*"),
+    outcome = if_else(
+      str_detect(outcome, '-'),
+      str_extract(outcome, ".*(?=-)"),
+      outcome
+    )
+  ) |> 
+  relocate(
+    outcome, grade, measurement, N, N_missing, Min, Max, Mean, SD
+  )
+
+# Render summary table interactively
+datatable(
+  summary_table,
+  extensions = 'Buttons',
+  options = list(dom = 'Bfrtip')
+)
+```
+
 ## Histograms and scatterplots
+### Pre & post fluency
 ```{r}
 #| column: screen
 #| 
 data_wide |> 
   dplyr::select(
-    time, words, accuracy, grade, contains('post')
+    grade, contains('post')
+  ) |> 
+  scatterPlotMatrix(
+    categorical = list(grade = sort(unique(data_wide$grade))),
+    zAxisDim = 'grade',
+    rotateTitle = T,
+    width = 1400,
+    height = 1400
+  )
+
+```
+
+### Practice measures
+```{r}
+#| column: screen
+#| 
+data_wide |> 
+  dplyr::select(
+    time, words, accuracy, grade
+  ) |> 
+  scatterPlotMatrix(
+    categorical = list(grade = sort(unique(data_wide$grade))),
+    zAxisDim = 'grade',
+    rotateTitle = T,
+    width = 1400,
+    height = 1400
+  )
+```
+
+### Post & time
+```{r}
+#| column: screen
+#| 
+data_wide |> 
+  dplyr::select(
+    time, grade, contains('post')
+  ) |> 
+  scatterPlotMatrix(
+    categorical = list(grade = sort(unique(data_wide$grade))),
+    zAxisDim = 'grade',
+    rotateTitle = T,
+    width = 1400,
+    height = 1400
+  )
+
+```
+
+### Post & words
+```{r}
+#| column: screen
+#| 
+data_wide |> 
+  dplyr::select(
+    words, grade, contains('post')
+  ) |> 
+  scatterPlotMatrix(
+    categorical = list(grade = sort(unique(data_wide$grade))),
+    zAxisDim = 'grade',
+    rotateTitle = T,
+    width = 1400,
+    height = 1400
+  )
+
+```
+
+### Post & accuracy
+```{r}
+#| column: screen
+#| 
+data_wide |> 
+  dplyr::select(
+    accuracy, grade, contains('post')
   ) |> 
   scatterPlotMatrix(
     categorical = list(grade = sort(unique(data_wide$grade))),
