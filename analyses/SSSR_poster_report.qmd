@@ -4,7 +4,9 @@ subtitle: "A data report"
 description: "This report provides a detailed overview of the data used for the SSSR poster. In addition it provides the estimates derived from both analyses."
 
 author: 
-  name: 'Emiel Schoneveld'
+  name: Emiel Schoneveld
+  email: r.e.schoneveld@uva.nl
+  orcid: 0000-0001-5679-6616
   affiliations:
     name: 'University of Amsterdam'
 

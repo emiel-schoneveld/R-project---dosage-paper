@@ -3,7 +3,7 @@
     "path": "C:/Users/RSCHONE/OneDrive - UvA/Promotie/Paper - dosage/R project - dosage paper/analyses/SSSR_poster_report.qmd",
     "project_path": "analyses/SSSR_poster_report.qmd",
     "type": "quarto_markdown",
-    "hash": "3426397907",
+    "hash": "1676282064",
     "contents": "",
     "dirty": false,
     "created": 1782895572378.0,
@@ -13,15 +13,15 @@
         "rmdVisualMode": "false",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "63,39",
-        "scrollLine": "48"
+        "cursorPosition": "6,8",
+        "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1783333581,
+    "lastKnownWriteTime": 1783336115,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1783333581630,
+    "last_content_update": 1783336115655,
     "read_only": false,
     "read_only_alternatives": []
 }
