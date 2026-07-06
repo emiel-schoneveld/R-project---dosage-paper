@@ -206,6 +206,26 @@ estimates_interaction |>
   ) #|> View()
 
 ### Plot results
+p_interaction_pre <- estimates_interaction |> 
+  filter(
+    term == 'fluency_pre'
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = significant,
+      label = std_estimate |> round(2)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  geom_text(color = 'white', size = 8) +
+  ggtitle('Pre -> post') +
+  common_theme_labs +
+  labs(x = NULL) +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
+
 p_interaction_exposures <- estimates_interaction |> 
   filter(
     term == 'words_exposures'
@@ -220,7 +240,7 @@ p_interaction_exposures <- estimates_interaction |>
   ) +
   geom_tile(color = 'black') +
   geom_text(color = 'white', size = 8) +
-  ggtitle('Post ~ words') +
+  ggtitle('Words -> post') +
   common_theme_labs +
   labs(x = NULL) +
   theme(legend.position = "none") +
@@ -241,7 +261,7 @@ p_interaction_accuracy <- estimates_interaction |>
   ) +
   geom_tile(color = 'black') +
   geom_text(color = 'white', size = 8) +
-  ggtitle('Post ~ accuracy') +
+  ggtitle('Accuracy -> post') +
   common_theme_labs +
   labs(x = NULL) +
   theme(legend.position = "none") +
@@ -261,19 +281,21 @@ p_interaction_accuracyexposures <- estimates_interaction |>
   ) +
   geom_tile(color = 'black') +
   geom_text(color = 'white', size = 8) +
-  ggtitle('Post ~ accuracy:words') +
+  ggtitle('Accuracy:words -> post') +
   common_theme_labs +
   labs(x = NULL) +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
   
 
 # Plot all results ----
-p_interaction <- (p_interaction_exposures +
+p_interaction <- (p_interaction_pre +
+  p_interaction_exposures +
   p_interaction_accuracy +
   p_interaction_accuracyexposures +
   plot_layout(
     axis = "collect",
-    guides = "collect"
+    guides = "collect",
+    nrow = 2
   )) &
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 

@@ -1,9 +1,0 @@
-library(tidyverse)
-
-nrows = 230
-data_try <- tibble(.rows = nrows) |> 
-  mutate(
-    values_exact = rnorm(n = nrows, mean = 2.10, sd = 0.14),
-    values_rounded = round(values_exact)
-  )
-cor(data_try)

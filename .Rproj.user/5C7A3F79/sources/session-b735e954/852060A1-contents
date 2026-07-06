@@ -119,56 +119,56 @@ estimates_interaction_serial <- data |>
   mutate(outcome = 'serial', .before = 1)
 
 ### LED ----
-estimates_interaction_LED <- data |> 
-  mutate(
-    fluency_pre = fluency_LED_pre,
-    fluency_post = fluency_LED_post,
-    # words_exposures = words_exposures / 1000,
-    # words_exposures = words_exposures - mean(words_exposures),
-    # accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
-  ) |>
-  group_by(grade) |>
-  nest() |>
-  mutate(
-    fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
-                         select(std_estimate = Std_Coefficient,
-                                std_ci_low   = CI_low,
-                                std_ci_high  = CI_high))
-  ) |>
-  unnest(
-    c(
-      results,
-      standardized)
-    ) |>
-  mutate(outcome = 'LED', .before = 1)
+# estimates_interaction_LED <- data |> 
+#   mutate(
+#     fluency_pre = fluency_LED_pre,
+#     fluency_post = fluency_LED_post,
+#     # words_exposures = words_exposures / 1000,
+#     # words_exposures = words_exposures - mean(words_exposures),
+#     # accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
+#   ) |>
+#   group_by(grade) |>
+#   nest() |>
+#   mutate(
+#     fit          = map(data, ~ lm(mod_interaction, data = .x)),
+#     results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
+#     standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
+#                          select(std_estimate = Std_Coefficient,
+#                                 std_ci_low   = CI_low,
+#                                 std_ci_high  = CI_high))
+#   ) |>
+#   unnest(
+#     c(
+#       results,
+#       standardized)
+#     ) |>
+#   mutate(outcome = 'LED', .before = 1)
 
 ### pseudo ----
-estimates_interaction_pseudo <- data |> 
-  mutate(
-    fluency_pre = fluency_pseudo_pre,
-    fluency_post = fluency_pseudo_post,
-    # words_exposures = words_exposures / 1000,
-    # words_exposures = words_exposures - mean(words_exposures),
-    # accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
-  ) |>
-  group_by(grade) |>
-  nest() |>
-  mutate(
-    fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
-                         select(std_estimate = Std_Coefficient,
-                                std_ci_low   = CI_low,
-                                std_ci_high  = CI_high))
-  ) |>
-  unnest(
-    c(
-      results,
-      standardized)
-    ) |>
-  mutate(outcome = 'pseudo', .before = 1)
+# estimates_interaction_pseudo <- data |> 
+#   mutate(
+#     fluency_pre = fluency_pseudo_pre,
+#     fluency_post = fluency_pseudo_post,
+#     # words_exposures = words_exposures / 1000,
+#     # words_exposures = words_exposures - mean(words_exposures),
+#     # accuracy_anytry = accuracy_anytry - mean(accuracy_anytry, na.rm = T)
+#   ) |>
+#   group_by(grade) |>
+#   nest() |>
+#   mutate(
+#     fit          = map(data, ~ lm(mod_interaction, data = .x)),
+#     results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
+#     standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
+#                          select(std_estimate = Std_Coefficient,
+#                                 std_ci_low   = CI_low,
+#                                 std_ci_high  = CI_high))
+#   ) |>
+#   unnest(
+#     c(
+#       results,
+#       standardized)
+#     ) |>
+#   mutate(outcome = 'pseudo', .before = 1)
 
 ## Inspect results ----
 ### Bind results (add missing values explicitely)
@@ -176,8 +176,8 @@ estimates_interaction <- bind_rows(
   estimates_interaction_DMT,
   estimates_interaction_discrete,
   estimates_interaction_serial,
-  estimates_interaction_LED,
-  estimates_interaction_pseudo,
+  # estimates_interaction_LED,
+  # estimates_interaction_pseudo,
 ) |> 
   dplyr::select(
     !c(data, fit)
@@ -187,7 +187,13 @@ estimates_interaction <- bind_rows(
       (std_ci_low <= 0) & (std_ci_high >= 0) ~ 'Not significant',
       (std_ci_low > 0) & (std_ci_high > 0) ~ 'Significant',
       (std_ci_low < 0) & (std_ci_high < 0) ~ 'Significant',
-    )
+    ),
+    outcome = case_when(
+      outcome == 'DMT' ~ 'serial_normed',
+      outcome == 'serial' ~ 'serial_exp',
+      outcome == 'discrete' ~ 'discrete_exp',
+    ),
+    outcome = factor(outcome, levels = c('serial_normed', 'serial_exp', 'discrete_exp'))
   ) |> 
   arrange(
     outcome, grade, term
@@ -200,6 +206,26 @@ estimates_interaction |>
   ) #|> View()
 
 ### Plot results
+p_interaction_pre <- estimates_interaction |> 
+  filter(
+    term == 'fluency_pre'
+  ) |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = significant,
+      label = std_estimate |> round(2)
+    )
+  ) +
+  geom_tile(color = 'black') +
+  geom_text(color = 'white', size = 8) +
+  ggtitle('Pre -> post') +
+  common_theme_labs +
+  labs(x = NULL) +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
+
 p_interaction_exposures <- estimates_interaction |> 
   filter(
     term == 'words_exposures'
@@ -213,11 +239,13 @@ p_interaction_exposures <- estimates_interaction |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text() +
-  ggtitle('Post ~ words') +
+  geom_text(color = 'white', size = 8) +
+  ggtitle('Words -> post') +
   common_theme_labs +
   labs(x = NULL) +
+  theme(legend.position = "none") +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
+  
 
 p_interaction_accuracy <- estimates_interaction |> 
   filter(
@@ -232,10 +260,11 @@ p_interaction_accuracy <- estimates_interaction |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text() +
-  ggtitle('Post ~ accuracy') +
+  geom_text(color = 'white', size = 8) +
+  ggtitle('Accuracy -> post') +
   common_theme_labs +
   labs(x = NULL) +
+  theme(legend.position = "none") +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
 p_interaction_accuracyexposures <- estimates_interaction |> 
@@ -251,17 +280,26 @@ p_interaction_accuracyexposures <- estimates_interaction |>
     )
   ) +
   geom_tile(color = 'black') +
-  geom_text() +
-  ggtitle('Post ~ accuracy:words') +
+  geom_text(color = 'white', size = 8) +
+  ggtitle('Accuracy:words -> post') +
   common_theme_labs +
   labs(x = NULL) +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
+  
 
 # Plot all results ----
-p_interaction <- p_interaction_exposures +
+p_interaction <- (p_interaction_pre +
+  p_interaction_exposures +
   p_interaction_accuracy +
   p_interaction_accuracyexposures +
   plot_layout(
     axis = "collect",
-    guides = "collect"
-  )
+    guides = "collect",
+    nrow = 2
+  )) &
+  scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
+
+p_interaction_formatted <- p_interaction +
+  plot_annotation(
+  title = 'Interaction analysis',
+)
