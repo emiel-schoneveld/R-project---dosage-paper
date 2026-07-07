@@ -22,13 +22,10 @@ data_wordreading_wide <- data_wordreading_raw |>
   rename(
     student_ID = Leerlingnummer,
     wordreading_version_pre = Woordleestoets_versie_pre,
-    wordreading_version_mid = Woordleestoets_versie_mid,
     wordreading_version_post = Woordleestoets_versie_post,
     wordreading_score_pre = Woordleestoets_vaardigheidsscore_pre,
-    wordreading_score_mid = Woordleestoets_vaardigheidsscore_mid,
     wordreading_score_post = Woordleestoets_vaardigheidsscore_post,
     wordreading_date_pre = Woordleestoets_datum_pre,
-    wordreading_date_mid = Woordleestoets_datum_mid,
     wordreading_date_post = Woordleestoets_datum_post,
   )
 
@@ -36,7 +33,6 @@ data_wordreading_wide <- data_wordreading_raw |>
 data_wordreading_wide <- data_wordreading_wide |> 
   mutate(
     wordreading_score_pre = wordreading_score_pre |> as.numeric(),
-    wordreading_score_mid = wordreading_score_mid |> as.numeric(),
     wordreading_score_post = wordreading_score_post |> as.numeric()
   )
 
@@ -141,7 +137,6 @@ data_wordreading <- data_wordreading_long |>
 data_wordreading |> 
   filter(
     is.na(wordreading_date_pre) |
-      is.na(wordreading_date_mid) |
       is.na(wordreading_date_post)
   )
 
@@ -154,7 +149,6 @@ data_wordreading <- data_wordreading |>
 ### Set dates for imputing if no school mean is present
 day_before_start_of_schoolyear = as.Date("2023-08-19")
 day_after_end_of_schoolyear = as.Date("2024-07-21")
-median_date_mid <- median(data_wordreading$wordreading_date_mid, na.rm = T)
 
 ### Impute missing dates
 data_wordreading_imputed_dates <- data_wordreading |> 
@@ -165,11 +159,6 @@ data_wordreading_imputed_dates <- data_wordreading |>
       is.na(wordreading_date_pre),
       median(wordreading_date_pre, na.rm = TRUE),
       wordreading_date_pre
-    ),
-    wordreading_date_mid = if_else(
-      is.na(wordreading_date_mid),
-      median(wordreading_date_mid, na.rm = TRUE),
-      wordreading_date_mid
     ),
     wordreading_date_post = if_else(
       is.na(wordreading_date_post),
@@ -185,12 +174,6 @@ data_wordreading_imputed_dates <- data_wordreading |>
       day_before_start_of_schoolyear,
       wordreading_date_pre
     ),
-    # Set mid measurement date to grand median of sample if no midmeasurement date
-    wordreading_date_mid = if_else(
-      is.na(wordreading_date_mid),
-      median_date_mid,
-      wordreading_date_mid
-    ),
     # Set post measurement date to day after end of schoolyear if no postmeasurement date
     wordreading_date_post = if_else(
       is.na(wordreading_date_post),
@@ -203,7 +186,6 @@ data_wordreading_imputed_dates <- data_wordreading |>
 data_wordreading_imputed_dates |> 
   filter(
     is.na(wordreading_date_pre) |
-      is.na(wordreading_date_mid) |
       is.na(wordreading_date_post)
   )
 

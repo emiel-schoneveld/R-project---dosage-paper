@@ -14,7 +14,10 @@ library(here)
 ## Data from practice logs
 data_logs_raw <- read_xlsx(
   here('input/logs_lessons_anonymous.xlsx')
-)
+) |> 
+  rename(
+    school_ID = school
+  )
 
 ## Wordreading data
 data_logs_lesson_dose <- readRDS(
@@ -69,7 +72,9 @@ data_logs_lesson <- data_logs_lesson |>
 ## Inspect percentage of DMT lessons for students
 data_logs_lesson |> 
   group_by(
-    student_ID
+    # student_ID, 
+    school_ID,
+    class_ID
   ) |> 
   summarise(
     N = n(),
@@ -78,10 +83,10 @@ data_logs_lesson |>
   ungroup() |> 
   mutate(
     perc_DMT = (N_DMT / N)*100
-  ) #|> 
-  # filter(
-  #   perc_DMT > 5
-  # )
+  ) |> 
+  arrange(
+    desc(perc_DMT)
+  ) |> View()
 
 ## Filter out all nonvalid lesson types ----
 data_logs_lesson <- data_logs_lesson |> 
