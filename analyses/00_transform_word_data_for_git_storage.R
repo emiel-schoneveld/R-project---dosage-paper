@@ -61,7 +61,7 @@ data_logs_words <- data_logs_words |>
     # Exposures
     exposures = case_when(
       # DMT: one exposure per word
-      (LessonType == "DMT") ~ 1,
+      (LessonType == "DMT") ~ tries,
       # RowRead: one exposure per word
       str_detect(LessonType, 'RowRead') ~ 1,
       # Flits: multiple exposures per word
@@ -84,8 +84,7 @@ data_logs_words <- data_logs_words |>
     # Accurate at any attempt
     accurate_anytry = case_when(
       # DMT: accurate if progressed to next word before third attempt, unclear if third attempt is accurate or not because software does not register more than 3 tries
-      (LessonType == 'DMT') & (tries < 3) ~ 1,
-      (LessonType == 'DMT') & (tries == 3) ~ NA,
+      (LessonType == 'DMT') & (tries <= 3) ~ 1,
       # RowRead: accurate if one try, inaccurate if multiple tries
       str_detect(LessonType, 'RowRead') & (tries == 1) ~ 1,
       str_detect(LessonType, 'RowRead') & (tries > 1) ~ 0,
@@ -98,12 +97,12 @@ data_logs_words <- data_logs_words |>
 ## Check tries, exposure and accuracy combinations for lessontypes
 data_logs_words |> 
   filter(
-    str_detect(LessonType, 'Flits'),
-    # tries != 1,
-    audioplays != 0,
+    str_detect(LessonType, 'DMT'),
+    # tries == 3,
+    # audioplays != 0,
     # exposures != 1,
     # accurate_firsttry == 1,
-    accurate_anytry != 0,
+    # accurate_anytry == 1,
     # accurate_firsttry != accurate_anytry,
     # is.na(accurate_firsttry)
     # is.na(accurate_anytry)

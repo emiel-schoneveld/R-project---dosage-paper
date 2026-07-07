@@ -26,6 +26,9 @@ data <- readRDS(
   here::here('output/data_cleaned.rds')
 )
 
+# Set accuracy threshold ----
+alpha_pathcoefficients = 0.05/3
+
 # Accuracy inspection ----
 ## Specify general model ----
 mod_interaction <- 
@@ -49,8 +52,8 @@ estimates_interaction_DMT <- data |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 1-alpha_pathcoefficients)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 1-alpha_pathcoefficients) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
@@ -79,8 +82,8 @@ estimates_interaction_discrete <- data |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 1-alpha_pathcoefficients)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 1-alpha_pathcoefficients) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))
@@ -105,8 +108,8 @@ estimates_interaction_serial <- data |>
   nest() |>
   mutate(
     fit          = map(data, ~ lm(mod_interaction, data = .x)),
-    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 0.9833333)),
-    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 0.9833333) |>
+    results      = map(fit, ~ broom::tidy(.x, conf.int = TRUE, conf.level = 1-alpha_pathcoefficients)),
+    standardized = map(fit, ~ effectsize::standardize_parameters(.x, ci = 1-alpha_pathcoefficients) |>
                          select(std_estimate = Std_Coefficient,
                                 std_ci_low   = CI_low,
                                 std_ci_high  = CI_high))

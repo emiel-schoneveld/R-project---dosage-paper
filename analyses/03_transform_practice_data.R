@@ -69,31 +69,13 @@ data_logs_lesson <- data_logs_lesson |>
     EndDate = na_if(EndDate, "NULL")
   )
 
-## Inspect percentage of DMT lessons for students
-data_logs_lesson |> 
-  group_by(
-    # student_ID, 
-    school_ID,
-    class_ID
-  ) |> 
-  summarise(
-    N = n(),
-    N_DMT = sum(lesson_form == 'DMT', na.rm = T),
-  ) |>
-  ungroup() |> 
-  mutate(
-    perc_DMT = (N_DMT / N)*100
-  ) |> 
-  arrange(
-    desc(perc_DMT)
-  ) |> View()
-
 ## Filter out all nonvalid lesson types ----
 data_logs_lesson <- data_logs_lesson |> 
   filter(
     lesson_form %in% c(
       "ResearchFlits", "Flits", 
-      "ResearchRowRead", "RowRead"
+      "ResearchRowRead", "RowRead",
+      "DMT"
       )
   )
 

@@ -25,6 +25,11 @@ data <- readRDS(
   here::here('output/data_cleaned.rds')
 )
 
+# Set accuracy threshold ----
+alpha_pathcoefficients = 0.05/3
+alpha_mediationtest = 0.05/3
+alpha_grouptest = 0.05/3
+
 # Mediation analysis ----
 ## Specify model ----
 ### Full mediation model
@@ -65,6 +70,8 @@ post_time_total_4 := post_words_4*words_time_4
 
 ## Fit models ----
 ### DMT ----
+#### Fit partial mediation and test for equal path estimates ----
+##### Fit models ----
 fit_partialmediation_DMT <- sem(
   c(
     mod_fullmediation,
@@ -84,6 +91,36 @@ fit_partialmediation_DMT <- sem(
   cluster = "class_ID",
 )
 
+fit_partialmediation_DMT_nogroups <- sem(
+  c(
+    mod_fullmediation,
+    mod_addition_partialmediation,
+    mod_addition_totaltimeeffect_partialmediation
+  ),
+  data = data |> 
+    mutate(
+      words_exposures = words_exposures / 1000,
+      fluency_pre = fluency_DMT_pre,
+      fluency_post = fluency_DMT_post,
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+  group.equal = c('regressions')
+)
+
+##### Compare models ----
+anova_groups_DMT <- anova(
+  fit_partialmediation_DMT,
+  fit_partialmediation_DMT_nogroups
+)
+
+(anova_groups_DMT$`Pr(>Chisq)`[2]<alpha_grouptest)
+
+#### Fit full mediation ----
+##### Fit model ----
 fit_fullmediation_DMT <- sem(
   c(
     mod_fullmediation,
@@ -105,14 +142,15 @@ fit_fullmediation_DMT <- sem(
 
 fitMeasures(fit_fullmediation_DMT)[c('cfi', 'rmsea')]
 
+##### Compare models ----
 anova_mediation_DMT <- anova(
   fit_partialmediation_DMT,
   fit_fullmediation_DMT
 )
 
-# p value after correction
-(anova_mediation_DMT$`Pr(>Chisq)`[2]*3)
+(anova_mediation_DMT$`Pr(>Chisq)`[2]<alpha_mediationtest)
 
+#### Save estimates -----
 estimates_mediation_DMT <- parameterEstimates(
   fit_fullmediation_DMT,
   standardized = T
@@ -132,6 +170,7 @@ estimates_mediation_DMT <- parameterEstimates(
   )
 
 ### discrete ----
+#### Fit partial mediation models and test equal path estimates ----
 fit_partialmediation_discrete <- sem(
   c(
     mod_fullmediation,
@@ -151,6 +190,36 @@ fit_partialmediation_discrete <- sem(
   cluster = "class_ID",
 )
 
+fit_partialmediation_discrete_nogroups <- sem(
+  c(
+    mod_fullmediation,
+    mod_addition_partialmediation,
+    mod_addition_totaltimeeffect_partialmediation
+  ),
+  data = data |> 
+    mutate(
+      words_exposures = words_exposures / 1000,
+      fluency_pre = fluency_discrete_pre,
+      fluency_post = fluency_discrete_post,
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+  group.equal = c('regressions')
+)
+
+##### Compare models ----
+anova_groups_discrete <- anova(
+  fit_partialmediation_discrete,
+  fit_partialmediation_discrete_nogroups
+)
+
+(anova_groups_discrete$`Pr(>Chisq)`[2]<alpha_grouptest)
+
+#### Fit full mediation model ----
+##### Fit model ----
 fit_fullmediation_discrete <- sem(
   c(
     mod_fullmediation,
@@ -170,14 +239,15 @@ fit_fullmediation_discrete <- sem(
   cluster = "class_ID",
 )
 
+##### Compare models -----
 anova_mediation_discrete <- anova(
   fit_partialmediation_discrete,
   fit_fullmediation_discrete
 )
 
-# p value after correction
-(anova_mediation_discrete$`Pr(>Chisq)`[2]*3)
+(anova_mediation_discrete$`Pr(>Chisq)`[2]<alpha_mediationtest)
 
+#### Save estimates ----
 estimates_mediation_discrete <- parameterEstimates(
   fit_fullmediation_discrete,
   standardized = T
@@ -197,6 +267,7 @@ estimates_mediation_discrete <- parameterEstimates(
   )
  
 ### serial ----
+#### Fit partial mediation models and test for equal path estimates ----
 fit_partialmediation_serial <- sem(
   c(
     mod_fullmediation,
@@ -216,6 +287,36 @@ fit_partialmediation_serial <- sem(
   cluster = "class_ID",
 )
 
+fit_partialmediation_serial_nogroups <- sem(
+  c(
+    mod_fullmediation,
+    mod_addition_partialmediation,
+    mod_addition_totaltimeeffect_partialmediation
+  ),
+  data = data |> 
+    mutate(
+      words_exposures = words_exposures / 1000,
+      fluency_pre = fluency_serial_pre,
+      fluency_post = fluency_serial_post,
+    )
+  , 
+  missing = "FIML",
+  group = "grade",
+  group.label = c('grade_2', 'grade_3', 'grade_4'),
+  cluster = "class_ID",
+  group.equal = c('regressions')
+)
+
+##### Compare models ----
+anova_groups_serial <- anova(
+  fit_partialmediation_serial,
+  fit_partialmediation_serial_nogroups
+)
+
+(anova_groups_serial$`Pr(>Chisq)`[2]<alpha_grouptest)
+
+#### Full mediation model ----
+##### Fit model -----
 fit_fullmediation_serial <- sem(
   c(
     mod_fullmediation,
@@ -235,14 +336,15 @@ fit_fullmediation_serial <- sem(
   cluster = "class_ID",
 )
 
+##### Compare models -----
 anova_mediation_serial <- anova(
   fit_partialmediation_serial,
   fit_fullmediation_serial
 )
 
-# p value after correction
-(anova_mediation_serial$`Pr(>Chisq)`[2]*3)
+(anova_mediation_serial$`Pr(>Chisq)`[2]<alpha_mediationtest)
 
+#### Save estimates ----
 estimates_mediation_serial <- parameterEstimates(
   fit_fullmediation_serial,
   standardized = T
@@ -392,6 +494,56 @@ estimates_mediation_serial <- parameterEstimates(
 #   )
 
 ## Inspect results ----
+### Bind anova comparisons groups vs no groups----
+estimates_groups_comparison <- bind_rows(
+  c('outcome' = 'serial_normed', unlist(anova_groups_DMT)),
+  c("outcome" = "discrete_exp", unlist(anova_groups_discrete)),
+  c("outcome" = "serial_exp", unlist(anova_groups_serial)),
+  # c("outcome" = "LED", unlist(anova_mediation_LED)),
+  # c("outcome" = "pseudo", unlist(anova_mediation_pseudo)),
+) |> 
+  rename(
+    'chisq_diff' = `Chisq diff2`,
+    'pvalue' = `Pr(>Chisq)2`,
+    'df_diff' = Df2
+  ) |> 
+  dplyr::select(
+    outcome, df_diff, chisq_diff, pvalue
+  ) |> 
+  mutate(
+    pvalue = as.numeric(pvalue),
+    significant = case_when(
+      pvalue < alpha_grouptest ~ 'Significant',
+      pvalue >= alpha_grouptest ~ 'Not significant'
+    ),
+    grade = '',
+    outcome = factor(outcome, levels = c('serial_normed', 'serial_exp', 'discrete_exp'))
+  )
+
+### Bind anova comparisons mediation ----
+estimates_mediation_comparison <- bind_rows(
+  c('outcome' = 'serial_normed', unlist(anova_mediation_DMT)),
+  c("outcome" = "discrete_exp", unlist(anova_mediation_discrete)),
+  c("outcome" = "serial_exp", unlist(anova_mediation_serial)),
+) |> 
+  rename(
+    'chisq_diff' = `Chisq diff2`,
+    'pvalue' = `Pr(>Chisq)2`,
+    'df_diff' = Df2
+  ) |> 
+  dplyr::select(
+    outcome, df_diff, chisq_diff, pvalue
+  ) |> 
+  mutate(
+    pvalue = as.numeric(pvalue),
+    significant = case_when(
+      pvalue < alpha_mediationtest ~ 'Significant',
+      pvalue >= alpha_mediationtest ~ 'Not significant'
+    ),
+    grade = '',
+    outcome = factor(outcome, levels = c('serial_normed', 'serial_exp', 'discrete_exp'))
+  )
+
 ### Bind results of mediation models (and adding missing values explicitely for plotting purposes) ----
 estimates_mediation <- bind_rows(
   estimates_mediation_DMT,
@@ -402,8 +554,8 @@ estimates_mediation <- bind_rows(
 ) |> as_tibble() |> 
   mutate(
     significant = case_when(
-    pvalue < .05/9 ~ 'Significant',
-    pvalue >= .05/9 ~ 'Not significant'
+    pvalue < alpha_pathcoefficients ~ 'Significant',
+    pvalue >= alpha_pathcoefficients ~ 'Not significant'
   ),
     group = case_when(
       group == 1 ~ 'grade_2',
@@ -420,64 +572,6 @@ estimates_mediation <- bind_rows(
   rename(
     grade = group
   )
-
-### Extract missing combos
-# missing_combos <- estimates_mediation |> 
-#   filter(
-#     str_detect(op, '~'),
-#     str_detect(lhs, 'post'),
-#     str_detect(rhs, 'time'),
-#   ) |> 
-#   add_row(
-#     outcome = c(
-#       'serial_exp',
-#       'discrete_exp',
-#       'serial_exp',
-#       'LED',
-#       'pseudo'
-#       ),
-#     lhs = c('fluency_post', 'fluency_post', 'fluency_post'),
-#     rhs = c('time', 'time', 'time'),
-#     op = c('~', '~', '~')
-#   ) |> 
-#   expand(
-#     outcome, op, lhs, rhs, grade
-#   ) |> 
-#   drop_na() |> 
-#   filter(
-#     !(outcome %in% c('pseudo'))
-#   )
-# 
-# ### Add missing combos
-# estimates_mediation <- estimates_mediation |> 
-#   bind_rows(
-#     missing_combos
-#   )
-
-### Bind anova comparisons ----
-estimates_mediation_comparison <- bind_rows(
-  c('outcome' = 'serial_normed', unlist(anova_mediation_DMT)),
-  c("outcome" = "discrete_exp", unlist(anova_mediation_discrete)),
-  c("outcome" = "serial_exp", unlist(anova_mediation_serial)),
-  # c("outcome" = "LED", unlist(anova_mediation_LED)),
-  # c("outcome" = "pseudo", unlist(anova_mediation_pseudo)),
-) |> 
-  rename(
-    'chisq_diff' = `Chisq diff2`,
-    'pvalue' = `Pr(>Chisq)2`,
-    'df_diff' = Df2
-  ) |> 
-  dplyr::select(
-    outcome, df_diff, chisq_diff, pvalue
-  ) |> 
-  mutate(
-    significant = case_when(
-      pvalue < .05/3 ~ 'Significant',
-      pvalue >= .05/3 ~ 'Not significant'
-      ),
-    grade = '',
-    outcome = factor(outcome, levels = c('serial_normed', 'serial_exp', 'discrete_exp'))
-    )
 
 ### Plot results ----
 p_mediation_postpre <- estimates_mediation |> 
@@ -594,7 +688,7 @@ p_mediation_posttimetotal <- estimates_mediation |>
   theme(legend.position = "none") +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
-p_comparison <- estimates_mediation_comparison |> 
+p_comparison_mediation <- estimates_mediation_comparison |> 
   ggplot(
     aes(
       x = grade,
@@ -612,12 +706,33 @@ p_comparison <- estimates_mediation_comparison |>
   theme(legend.position = "none") +
   scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
 
-p_mediation <- (p_mediation_postpre +
+p_comparison_groups <- estimates_groups_comparison |> 
+  ggplot(
+    aes(
+      x = grade,
+      y = outcome,
+      fill = significant
+    )
+  ) +
+  geom_tile(color = "black") +
+  ggtitle('Multigroup vs single group model') +
+  common_theme_labs +
+  theme(
+    axis.text.x = element_blank()
+  ) +
+  labs(x = NULL) +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = c('Significant' = sig_color, 'Not significant' = insig_color))
+
+
+p_mediation <- (
+  # p_comparison_groups +
+  p_comparison_mediation +
+  p_mediation_postpre +
   p_mediation_wordstime +
   p_mediation_postwords +
   p_mediation_posttime +
   p_mediation_posttimetotal +
-  p_comparison +
   plot_layout(
     axis = 'collect',
     guides = 'collect'
