@@ -16,6 +16,37 @@ line_size = 4
 key_size = 2
 
 # Build a small data frame of slopes/intercepts per grade ----
+plotting_data_interaction <- estimates_interaction |> 
+  filter(
+    str_detect(term, 'Intercept') |
+    str_detect(term, 'words_exposures') |
+    str_detect(term, ':'),
+  ) |> 
+  dplyr::select(
+    outcome, grade, term, std_estimate, significant
+  ) |> 
+  rename(
+    estimate = std_estimate
+  ) |> 
+  mutate(
+    term = case_when(
+      term == '(Intercept)' ~ 'intercept',
+      term == 'words_exposures' ~ 'slope',
+      term == 'words_exposures:accuracy_anytry' ~ 'interaction',
+    )
+  ) |> 
+  pivot_wider(
+    names_from = term,
+    values_from = c(estimate, significant)
+  )
+
+plotting_data_interaction |> 
+  mutate(
+    estimate_slope_min1SD = estimate_slope - estimate_interaction,
+    estimate_slope_plus1SD = estimate_slope + estimate_interaction,
+  ) |> View()
+
+
 ## Grade 2 ----
 abline_data_grade2 <- tibble(
   Grade = factor(c('Grade 2', 'Grade 2', 'Grade 2'), levels = c('Grade 2', 'Grade 3', 'Grade 4')),
