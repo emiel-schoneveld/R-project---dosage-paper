@@ -1,154 +1,26 @@
 # SSSR poster plot
-source(
-  here::here('analyses/09_analysis_interaction.R')
-)
+# source(
+#   here::here('analyses/09_analysis_interaction.R')
+# )
 
-# Set colors ----
+# Plot parameters ----
+## Set colors ----
 color_mean = '#1B1918'
 color_plus_1SD = "#257835"
 color_min_1SD = '#bc0031'
 color_background = "#D7D6D4"
 
-# set size
-title_fontsize = 26
+## set sizes ----
+title_fontsize = 22
 axes_fontsize = 20
-line_size = 4
+line_size = 3
 key_size = 2
-
-# Build a small data frame of slopes/intercepts per grade ----
-plotting_data_interaction <- estimates_interaction |> 
-  filter(
-    str_detect(term, 'Intercept') |
-    str_detect(term, 'words_exposures') |
-    str_detect(term, ':'),
-  ) |> 
-  dplyr::select(
-    outcome, grade, term, std_estimate, significant
-  ) |> 
-  rename(
-    estimate = std_estimate
-  ) |> 
-  mutate(
-    term = case_when(
-      term == '(Intercept)' ~ 'intercept',
-      term == 'words_exposures' ~ 'slope',
-      term == 'words_exposures:accuracy_anytry' ~ 'interaction',
-    )
-  ) |> 
-  pivot_wider(
-    names_from = term,
-    values_from = c(estimate, significant)
-  )
-
-plotting_data_interaction |> 
-  mutate(
-    estimate_slope_min1SD = estimate_slope - estimate_interaction,
-    estimate_slope_plus1SD = estimate_slope + estimate_interaction,
-  ) |> View()
+plot_height = 19
+plot_width = 26
 
 
-## Grade 2 ----
-abline_data_grade2 <- tibble(
-  Grade = factor(c('Grade 2', 'Grade 2', 'Grade 2'), levels = c('Grade 2', 'Grade 3', 'Grade 4')),
-  Accuracy = factor(c('Mean', '+1 SD', '-1 SD'), levels = c('Mean', '+1 SD', '-1 SD')),
-  intercept = rep(
-    estimates_interaction |> 
-      filter(outcome == 'discrete_exp', grade == 'grade_2', str_detect(term, 'Intercept')) |> 
-      pull(std_estimate),
-    3
-  ),
-  slope = c(
-    estimates_interaction |> 
-      filter(outcome == 'discrete_exp', grade == 'grade_2', term == 'words_exposures') |> 
-      pull(std_estimate),
-    (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_2', term == 'words_exposures') |> pull(std_estimate)) +
-      (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_2', str_detect(term, ':')) |> pull(std_estimate)),
-    (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_2', term == 'words_exposures') |> pull(std_estimate)) -
-      (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_2', str_detect(term, ':')) |> pull(std_estimate))
-  ),
-  Significance = factor(c('Significant', 'Significant', 'Significant'), levels = c('Significant', 'Not significant'))
-)
-
-## Grade 3 ----
-abline_data_grade3 <- tibble(
-  Grade = factor(c('Grade 3', 'Grade 3', 'Grade 3'), levels = c('Grade 2', 'Grade 3', 'Grade 4')),
-  Accuracy = factor(c('Mean', '+1 SD', '-1 SD'), levels = c('Mean', '+1 SD', '-1 SD')),
-  intercept = rep(
-    estimates_interaction |> 
-      filter(outcome == 'discrete_exp', grade == 'grade_3', str_detect(term, 'Intercept')) |> 
-      pull(std_estimate),
-    3
-  ),
-  slope = c(
-    estimates_interaction |> 
-      filter(outcome == 'discrete_exp', grade == 'grade_3', term == 'words_exposures') |> 
-      pull(std_estimate),
-    (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_3', term == 'words_exposures') |> pull(std_estimate)) +
-      (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_3', str_detect(term, ':')) |> pull(std_estimate)),
-    (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_3', term == 'words_exposures') |> pull(std_estimate)) -
-      (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_3', str_detect(term, ':')) |> pull(std_estimate))
-  ),
-  Significance = factor(c('Significant', 'Not significant', 'Not significant'), levels = c('Significant', 'Not significant'))
-)
-## Grade 4 ----
-abline_data_grade4 <- tibble(
-  Grade = factor(c('Grade 4', 'Grade 4', 'Grade 4'), levels = c('Grade 2', 'Grade 3', 'Grade 4')),
-  Accuracy = factor(c('Mean', '+1 SD', '-1 SD'), levels = c('Mean', '+1 SD', '-1 SD')),
-  intercept = rep(
-    estimates_interaction |> 
-      filter(outcome == 'discrete_exp', grade == 'grade_4', str_detect(term, 'Intercept')) |> 
-      pull(std_estimate),
-    3
-  ),
-  slope = c(
-    estimates_interaction |> 
-      filter(outcome == 'discrete_exp', grade == 'grade_4', term == 'words_exposures') |> 
-      pull(std_estimate),
-    (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_4', term == 'words_exposures') |> pull(std_estimate)) +
-      (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_4', str_detect(term, ':')) |> pull(std_estimate)),
-    (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_4', term == 'words_exposures') |> pull(std_estimate)) -
-      (estimates_interaction |> filter(outcome == 'discrete_exp', grade == 'grade_4', str_detect(term, ':')) |> pull(std_estimate))
-  ),
-  Significance = factor(c('Significant', 'Significant', 'Significant'), levels = c('Significant', 'Not significant'))
-)
-
-## Combine grades
-abline_data <- bind_rows(
-  abline_data_grade2,
-  abline_data_grade3,
-  abline_data_grade4
-)
-
-# Plot probed interactions ----
-p_moderation <- data |> 
-  group_by(grade) |> 
-  mutate(
-    fluency_discrete_post = scale(fluency_discrete_post),
-    words_exposures = scale(words_exposures)
-  ) |> 
-  ggplot(aes(x = words_exposures, y = fluency_discrete_post)) +
-  geom_point(alpha = 0.0) +
-  geom_abline(
-    data = abline_data,
-    aes(intercept = intercept, slope = slope, color = Accuracy, linetype = Significance),
-    linewidth = line_size
-  ) +
-  coord_cartesian(xlim = c(-2, 2), ylim = c(-2, 2)) +
-  scale_x_continuous(name = 'Words read', breaks = -2:2,
-                     labels = c('-2 SD', '-1 SD', 'Mean', '+1 SD', '+2 SD')) +
-  scale_y_continuous(name = 'Discrete post', breaks = -2:2,
-                     labels = c('-2 SD', '-1 SD', 'Mean', '+1 SD', '+2 SD')) +
-  facet_wrap(~Grade) +
-  scale_color_manual(
-    values = c('Mean' = color_mean,
-               '+1 SD' = color_plus_1SD,
-               '-1 SD' = color_min_1SD
-    )
-  ) +
-  scale_linetype_manual(
-    values = c('Significant' = 'solid', 'Not significant' = '11'),
-  ) +
-  theme_bw() +
+## Set theme ----
+common_theme_SSSR_plots <- theme_bw() +
   theme(
     # Titles
     plot.title = element_text(hjust = 0.5, size = title_fontsize),
@@ -177,15 +49,262 @@ p_moderation <- data |>
     strip.background = element_rect(
       fill = color_background,
       color = NA
-      ),
+    ),
   ) 
-  
-p_moderation
+
+# Plot main accuracy effect ----
+## Build a tibble with slopes and intercepts ----
+data_plotting_postaccuracy <- estimates_interaction_standardized |> 
+  filter(
+    str_detect(term, 'Intercept') |
+      str_detect(term, 'accuracy_anytry') |
+      str_detect(term, ':'),
+  ) |> 
+  dplyr::select(
+    outcome, grade, term, std_estimate, significant
+  ) |> 
+  rename(
+    estimate = std_estimate,
+    Significance = significant,
+    Grade = grade
+  ) |> 
+  mutate(
+    term = case_when(
+      term == '(Intercept)' ~ 'intercept',
+      term == 'accuracy_anytry' ~ 'slope',
+      term == 'words_exposures:accuracy_anytry' ~ 'interaction',
+    ),
+    Significance = factor(Significance, levels = c('Significant', 'Not significant')),
+    Grade = case_when(
+      Grade == 'grade_2' ~ 'Grade 2',
+      Grade == 'grade_3' ~ 'Grade 3',
+      Grade == 'grade_4' ~ 'Grade 4',
+    ),
+    Grade = factor(Grade, levels = c('Grade 2', 'Grade 3', 'Grade 4'))
+  ) |> 
+  pivot_wider(
+    names_from = term,
+    values_from = c(estimate, Significance)
+  ) |> 
+  rename(
+    estimate_slope_mean = estimate_slope
+  )
+
+## Format the data ----
+data_plotting_postaccuracy_long <- data_plotting_postaccuracy |> 
+  mutate(
+    estimate_slope_min1SD = estimate_slope_mean - estimate_interaction,
+    estimate_slope_plus1SD = estimate_slope_mean + estimate_interaction,
+  ) |> 
+  pivot_longer(
+    contains('estimate_slope_'),
+    names_to = 'Words read',
+    names_prefix = 'estimate_slope_',
+    values_to = 'estimate_slope',
+  ) |> 
+  mutate(
+    `Words read` = case_when(
+      `Words read` == 'mean' ~ 'Mean',
+      `Words read` == 'min1SD' ~ '-1 SD',
+      `Words read` == 'plus1SD' ~ '+1 SD',
+    ),
+    `Words read` = factor(`Words read`, levels = c('-1 SD', 'Mean', '+1 SD'))
+  )
+
+## Basic plot ----
+p_moderation_postaccuracy_basic <- 
+  ggplot() +
+  geom_abline(
+    data = data_plotting_postaccuracy_long |>
+      filter(
+        str_detect(`Words read`, 'SD')
+      ),
+    aes(
+      intercept = estimate_intercept,
+      slope = estimate_slope,
+      linetype = Significance_interaction,
+      color = `Words read`
+    ),
+    linewidth = line_size
+  ) +
+  geom_abline(
+    data = data_plotting_postaccuracy_long |> 
+      filter(
+        `Words read` == 'Mean'
+      ),
+    aes(
+      intercept = estimate_intercept,
+      slope = estimate_slope,
+      linetype = Significance_slope,
+      color = `Words read`
+    ),
+    linewidth = line_size
+  ) +
+  expand_limits(x = c(-2, 2), y = c(-1, 1)) +
+  facet_grid(Grade ~ outcome)
+
+## Plot visuals ----
+p_moderation_postaccuracy <- p_moderation_postaccuracy_basic +
+  scale_color_manual(
+    values = c('Mean' = color_mean,
+               '+1 SD' = color_plus_1SD,
+               '-1 SD' = color_min_1SD
+    ),
+    breaks = c('-1 SD', 'Mean', '+1 SD'),
+  ) +
+  scale_linetype_manual(
+    values = c('Significant' = 'solid', 'Not significant' = '11'),
+  ) +
+  scale_x_continuous(
+    name = "Accuracy",
+    breaks = seq(-2, 2, 1),
+    labels = c("-2 SD", "-1 SD", "Mean", "+1 SD", "+2 SD")  # or custom labels
+  ) +
+  scale_y_continuous(
+    name = "Fluency post",
+    breaks = seq(-1, 1, 1),
+    labels = c("-1 SD", "Mean", "+1 SD")  # or custom labels
+  ) +
+  guides(linetype = guide_legend(title = "Significance")) +
+  common_theme_SSSR_plots
+
+## Display plot ----
+p_moderation_postaccuracy
+
+## Save plot ----
 ggsave(
-  here::here('output/interaction_plot_SSSR.png'),
+  here::here('output/interaction_plot_SSSR_postaccuracy.png'),
   dpi = 600,
-  height = 16,
-  width = 26,
+  height = plot_height,
+  width = plot_width,
+  units = 'cm'
+)
+
+# Plot interaction ----
+## Build a tibble with slopes and intercepts ----
+data_plotting_postword <- estimates_interaction_standardized |> 
+  filter(
+    str_detect(term, 'Intercept') |
+    str_detect(term, 'words_exposures') |
+    str_detect(term, ':'),
+  ) |> 
+  dplyr::select(
+    outcome, grade, term, std_estimate, significant
+  ) |> 
+  rename(
+    estimate = std_estimate,
+    Significance = significant,
+    Grade = grade
+  ) |> 
+  mutate(
+    term = case_when(
+      term == '(Intercept)' ~ 'intercept',
+      term == 'words_exposures' ~ 'slope',
+      term == 'words_exposures:accuracy_anytry' ~ 'interaction',
+    ),
+    Significance = factor(Significance, levels = c('Significant', 'Not significant')),
+    Grade = case_when(
+      Grade == 'grade_2' ~ 'Grade 2',
+      Grade == 'grade_3' ~ 'Grade 3',
+      Grade == 'grade_4' ~ 'Grade 4',
+    ),
+    Grade = factor(Grade, levels = c('Grade 2', 'Grade 3', 'Grade 4'))
+  ) |> 
+  pivot_wider(
+    names_from = term,
+    values_from = c(estimate, Significance)
+  ) |> 
+  rename(
+    estimate_slope_mean = estimate_slope
+  )
+
+## Format the data ----
+data_plotting_postword_long <- data_plotting_postword |> 
+  mutate(
+    estimate_slope_min1SD = estimate_slope_mean - estimate_interaction,
+    estimate_slope_plus1SD = estimate_slope_mean + estimate_interaction,
+  ) |> 
+  pivot_longer(
+    contains('estimate_slope_'),
+    names_to = 'Accuracy',
+    names_prefix = 'estimate_slope_',
+    values_to = 'estimate_slope',
+  ) |> 
+  mutate(
+    Accuracy = case_when(
+      Accuracy == 'mean' ~ 'Mean',
+      Accuracy == 'min1SD' ~ '-1 SD',
+      Accuracy == 'plus1SD' ~ '+1 SD',
+    ),
+    Accuracy = factor(Accuracy, levels = c('-1 SD', 'Mean', '+1 SD'))
+  )
+
+## Basic plot ----
+p_moderation_postword_basic <- 
+  ggplot() +
+    geom_abline(
+      data = data_plotting_postword_long |>
+        filter(
+          str_detect(Accuracy, 'SD')
+        ),
+      aes(
+        intercept = estimate_intercept,
+        slope = estimate_slope,
+        linetype = Significance_interaction,
+        color = Accuracy
+      ),
+      linewidth = line_size
+    ) +
+  geom_abline(
+    data = data_plotting_postword_long |> 
+      filter(
+        Accuracy == 'Mean'
+      ),
+    aes(
+      intercept = estimate_intercept,
+      slope = estimate_slope,
+      linetype = Significance_slope,
+      color = Accuracy
+    ),
+    linewidth = line_size
+  ) +
+  expand_limits(x = c(-2, 2), y = c(-1, 1)) +
+  facet_grid(Grade ~ outcome)
+
+## Plot visuals ----
+p_moderation_postword <- p_moderation_postword_basic +
+  scale_color_manual(
+    values = c('Mean' = color_mean,
+               '+1 SD' = color_plus_1SD,
+               '-1 SD' = color_min_1SD
+    ),
+    breaks = c('-1 SD', 'Mean', '+1 SD'),
+  ) +
+  scale_linetype_manual(
+    values = c('Significant' = 'solid', 'Not significant' = '11'),
+  ) +
+  scale_x_continuous(
+    name = "Words read",
+    breaks = seq(-2, 2, 1),
+    labels = c("-2 SD", "-1 SD", "Mean", "+1 SD", "+2 SD")
+  ) +
+  scale_y_continuous(
+    name = "Fluency post",
+    breaks = seq(-1, 1, 1),
+    labels = c("-1 SD", "Mean", "+1 SD")
+  ) +
+  guides(linetype = guide_legend(title = "Significance")) +
+  common_theme_SSSR_plots
+  
+## Display plot ----
+p_moderation_postword
+
+## Save plot ----
+ggsave(
+  here::here('output/interaction_plot_SSSR_postword.png'),
+  dpi = 600,
+  height = plot_height,
+  width = plot_width,
   units = 'cm'
 )
 

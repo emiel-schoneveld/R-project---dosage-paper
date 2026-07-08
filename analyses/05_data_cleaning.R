@@ -101,3 +101,12 @@ saveRDS(
   data_cleaned,
   here("output/data_cleaned.rds")
 )
+data_cleaned |> 
+  dplyr::select(
+    student_ID, class_ID, school_ID,
+    time, words_exposures, accuracy_anytry,
+    contains("fluency") & (!contains('LED') & !contains('pseudo'))
+  ) |> 
+  writexl::write_xlsx(
+  here::here("output/data_dosage.xlsx")
+)
